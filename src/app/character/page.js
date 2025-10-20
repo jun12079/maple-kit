@@ -6,19 +6,26 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Loader2, Search } from 'lucide-react'
+import { Loader2, Search, Heart } from 'lucide-react'
 
 // 導入所有顯示組件
 import { CharacterCard } from '@/components/character/CharacterCard'
 import { StatDisplay } from '@/components/character/StatDisplay'
 import { EquipmentDisplay } from '@/components/character/EquipmentDisplay'
 import { SkillTabsDisplay } from '@/components/character/SkillTabsDisplay'
+import { FavoritesList } from '@/components/character/FavoritesList'
+
+// 導入最愛管理 hook
+import { useFavorites } from '@/hooks/useFavorites'
 
 export default function CharacterDetailPage() {
   const [characterName, setCharacterName] = useState('')
   const [ocid, setOcid] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  
+  // 最愛管理
+  const { favorites, isLoaded: favoritesLoaded, removeFavorite, isFavorite, toggleFavorite } = useFavorites()
 
   // 各種資料狀態
   const [basicData, setBasicData] = useState(null)
@@ -43,40 +50,7 @@ export default function CharacterDetailPage() {
     }
   }, [])
 
-  const handleSearch = async () => {
-    if (!characterName.trim()) {
-      setError('請輸入角色名稱')
-      return
-    }
 
-    // 如果已在搜尋中或被禁用，則返回
-    if (isLoading || isSearchDisabled) {
-      return
-    }
-
-    setIsSearchDisabled(true)
-    setIsLoading(true)
-    setError(null)
-    resetAllData()
-
-    try {
-      // 取得 OCID
-      const ocidResponse = await mapleAPI.getCharacterOCID(characterName.trim())
-      setOcid(ocidResponse.ocid)
-
-      // 載入基本資料（包含符文和技能）
-      await loadAllData(ocidResponse.ocid)
-    } catch (err) {
-      setError(err.message || '查詢失敗，請檢查角色名稱是否正確')
-    } finally {
-      setIsLoading(false)
-      
-      // 設定冷卻時間
-      cooldownTimerRef.current = setTimeout(() => {
-        setIsSearchDisabled(false)
-      }, COOLDOWN_MS)
-    }
-  }
 
   const resetAllData = () => {
     setBasicData(null)
@@ -150,6 +124,79 @@ export default function CharacterDetailPage() {
 
 
 
+  // 修改搜尋函數，支援傳入角色名稱
+  const handleSearchWithName = async (searchName = null) => {
+    const nameToSearch = searchName || characterName.trim()
+    
+    if (!nameToSearch) {
+      setError('請輸入角色名稱')
+      return
+    }
+
+    // 如果已在搜尋中或被禁用，則返回
+    if (isLoading || isSearchDisabled) {
+      return
+    }
+
+    setIsSearchDisabled(true)
+    setIsLoading(true)
+    setError(null)
+    resetAllData()
+
+    // 如果是從最愛選擇的，更新輸入框
+    if (searchName) {
+      setCharacterName(searchName)
+    }
+
+    try {
+      // 取得 OCID
+      const ocidResponse = await mapleAPI.getCharacterOCID(nameToSearch)
+      setOcid(ocidResponse.ocid)
+
+      // 載入基本資料（包含符文和技能）
+      await loadAllData(ocidResponse.ocid)
+    } catch (err) {
+      setError(err.message || '查詢失敗，請檢查角色名稱是否正確')
+    } finally {
+      setIsLoading(false)
+      
+      // 設定冷卻時間
+      cooldownTimerRef.current = setTimeout(() => {
+        setIsSearchDisabled(false)
+      }, COOLDOWN_MS)
+    }
+  }
+
+  const handleSearch = () => handleSearchWithName()
+
+  // 處理最愛角色選擇
+  const handleFavoriteSelect = (favoriteName) => {
+    setCharacterName(favoriteName)
+    // 自動觸發搜尋
+    if (!isSearchDisabled && !isLoading) {
+      setCharacterName(favoriteName)
+      // 延遲一點讓 state 更新完成再搜尋
+      setTimeout(() => {
+        handleSearchWithName(favoriteName)
+      }, 100)
+    }
+  }
+
+  // 處理最愛角色移除
+  const handleFavoriteRemove = (favoriteName) => {
+    removeFavorite(favoriteName)
+  }
+
+  // 處理愛心按鈕點擊
+  const handleToggleFavorite = () => {
+    if (!characterName.trim()) return
+    
+    const success = toggleFavorite(characterName.trim())
+    if (success && !isFavorite(characterName.trim())) {
+      // 成功添加到最愛
+    }
+  }
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !isSearchDisabled && !isLoading && characterName.trim()) {
       handleSearch()
@@ -181,23 +228,50 @@ export default function CharacterDetailPage() {
                 disabled={isLoading}
               />
             </div>
-            <Button 
-              onClick={handleSearch} 
-              disabled={isLoading || !characterName.trim() || isSearchDisabled}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  查詢中...
-                </>
-              ) : (
-                <>
-                  <Search className="w-4 h-4 mr-2" />
-                  查詢
-                </>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              {/* 愛心按鈕 */}
+              <Button
+                variant={isFavorite(characterName.trim()) ? "default" : "outline"}
+                size="icon"
+                onClick={handleToggleFavorite}
+                disabled={!characterName.trim() || isLoading}
+                title={isFavorite(characterName.trim()) ? "移除最愛" : "加入最愛"}
+              >
+                <Heart 
+                  className={`w-4 h-4 ${isFavorite(characterName.trim()) ? 'fill-current text-red-500' : ''}`} 
+                />
+              </Button>
+              
+              {/* 搜尋按鈕 */}
+              <Button 
+                onClick={handleSearch} 
+                disabled={isLoading || !characterName.trim() || isSearchDisabled}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    查詢中...
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-4 h-4 mr-2" />
+                    查詢
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
+
+          {/* 最愛清單 */}
+          {favoritesLoaded && (
+            <FavoritesList
+              favorites={favorites}
+              isLoaded={favoritesLoaded}
+              onSelectFavorite={handleFavoriteSelect}
+              onRemoveFavorite={handleFavoriteRemove}
+              className="mt-4"
+            />
+          )}
 
           {error && (
             <div className="text-red-500 text-sm mt-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-md">
