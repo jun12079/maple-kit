@@ -38,7 +38,25 @@ const faqData = [
         提供建議。
       </span>
     )
-  }
+  },
+  {
+    id: "item-5",
+    question: "為什麼角色查詢的資料結果有缺少？",
+    answer: (
+      <span>
+        角色查詢仍在開發中，會持續修正與新增功能，如果有發現任何問題，歡迎透過{' '}
+        <a
+          href="https://forms.gle/TfA1kbPJmsorU9wv6"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-black dark:text-white font-semibold underline hover:no-underline"
+        >
+          回報表單
+        </a>{' '}
+        提供建議。
+      </span>
+    )
+  },
 ];
 
 export default function FAQ() {

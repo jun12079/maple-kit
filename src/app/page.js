@@ -9,7 +9,7 @@ export default function Home() {
       <div className="flex flex-col items-center text-center pt-10">
         <h1 className="text-6xl font-semibold mb-12">MapleKit</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 w-full max-w-4xl">
           <Link href="/calc/destiny-weapon" className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-12 text-left">

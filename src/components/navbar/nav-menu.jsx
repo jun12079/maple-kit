@@ -84,6 +84,11 @@ export const NavMenu = (props) => (
       </NavigationMenuItem>
       <NavigationMenuItem>
         <Button variant="ghost" asChild>
+          <Link href="/character">角色查詢</Link>
+        </Button>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <Button variant="ghost" asChild>
           <Link href="/faq">常見問題</Link>
         </Button>
       </NavigationMenuItem>
