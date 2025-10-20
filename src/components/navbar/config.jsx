@@ -46,6 +46,10 @@ export const menu = [
     ],
   },
   {
+    title: "角色查詢",
+    url: "/character",
+  },
+  {
     title: "常見問題",
     url: "/faq",
   },
