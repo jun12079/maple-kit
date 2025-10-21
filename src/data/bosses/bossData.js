@@ -29,6 +29,7 @@ import kalosIcon from '@/assets/images/bosses/icons/Kalos_icon.png';
 import kalingIcon from '@/assets/images/bosses/icons/Kaling_icon.png';
 import limboIcon from '@/assets/images/bosses/icons/Limbo_icon.png';
 import baldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
+import malitiaIcon from '@/assets/images/bosses/icons/Malitia_icon.png';
 
 // 從itemDatabase導入圖片
 import {
@@ -57,6 +58,10 @@ import {
   superiorEngravedGolluxBeltIcon,
   superiorGolluxEarringsIcon,
   traceOfEternalLoyaltyIcon,
+  MalitiaDrops2Icon,
+  MalitiaDrops3Icon,
+  MaliciousEternalArmorBoxIcon,
+  MalitiaSoulIcon,
   annihilationWeaponLotusroidIcon,
   baldrixroidIcon,
   damienroidIcon,
@@ -1058,6 +1063,33 @@ export const bossData = {
         drops: [traceOfEternalLoyaltyIcon, lifeJadeBossRingBoxIcon, grindstoneOfFaithIcon, baldrixroidIcon, oathswornEthernalArmorBoxIcon, oathOfDeathIcon],
         solErda: 600,
         mesos: 840000000
+      }
+    }
+  },
+  malitia: {
+    name: '瑪麗西亞',
+    image: malitiaIcon,
+    players: 3,
+    difficulties: {
+      normal: {
+        level: 250,
+        health: [[49000000000000, 21000000000000], 56000000000000, '24兆(砲5下)', 28000000000000],
+        defense: 380,
+        symbol: null,
+        reset: 'weekly',
+        drops: [blackJadeBossRingBoxIcon, arcaneUmbraArmorBoxIcon, arcaneUmbraWeaponBoxIcon, MalitiaDrops2Icon],
+        solErda: 120,
+        mesos: 150000000
+      },
+      extreme: {
+        level: 250,
+        health: ['?','?', '?', '?'],
+        defense: 380,
+        symbol: null,
+        reset: 'weekly',
+        drops: [lifeJadeBossRingBoxIcon, MaliciousEternalArmorBoxIcon, grindstoneOfFaithIcon, MalitiaDrops2Icon, MalitiaDrops3Icon, MalitiaSoulIcon],
+        solErda: null,
+        mesos: 1500000000
       }
     }
   }

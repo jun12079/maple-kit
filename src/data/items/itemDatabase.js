@@ -25,6 +25,10 @@ import ruinForceShieldIcon from '@/assets/images/items/icons/RuinForceShield_ico
 import superiorEngravedGolluxBeltIcon from '@/assets/images/items/icons/SuperiorEngravedGolluxBelt_icon.png';
 import superiorGolluxEarringsIcon from '@/assets/images/items/icons/SuperiorGolluxEarrings_icon.png';
 import traceOfEternalLoyaltyIcon from '@/assets/images/items/icons/TraceOfEternalLoyalty_icon.png';
+import MalitiaDrops2Icon from '@/assets/images/items/icons/MalitiaDrops2_icon.png';
+import MalitiaDrops3Icon from '@/assets/images/items/icons/MalitiaDrops3_icon.png';
+import MaliciousEternalArmorBoxIcon from '@/assets/images/items/icons/MaliciousEternalArmorBox_icon.png';
+import MalitiaSoulIcon from '@/assets/images/items/icons/MalitiaSoul_icon.png';
 
 // 機器人
 import annihilationWeaponLotusroidIcon from '@/assets/images/items/icons/robot/AnnihilationWeaponLotusroid_icon.png';
@@ -149,7 +153,11 @@ export const itemDatabase = {
   [ruinForceShieldIcon.src]: { name: '毀滅力量盾牌', image: ruinForceShieldIcon },
   [superiorEngravedGolluxBeltIcon.src]: { name: '頂級培羅德烙印腰帶', image: superiorEngravedGolluxBeltIcon },
   [superiorGolluxEarringsIcon.src]: { name: '頂級培羅德耳環', image: superiorGolluxEarringsIcon },
-  [traceOfEternalLoyaltyIcon.src]: { name: '永遠忠誠的痕跡', image: traceOfEternalLoyaltyIcon }
+  [traceOfEternalLoyaltyIcon.src]: { name: '永遠忠誠的痕跡', image: traceOfEternalLoyaltyIcon },
+  [MalitiaDrops2Icon.src]: { name: '月之淚', image: MalitiaDrops2Icon },
+  [MalitiaDrops3Icon.src]: { name: '月亮的意志', image: MalitiaDrops3Icon },
+  [MaliciousEternalArmorBoxIcon.src]: { name: '惡意的永恆防具箱', image: MaliciousEternalArmorBoxIcon },
+  [MalitiaSoulIcon.src]: { name: '瑪麗西亞靈魂寶珠', image: MalitiaSoulIcon }
 };
 
 // 篩選選單中要顯示的物品
@@ -249,5 +257,9 @@ export {
   ruinForceShieldIcon,
   superiorEngravedGolluxBeltIcon,
   superiorGolluxEarringsIcon,
-  traceOfEternalLoyaltyIcon
+  traceOfEternalLoyaltyIcon,
+  MalitiaDrops2Icon,
+  MalitiaDrops3Icon,
+  MaliciousEternalArmorBoxIcon,
+  MalitiaSoulIcon
 };
