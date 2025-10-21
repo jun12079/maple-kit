@@ -72,20 +72,27 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
     if (stat.display === '冷卻時間減少') {
       const percentStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(％)')
       const secondStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(秒)')
-      const parts = []
-      if (percentStat && percentStat.stat_value !== '0') {
-        parts.push(`${percentStat.stat_value}%`)
-      }
-      if (secondStat && secondStat.stat_value !== '0') {
-        parts.push(`${secondStat.stat_value}秒`)
-      }
-      return parts.length > 0 ? parts.join(' + ') : '0'
+      
+      const secondValue = secondStat?.stat_value || '0'
+      const percentValue = percentStat?.stat_value || '0'
+      
+      return `${secondValue}秒 / ${percentValue}%`
+    }
+
+    // 攻擊速度特殊處理
+    if (stat.display === '攻擊速度') {
+      return `第${value}階段`
     }
 
     // 百分比數值處理
     if (typeof value === 'string' && value.includes('.') &&
       ['傷害', '最終傷害', 'BOSS怪物傷害', '無視防禦率', '爆擊傷害', '一般怪物傷害', '無視屬性抗性', '狀態異常追加傷害', '獲得額外經驗值'].includes(stat.display)) {
       return `${value}%`
+    }
+
+    // 需要加上 % 的統計項目
+    if (['爆擊機率', 'Buff持續時間', '無視冷卻時間', '增加召喚獸持續時間', '楓幣獲得量', '道具掉落率', '額外獲得經驗值', '移動速度', '跳躍力', '格擋'].includes(stat.display)) {
+      return `${formatNumber(value)}%`
     }
 
     return formatNumber(value)
@@ -111,7 +118,7 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
       }
       // 特殊處理：冷卻時間減少
       else if (config.display === '冷卻時間減少') {
-        const percentStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(%)')
+        const percentStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(％)')
         const secondStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(秒)')
         if ((percentStat && percentStat.stat_value !== '0') || (secondStat && secondStat.stat_value !== '0')) {
           stat = { stat_name: config.display, stat_value: 'combined' }
@@ -216,7 +223,7 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
         {sortedStats.map((stat, index) => (
           <div key={index} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
             <div className="flex items-center gap-2">
-              <Badge className="bg-primary text-xs h-5 px-1">Lv. {stat.stat_level}</Badge>
+              <Badge className="bg-primary text-xs h-5 px-1 w-12 justify-center">Lv. {stat.stat_level}</Badge>
               <span className="text-xs text-muted-foreground">{stat.stat_type}</span>
             </div>
             <div className="text-xs font-mono text-foreground">
