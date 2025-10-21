@@ -23,7 +23,7 @@ export default function CharacterDetailPage() {
   const [ocid, setOcid] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
-  
+
   // 最愛管理
   const { favorites, isLoaded: favoritesLoaded, removeFavorite, isFavorite, toggleFavorite } = useFavorites()
 
@@ -80,9 +80,9 @@ export default function CharacterDetailPage() {
       ])
 
       // 設定基本資料
-      if (basic.status === 'fulfilled' && popularity.status === 'fulfilled' && 
-          stat.status === 'fulfilled' && hyperStat.status === 'fulfilled' && 
-          ability.status === 'fulfilled' && equipment.status === 'fulfilled') {
+      if (basic.status === 'fulfilled' && popularity.status === 'fulfilled' &&
+        stat.status === 'fulfilled' && hyperStat.status === 'fulfilled' &&
+        ability.status === 'fulfilled' && equipment.status === 'fulfilled') {
         setBasicData({
           basic: basic.value,
           popularity: popularity.value,
@@ -116,7 +116,7 @@ export default function CharacterDetailPage() {
         linkSkill: linkSkill.status === 'fulfilled' ? linkSkill.value : null
       }
       setSkillData(skillResults)
-      
+
     } catch {
       // 完全載入失敗
     }
@@ -127,7 +127,7 @@ export default function CharacterDetailPage() {
   // 修改搜尋函數，支援傳入角色名稱
   const handleSearchWithName = async (searchName = null) => {
     const nameToSearch = searchName || characterName.trim()
-    
+
     if (!nameToSearch) {
       setError('請輸入角色名稱')
       return
@@ -155,11 +155,11 @@ export default function CharacterDetailPage() {
 
       // 載入基本資料（包含符文和技能）
       await loadAllData(ocidResponse.ocid)
-    } catch (err) {
-      setError(err.message || '查詢失敗，請檢查角色名稱是否正確')
+    } catch {
+      setError('查無角色，請檢查角色名稱是否正確')
     } finally {
       setIsLoading(false)
-      
+
       // 設定冷卻時間
       cooldownTimerRef.current = setTimeout(() => {
         setIsSearchDisabled(false)
@@ -190,7 +190,7 @@ export default function CharacterDetailPage() {
   // 處理愛心按鈕點擊
   const handleToggleFavorite = () => {
     if (!characterName.trim()) return
-    
+
     const success = toggleFavorite(characterName.trim())
     if (success && !isFavorite(characterName.trim())) {
       // 成功添加到最愛
@@ -237,14 +237,14 @@ export default function CharacterDetailPage() {
                 disabled={!characterName.trim() || isLoading}
                 title={isFavorite(characterName.trim()) ? "移除最愛" : "加入最愛"}
               >
-                <Heart 
-                  className={`w-4 h-4 ${isFavorite(characterName.trim()) ? 'fill-current text-red-500' : ''}`} 
+                <Heart
+                  className={`w-4 h-4 ${isFavorite(characterName.trim()) ? 'fill-current text-red-500' : ''}`}
                 />
               </Button>
-              
+
               {/* 搜尋按鈕 */}
-              <Button 
-                onClick={handleSearch} 
+              <Button
+                onClick={handleSearch}
                 disabled={isLoading || !characterName.trim() || isSearchDisabled}
               >
                 {isLoading ? (
@@ -311,8 +311,8 @@ export default function CharacterDetailPage() {
               <>
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   <div className="lg:col-span-4">
-                    <StatDisplay 
-                      statData={basicData.stat} 
+                    <StatDisplay
+                      statData={basicData.stat}
                       hyperStatData={basicData.hyperStat}
                       abilityData={basicData.ability}
                     />
