@@ -607,14 +607,14 @@ export const bossData = {
     players: 6,
     difficulties: {
       normal: {
-        level: 160,
-        health: [200000000000],
+        level: 180,
+        health: [526000000000],
         defense: 100,
         symbol: null,
         reset: 'weekly',
         drops: [princessNoEffectCouponIcon],
         solErda: null,
-        mesos: 8953200
+        mesos: 18500000
       }
     }
   },
