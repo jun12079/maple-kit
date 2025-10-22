@@ -12,7 +12,7 @@ import { Loader2, Search, Heart } from 'lucide-react'
 import { CharacterCard } from '@/components/character/CharacterCard'
 import { StatDisplay } from '@/components/character/StatDisplay'
 import { EquipmentDisplay } from '@/components/character/EquipmentDisplay'
-import { SkillTabsDisplay } from '@/components/character/SkillTabsDisplay'
+import { SkillDisplay } from '@/components/character/SkillDisplay'
 import { FavoritesList } from '@/components/character/FavoritesList'
 
 // 導入最愛管理 hook
@@ -331,7 +331,18 @@ export default function CharacterDetailPage() {
 
           {/* 技能分頁 */}
           <TabsContent value="skill">
-            <SkillTabsDisplay ocid={ocid} skillData={skillData} />
+            {skillData ? (
+              <SkillDisplay 
+                hexaMatrix={skillData.hexaMatrix}
+                hexaStatData={skillData.hexaMatrixStat}
+                vMatrixData={skillData.vMatrix}
+                linkSkillData={skillData.linkSkill}
+              />
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                搜尋中...
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       )}
