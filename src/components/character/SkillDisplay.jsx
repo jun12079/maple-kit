@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button'
 /**
  * 技能顯示組件
  * @param {Object} props
- * @param {Object} props.skillData - 技能資訊
- * @param {string} props.type - 技能類型 (skill|vmatrix|hexamatrix|hexastat)
+ * @param {Object} props.hexaMatrix - HEXA矩陣技能資訊
+ * @param {Object} props.hexaStatData - HEXA屬性核心資訊
+ * @param {Object} props.vMatrixData - V矩陣技能資訊
+ * @param {Object} props.linkSkillData - 連結技能資訊
  * @returns {JSX.Element}
  */
 
-
-export function SkillDisplay({ skillData, type = 'skill', hexaStatData, vMatrixData, linkSkillData }) {
+export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillData }) {
   // 判斷當前裝備對應哪個預設
   const getCurrentPreset = () => {
     if (!linkSkillData || !linkSkillData.character_link_skill) return "1"
@@ -50,7 +51,7 @@ export function SkillDisplay({ skillData, type = 'skill', hexaStatData, vMatrixD
     return 'bg-green-500'
   }
 
-  // 一般技能顯示
+  // Hexa、V技能顯示
   const renderSkills = (skills) => (
     <div className="flex flex-wrap gap-2">
       {skills?.map((skill, index) => (
@@ -256,102 +257,61 @@ export function SkillDisplay({ skillData, type = 'skill', hexaStatData, vMatrixD
     )
   }
 
-  // 如果是統一顯示模式（傳入了多個資料）
-  if (type === 'unified') {
-    return (
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">技能</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* HEXA矩陣 */}
-          {skillData && skillData.character_skill && skillData.character_skill.length > 0 ? (
-            <div className="space-y-3">
-              <div>
-                <h3 className="text-sm font-semibold mb-2">HEXA矩陣</h3>
-                {renderSkills(skillData.character_skill)}
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div>
-                <h3 className="text-sm font-semibold mb-2">HEXA矩陣</h3>
-                <div className="text-center py-4 text-muted-foreground text-sm">
-                  沒有裝備任何 HEXA 技能
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* HEXA屬性核心 */}
-          <div className="space-y-3">
-            <div className="border-t pt-4">
-              <h3 className="text-sm font-semibold mb-2">HEXA屬性核心</h3>
-              {hexaStatData ? (
-                renderHexaStatCores(hexaStatData)
-              ) : (
-                <div className="text-center py-4 text-muted-foreground text-sm">
-                  沒有裝備任何 HEXA 屬性核心
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* V矩陣 */}
-          <div className="space-y-3">
-            <div className="border-t pt-4">
-              <h3 className="text-sm font-semibold mb-2">V矩陣</h3>
-              {vMatrixData && vMatrixData.character_skill && vMatrixData.character_skill.length > 0 ? (
-                renderSkills(vMatrixData.character_skill)
-              ) : (
-                <div className="text-center py-4 text-muted-foreground text-sm">
-                  沒有裝備任何 V 技能
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 連結技能 */}
-          <div className="space-y-3">
-            <div className="border-t pt-4">
-              {renderLinkSkills(linkSkillData)}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
+  // 統一顯示模式
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {type === 'skill' && '技能資訊'}
-            {type === 'vmatrix' && 'V矩陣'}
-            {type === 'hexamatrix' && 'HEXA矩陣'}
-            {type === 'hexastat' && 'HEXA屬性核心'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {type === 'skill' && renderSkills(skillData.character_skill)}
-          {type === 'vmatrix' && renderSkills(skillData.character_skill)}
-          {type === 'hexamatrix' && renderSkills(skillData.character_skill)}
-          {type === 'hexastat' && renderHexaStatCores(skillData)}
-        </CardContent>
-      </Card>
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">技能</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* HEXA矩陣 */}
+        {hexaMatrix && hexaMatrix.character_skill && hexaMatrix.character_skill.length > 0 ? (
+          <div className="space-y-3">
+            <div>
+              <h3 className="text-sm font-semibold mb-2">HEXA矩陣</h3>
+              {renderSkills(hexaMatrix.character_skill)}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div>
+              <h3 className="text-sm font-semibold mb-2">HEXA矩陣</h3>
+              <div className="text-center py-4 text-muted-foreground text-sm">
+                沒有裝備任何 HEXA 技能
+              </div>
+            </div>
+          </div>
+        )}
 
-      {/* 在 HEXA 矩陣下方顯示 HEXA 屬性核心 */}
-      {type === 'hexamatrix' && skillData && (
-        <Card>
-          <CardHeader>
-            <CardTitle>HEXA屬性核心</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {renderHexaStatCores(skillData)}
-          </CardContent>
-        </Card>
-      )}
-    </div>
+        {/* HEXA屬性核心 */}
+        <div className="space-y-3">
+          <div className="border-t pt-4">
+            <h3 className="text-sm font-semibold mb-2">HEXA屬性核心</h3>
+            {renderHexaStatCores(hexaStatData)}
+          </div>
+        </div>
+
+        {/* V矩陣 */}
+        <div className="space-y-3">
+          <div className="border-t pt-4">
+            <h3 className="text-sm font-semibold mb-2">V矩陣</h3>
+            {vMatrixData && vMatrixData.character_skill && vMatrixData.character_skill.length > 0 ? (
+              renderSkills(vMatrixData.character_skill)
+            ) : (
+              <div className="text-center py-4 text-muted-foreground text-sm">
+                沒有裝備任何 V 技能
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 連結技能 */}
+        <div className="space-y-3">
+          <div className="border-t pt-4">
+            {renderLinkSkills(linkSkillData)}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
