@@ -15,69 +15,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png";
-import serenIcon from "@/assets/images/bosses/icons/Seren_icon.png";
-import kalosIcon from "@/assets/images/bosses/icons/Kalos_icon.png";
-import kalingIcon from "@/assets/images/bosses/icons/Kaling_icon.png";
-import limboIcon from "@/assets/images/bosses/icons/Limbo_icon.png";
-import baldrixIcon from "@/assets/images/bosses/icons/Baldrix_icon.png";
-
-const bossData = {
-  seren: {
-    name: '賽連',
-    players: 6,
-    difficulties: {
-      hard: { name: '困難', energy: 6 },
-      extreme: { name: '極限', energy: 80 }
-    }
-  },
-  kalos: {
-    name: '卡洛斯',
-    players: 6,
-    difficulties: {
-      normal: { name: '普通', energy: 10 },
-      hard: { name: '困難', energy: 70 },
-      extreme: { name: '極限', energy: 400 }
-    }
-  },
-  kaling: {
-    name: '卡凌',
-    players: 6,
-    difficulties: {
-      normal: { name: '普通', energy: 20 },
-      hard: { name: '困難', energy: 160 },
-      extreme: { name: '極限', energy: 1200 }
-    }
-  },
-  limbo: {
-    name: '林波',
-    players: 3,
-    difficulties: {
-      normal: { name: '普通', energy: 120 },
-      hard: { name: '困難', energy: 360 }
-    }
-  },
-  baldrix: {
-    name: '巴德利斯',
-    players: 3,
-    difficulties: {
-      normal: { name: '普通', energy: 150 },
-      hard: { name: '困難', energy: 450 }
-    }
-  }
-};
-
-const bossIcon = {
-  seren: serenIcon,
-  serenReset: serenIcon,
-  kalos: kalosIcon,
-  kalosReset: kalosIcon,
-  kaling: kalingIcon,
-  limbo: limboIcon,
-  baldrix: baldrixIcon
-};
-
-const stageEnergy = [2000, 2500, 3000];
-const stageCumulative = [2000, 4500, 7500];
+import { 
+  destinyBossData as bossData, 
+  destinyBossIcon as bossIcon, 
+  destinyStageEnergy as stageEnergy, 
+  destinyStageCumulative as stageCumulative 
+} from "@/data/bosses/destinyWeaponData";
 
 export default function DestinyWeapon() {
   const [startDate, setStartDate] = useState(new Date());
