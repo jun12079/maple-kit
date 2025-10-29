@@ -3,6 +3,16 @@ import Image from "next/image";
 import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
 
+export const metadata = {
+  title: "MapleKit - 新楓之谷工具平台",
+  description: "MapleKit 為新楓之谷玩家提供命運武器進度計算、創世武器進度計算、HEXA技能計算等實用工具",
+  keywords: "新楓之谷, MapleStory, 命運武器, 創世武器, HEXA技能, 遊戲工具",
+  openGraph: {
+    title: "MapleKit - 新楓之谷工具平台",
+    description: "為新楓之谷玩家提供各種實用的遊戲進度計算工具",
+  },
+};
+
 export default function Home() {
   return (
     <div className="mx-auto px-4 py-8">
