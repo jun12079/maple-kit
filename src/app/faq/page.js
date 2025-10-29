@@ -5,6 +5,16 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+export const metadata = {
+  title: "常見問題 | Maple Kit",
+  description: "MapleKit 網站常見問題解答，包含網站功能介紹、使用方法和問題回報等資訊",
+  keywords: "MapleKit, 常見問題, FAQ, 新楓之谷工具",
+  openGraph: {
+    title: "常見問題 | Maple Kit",
+    description: "MapleKit 網站常見問題解答",
+  },
+};
+
 const faqData = [
   {
     id: "item-1",
