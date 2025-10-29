@@ -191,10 +191,10 @@ export default function GenesisWeapon() {
               <Input
                 type="number"
                 id="startEnergy"
-                value={startEnergy}
+                value={startEnergy || ''}
                 min="0"
                 max="6500"
-                onChange={(e) => setStartEnergy(Number(e.target.value))}
+                onChange={(e) => setStartEnergy(Number(e.target.value) || 0)}
                 placeholder="輸入目前痕跡數值 (0-6500)"
               />
             </div>

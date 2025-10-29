@@ -143,10 +143,10 @@ export default function DestinyWeapon() {
               <Input
                 type="number"
                 id="startEnergy"
-                value={startEnergy}
+                value={startEnergy || ''}
                 min="0"
                 max="7500"
-                onChange={(e) => setStartEnergy(Number(e.target.value))}
+                onChange={(e) => setStartEnergy(Number(e.target.value) || 0)}
                 placeholder="輸入目前決心數值 (0-7500)"
               />
             </div>
