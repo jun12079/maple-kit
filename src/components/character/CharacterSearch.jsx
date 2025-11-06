@@ -33,6 +33,7 @@ export default function CharacterSearch() {
   const [dojangData, setDojangData] = useState(null)
   const [skillData, setSkillData] = useState(null)
   const [unionData, setUnionData] = useState(null)
+  const [experienceData, setExperienceData] = useState(null)
 
   // 簡化的頻率限制狀態
   const [isSearchDisabled, setIsSearchDisabled] = useState(false)
@@ -58,6 +59,7 @@ export default function CharacterSearch() {
     setDojangData(null)
     setSkillData(null)
     setUnionData(null)
+    setExperienceData(null)
   }
 
   const loadAllData = async (characterOcid) => {
@@ -117,8 +119,60 @@ export default function CharacterSearch() {
       }
       setSkillData(skillResults)
 
+      // 獲取七天經驗值數據（在基本資料載入成功後）
+      if (basic.status === 'fulfilled') {
+        await loadExperienceData(characterOcid, basic.value.character_exp_rate)
+      }
+
     } catch {
       // 完全載入失敗
+    }
+  }
+
+  // 獲取七天經驗值數據
+  const loadExperienceData = async (characterOcid, todayExpRate) => {
+    try {
+      const data = []
+      const today = new Date()
+
+      // 獲取過去6天的數據（加上今天共7天）
+      for (let i = 6; i >= 1; i--) {
+        const date = new Date(today)
+        date.setDate(date.getDate() - i)
+        const dateString = date.toISOString().split('T')[0]
+
+        try {
+          const basicInfo = await mapleAPI.getCharacterBasic(characterOcid, dateString)
+          
+          data.push({
+            date: `${date.getMonth() + 1}/${date.getDate()}`,
+            exp: parseFloat(basicInfo.character_exp_rate || 0),
+            fullDate: dateString
+          })
+        } catch {
+          // 如果某天數據獲取失敗，填入0
+          data.push({
+            date: `${date.getMonth() + 1}/${date.getDate()}`,
+            exp: 0,
+            fullDate: dateString
+          })
+        }
+
+        // 添加延遲避免請求過快
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+
+      // 添加今天的數據（不帶 date 參數）
+      data.push({
+        date: `${today.getMonth() + 1}/${today.getDate()}`,
+        exp: parseFloat(todayExpRate || 0),
+        fullDate: today.toISOString().split('T')[0]
+      })
+
+      setExperienceData(data)
+    } catch {
+      // 如果獲取經驗值數據失敗，設為空陣列
+      setExperienceData([])
     }
   }
 
@@ -289,6 +343,7 @@ export default function CharacterSearch() {
             popularityInfo={basicData.popularity}
             dojangData={dojangData}
             unionData={unionData}
+            experienceData={experienceData}
           />
         </div>
       )}
