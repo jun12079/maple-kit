@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import Image from 'next/image'
 import { Mars, Venus } from 'lucide-react'
+import { ExperienceChart } from './ExperienceChart'
 
 /**
  * 角色基本資訊卡片組件
@@ -11,9 +11,11 @@ import { Mars, Venus } from 'lucide-react'
  * @param {Object} props.popularityInfo - 名聲資訊
  * @param {Object} props.dojangData - 武陵道場資訊
  * @param {Object} props.unionData - 戰地資訊
+ * @param {string} props.ocid - 角色辨識器
+ * @param {Array} props.experienceData - 七天經驗值數據
  * @returns {JSX.Element}
  */
-export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData }) {
+export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData, experienceData }) {
   const formatNumber = (num) => {
     if (!num) return '0'
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -99,11 +101,8 @@ export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData
                 <Progress value={parseFloat(basicInfo.character_exp_rate)} className="h-2" />
               </div>
             </div>
-          </div>
 
-          {/* 統計資訊區域 */}
-          <div className="lg:col-span-5 space-y-3">
-            {/* 武陵道場和戰地資訊 - 水平佈局 */}
+            {/* 武陵道場和戰地資訊 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {/* 武陵道場資訊 */}
               {dojangData && (
@@ -133,6 +132,13 @@ export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData
                 </div>
               )}
             </div>
+          </div>
+
+          {/* 經驗圖表區域 */}
+          <div className="lg:col-span-5">
+            <ExperienceChart 
+              experienceData={experienceData}
+            />
           </div>
         </div>
       </CardContent>
