@@ -3,7 +3,7 @@ import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
 import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_icon.png";
 import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
-import baldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
+import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
 
 export const logo = {
   title: "MapleKit",
@@ -46,7 +46,7 @@ export const menu = [
       },
       {
         title: "Boss 資訊",
-        icon: baldrixIcon,
+        icon: BaldrixIcon,
         url: "/data/bosses",
       }
     ],

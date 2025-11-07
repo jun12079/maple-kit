@@ -2,6 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
+import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_icon.png";
+import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
+import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
 
 export const metadata = {
   title: "MapleKit - 新楓之谷工具平台",
@@ -19,10 +22,10 @@ export default function Home() {
       <div className="flex flex-col items-center text-center pt-10">
         <h1 className="text-6xl font-semibold mb-12">MapleKit</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 w-full max-w-4xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
           <Link href="/calc/destiny-weapon" className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
-              <div className="p-12 text-left">
+              <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
                   <Image
                     src={DestinyRitualFanIcon}
@@ -39,7 +42,7 @@ export default function Home() {
 
           <Link href="/calc/genesis-weapon" className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
-              <div className="p-12 text-left">
+              <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
                   <Image
                     src={GenesisRitualFanIcon}
@@ -51,6 +54,60 @@ export default function Home() {
                   <h3 className="text-xl font-bold mb-1">創世武器進度</h3>
                 </div>
                 <p className="mb-0 text-gray-600 dark:text-gray-400">計算各階段所需痕跡、完成時間與週數</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/data/symbols" className="no-underline">
+            <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
+              <div className="p-8 text-left">
+                <div className="flex items-center mb-2">
+                  <Image
+                    src={ArcaneAuthenticSymbolSelectCoupon}
+                    alt="Symbol icon"
+                    width={32}
+                    height={32}
+                    className="mr-2"
+                  />
+                  <h3 className="text-xl font-bold mb-1">符文系統</h3>
+                </div>
+                <p className="mb-0 text-gray-600 dark:text-gray-400">查看神祕和真實符文升級所需數量</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/data/bosses" className="no-underline">
+            <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
+              <div className="p-8 text-left">
+                <div className="flex items-center mb-2">
+                  <Image
+                    src={BaldrixIcon}
+                    alt="Boss icon"
+                    width={32}
+                    height={32}
+                    className="mr-2"
+                  />
+                  <h3 className="text-xl font-bold mb-1">Boss 資訊</h3>
+                </div>
+                <p className="mb-0 text-gray-600 dark:text-gray-400">查看各Boss的詳細資訊與物品道具</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/calc/hexa-skill" className="no-underline">
+            <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
+              <div className="p-8 text-left">
+                <div className="flex items-center mb-2">
+                  <Image
+                    src={SolErdaFragmentIcon}
+                    alt="Hexa Skill icon"
+                    width={32}
+                    height={32}
+                    className="mr-2"
+                  />
+                  <h3 className="text-xl font-bold mb-1">HEXA技能</h3>
+                </div>
+                <p className="mb-0 text-gray-600 dark:text-gray-400">計算HEXA技能進度與升級所需數量</p>
               </div>
             </div>
           </Link>
