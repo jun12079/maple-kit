@@ -96,8 +96,8 @@ export const genesisStageIcon = {
   magnus: magnusIcon,
   lotus: lotusIcon,
   damien: damienIcon,
-  lucid: lucidIcon,
   will: willIcon,
+  lucid: lucidIcon,
   verusHilla: verusHillaIcon,
 };
 
