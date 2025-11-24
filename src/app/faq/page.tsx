@@ -4,8 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Metadata } from "next";
+import { ReactNode } from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "常見問題 | Maple Kit",
   description: "MapleKit 網站常見問題解答，包含網站功能介紹、使用方法和問題回報等資訊",
   keywords: "MapleKit, 常見問題, FAQ, 新楓之谷工具",
@@ -15,7 +17,13 @@ export const metadata = {
   },
 };
 
-const faqData = [
+interface FaqItem {
+  id: string;
+  question: string;
+  answer: string | ReactNode;
+}
+
+const faqData: FaqItem[] = [
   {
     id: "item-1",
     question: "MapleKit 是什麼？",
@@ -79,7 +87,7 @@ export default function FAQ() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">常見問題</h1>
           </div>
 
-          <Accordion type="multiple" collapsible="true" className="w-full">
+          <Accordion type="multiple" className="w-full">
             {faqData.map((item) => (
               <AccordionItem key={item.id} value={item.id} className="mb-4 border-b-0">
                 <AccordionTrigger className="text-left font-semibold hover:no-underline px-6 py-4 bg-white dark:bg-gray-800 rounded-t-xl border border-gray-200 dark:border-gray-700 [&[data-state=open]]:rounded-b-none">
