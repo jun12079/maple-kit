@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import React from "react";
 import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
 import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_icon.png";
@@ -16,7 +17,7 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default function Home(): React.ReactElement {
   return (
     <div className="mx-auto px-4 py-8">
       <div className="flex flex-col items-center text-center pt-10">
