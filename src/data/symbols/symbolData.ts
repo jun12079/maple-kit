@@ -13,9 +13,28 @@ import Authentic_Symbol_6 from '@/assets/images/symbol/Authentic_Symbol_6.png';
 import Authentic_Symbol_7 from '@/assets/images/symbol/Authentic_Symbol_7.png';
 import Arcane_Symbol_Select_Coupon from '@/assets/images/symbol/Arcane_Symbol_Select_Coupon.png';
 import Authentic_Symbol_Select_Coupon from '@/assets/images/symbol/Authentic_Symbol_Select_Coupon.png';
+import { StaticImageData } from 'next/image';
+
+export interface SymbolUpgradeInfo {
+  level: string;
+  upgradeCost: number;
+  totalCost: number;
+  upgradeCount: number;
+  totalCount: number;
+}
+
+export interface SymbolDefinition {
+  name: string;
+  icon: StaticImageData;
+  data: SymbolUpgradeInfo[];
+}
+
+export interface SymbolCollection {
+  [key: string]: SymbolDefinition;
+}
 
 // ARC升級資料
-const arcaneSymbolUpgradeData = [
+const arcaneSymbolUpgradeData: SymbolUpgradeInfo[] = [
   { level: '1 > 2', upgradeCost: 970000, totalCost: 970000, upgradeCount: 12, totalCount: 12 },
   { level: '2 > 3', upgradeCost: 1230000, totalCost: 2200000, upgradeCount: 15, totalCount: 27 },
   { level: '3 > 4', upgradeCost: 1660000, totalCost: 3860000, upgradeCount: 20, totalCount: 47 },
@@ -38,7 +57,7 @@ const arcaneSymbolUpgradeData = [
 ];
 
 // AUT升級資料
-const authenticSymbolUpgradeData = {
+const authenticSymbolUpgradeData: { [key: string]: SymbolUpgradeInfo[] } = {
   cernium: [
     { level: '1 > 2', upgradeCost: 36500000, totalCost: 36500000, upgradeCount: 29, totalCount: 29 },
     { level: '2 > 3', upgradeCost: 91200000, totalCost: 127700000, upgradeCount: 76, totalCount: 105 },
@@ -126,7 +145,7 @@ const authenticSymbolUpgradeData = {
 };
 
 // ARC符文
-export const arcaneSymbols = {
+export const arcaneSymbols: SymbolCollection = {
   vanishingJourney: {
     name: '消失的旅途',
     icon: Arcane_Symbol_1,
@@ -160,7 +179,7 @@ export const arcaneSymbols = {
 };
 
 // AUT符文
-export const authenticSymbols = {
+export const authenticSymbols: SymbolCollection = {
   cernium: {
     name: '賽爾尼溫',
     icon: Authentic_Symbol_1,
@@ -199,13 +218,13 @@ export const authenticSymbols = {
 };
 
 // 符文選擇券圖示
-export const symbolCoupons = {
+export const symbolCoupons: { [key: string]: StaticImageData } = {
   arcane: Arcane_Symbol_Select_Coupon,
   authentic: Authentic_Symbol_Select_Coupon
 };
 
 // 通用升級數量資料
-export const symbolUpgradeData = {
+export const symbolUpgradeData: { [key: string]: SymbolUpgradeInfo[] } = {
   arcane: arcaneSymbolUpgradeData,
   authentic: authenticSymbolUpgradeData.cernium // 真實符文都使用相同的升級數據
 };

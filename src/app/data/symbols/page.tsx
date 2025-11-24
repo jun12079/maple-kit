@@ -1,10 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
-import { arcaneSymbols, authenticSymbols, symbolCoupons, symbolUpgradeData } from "@/data/symbols/symbolData";
+import Image, { StaticImageData } from "next/image";
+import { arcaneSymbols, authenticSymbols, symbolCoupons, symbolUpgradeData, SymbolUpgradeInfo, SymbolDefinition } from "@/data/symbols/symbolData";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "符文系統 | Maple Kit",
   description: "新楓之谷符文系統查詢表格，包含秘法符文、真實符文的升級成本與升級數量資訊",
   keywords: "新楓之谷, 符文系統, 秘法符文, 真實符文, 符文升級",
@@ -14,11 +15,18 @@ export const metadata = {
   },
 };
 
-const formatNumber = (num) => {
+const formatNumber = (num: number) => {
   return num.toLocaleString('zh-TW');
 };
 
-const SymbolCard = ({ title, icon, data, viewMode }) => {
+interface SymbolCardProps {
+  title: string;
+  icon: StaticImageData | string;
+  data: SymbolUpgradeInfo[];
+  viewMode: "cost" | "count";
+}
+
+const SymbolCard = ({ title, icon, data, viewMode }: SymbolCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -110,7 +118,7 @@ export default function Symbols() {
 
         <TabsContent value="arcane" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {Object.entries(arcaneSymbols).map(([key, symbol]) => (
+            {Object.entries(arcaneSymbols).map(([key, symbol]: [string, SymbolDefinition]) => (
               <SymbolCard
                 key={key}
                 title={symbol.name}
@@ -124,7 +132,7 @@ export default function Symbols() {
 
         <TabsContent value="authentic" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {Object.entries(authenticSymbols).map(([key, symbol]) => (
+            {Object.entries(authenticSymbols).map(([key, symbol]: [string, SymbolDefinition]) => (
               <SymbolCard
                 key={key}
                 title={symbol.name}
