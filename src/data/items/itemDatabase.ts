@@ -1,3 +1,5 @@
+import { StaticImageData } from 'next/image';
+
 // 一般物品
 import absoLabArmorBoxIcon from '@/assets/images/items/icons/AbsoLabArmorBox_icon.png';
 import absoLabWeaponBoxIcon from '@/assets/images/items/icons/AbsoLabWeaponBox_icon.png';
@@ -77,7 +79,12 @@ import lifeJadeBossRingBoxIcon from '@/assets/images/items/icons/jade-boss-ring-
 import redJadeBossRingBoxIcon from '@/assets/images/items/icons/jade-boss-ring-box/RedJadeBossRingBox_icon.png';
 import whiteJadeBossRingBoxIcon from '@/assets/images/items/icons/jade-boss-ring-box/WhiteJadeBossRingBox_icon.png';
 
-export const itemDatabase = {
+export interface ItemData {
+  name: string;
+  image: StaticImageData | null;
+}
+
+export const itemDatabase: Record<string, ItemData> = {
   // 漆黑BOSS套裝
   [berserkedIcon.src]: { name: '口紅控制器標誌', image: berserkedIcon },
   [commandingForceEarringIcon.src]: { name: '指揮官力量耳環', image: commandingForceEarringIcon },
@@ -161,7 +168,7 @@ export const itemDatabase = {
 };
 
 // 篩選選單中要顯示的物品
-export const filterableItems = [
+export const filterableItems: ItemData[] = [
   { name: '信念研磨石', image: grindstoneOfFaithIcon },
   { name: '生命研磨石', image: grindstoneOfLifeIcon },
   { name: '生命的BOSS戒指箱子', image: lifeJadeBossRingBoxIcon },
@@ -174,9 +181,9 @@ export const filterableItems = [
 ];
 
 // 根據圖片找到掉落物資訊
-export const getDropInfo = (imagePath) => {
+export const getDropInfo = (imagePath: string | StaticImageData): ItemData => {
   // imagePath 可能是物件（包含 .src）或字串
-  const key = typeof imagePath === 'object' && imagePath.src ? imagePath.src : imagePath;
+  const key = typeof imagePath === 'string' ? imagePath : imagePath.src;
   return itemDatabase[key] || {
     name: '未知掉落物',
     image: null

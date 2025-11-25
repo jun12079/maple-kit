@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from 'react'
-import Image from 'next/image'
+import Image, { StaticImageData } from 'next/image'
 import {
   Table,
   TableBody,
@@ -14,11 +14,14 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { bossData } from '@/data/bosses/bossData'
+import { bossData, BossDifficulty } from '@/data/bosses/bossData'
 import { filterableItems, getDropInfo } from '@/data/items/itemDatabase'
 
 // 轉換單位
-const formatNumber = (num) => {
+const formatNumber = (num: number | string | null | undefined) => {
+  if (num === null || num === undefined) return '0'
+  if (typeof num === 'string') return num
+  
   if (num >= 1e16) {
     const value = num / 1e16
     return `${value % 1 === 0 ? value.toFixed(0) : value.toFixed(1)}京`
@@ -35,43 +38,20 @@ const formatNumber = (num) => {
     const value = num / 1e4
     return `${value % 1 === 0 ? value.toFixed(0) : value.toFixed(1)}萬`
   }
-  return num?.toLocaleString() || '0'
-}
-
-// 轉換血量
-const formatHealth = (healthArray, bossName) => {
-  if (!healthArray || healthArray.length === 0) return '0'
-
-  if (bossName === '咖凌') {
-    return formatKalingHealth(healthArray)
-  }
-
-  const formatHealthValue = (value) => {
-    // 如果是 array，用 + 連接(階段有多條血的情況)
-    if (Array.isArray(value)) {
-      return value.map(v => formatNumber(v)).join('+')
-    }
-
-    return formatNumber(value)
-  }
-
-  if (healthArray.length === 1) {
-    return formatHealthValue(healthArray[0])
-  }
-
-  return healthArray.map(health => formatHealthValue(health)).join(' / ')
+  return num.toLocaleString()
 }
 
 // 咖凌血量特殊處理
-const formatKalingHealth = (healthArray) => {
+const formatKalingHealth = (healthArray: (number | string | (number | string)[])[]) => {
   if (!healthArray || healthArray.length === 0) return '0'
 
-  const parts = []
+  const parts: string[] = []
 
   healthArray.forEach((health, index) => {
     if (Array.isArray(health)) {
       // 三階
-      const [firstPhase, secondPhase] = health
+      const firstPhase = health[0]
+      const secondPhase = health[1]
       const phaseText = `${formatNumber(firstPhase)}x3+${formatNumber(secondPhase)}`
       parts.push(phaseText)
     } else {
@@ -87,8 +67,32 @@ const formatKalingHealth = (healthArray) => {
   return parts.join(' / ')
 }
 
+// 轉換血量
+const formatHealth = (healthArray: (number | string | (number | string)[])[] | undefined, bossName: string) => {
+  if (!healthArray || healthArray.length === 0) return '0'
+
+  if (bossName === '咖凌') {
+    return formatKalingHealth(healthArray)
+  }
+
+  const formatHealthValue = (value: number | string | (number | string)[]) => {
+    // 如果是 array，用 + 連接(階段有多條血的情況)
+    if (Array.isArray(value)) {
+      return value.map(v => formatNumber(v)).join('+')
+    }
+
+    return formatNumber(value)
+  }
+
+  if (healthArray.length === 1) {
+    return formatHealthValue(healthArray[0])
+  }
+
+  return healthArray.map(health => formatHealthValue(health)).join(' / ')
+}
+
 // 等級處理
-const formatLevel = (level) => {
+const formatLevel = (level: number | number[] | null) => {
   if (Array.isArray(level)) {
     return level.join('/')
   }
@@ -96,7 +100,7 @@ const formatLevel = (level) => {
 }
 
 // 重置時間轉換
-const getResetTypeText = (reset) => {
+const getResetTypeText = (reset: string) => {
   switch (reset) {
     case 'daily': return '每日'
     case 'weekly': return '每週'
@@ -106,8 +110,8 @@ const getResetTypeText = (reset) => {
 }
 
 // 難度樣式
-const getDifficultyDisplay = (difficulty) => {
-  const displays = {
+const getDifficultyDisplay = (difficulty: string) => {
+  const displays: Record<string, { text: string, className: string }> = {
     easy: { text: '簡單', className: 'bg-gray-500 text-white' },
     normal: { text: '普通', className: 'bg-cyan-500 text-white' },
     hard: { text: '困難', className: 'bg-rose-500 text-white' },
@@ -117,6 +121,17 @@ const getDifficultyDisplay = (difficulty) => {
   return displays[difficulty] || { text: difficulty, className: 'bg-gray-500 text-white' }
 }
 
+interface ProcessedBossDifficulty extends BossDifficulty {
+  difficulty: string;
+}
+
+interface ProcessedBoss {
+  key: string;
+  name: string;
+  image: StaticImageData;
+  difficulties: ProcessedBossDifficulty[];
+}
+
 export default function BossTable() {
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -124,8 +139,8 @@ export default function BossTable() {
   const [itemFilter, setItemFilter] = useState('all')
 
   // 轉換資料格式，將每個 boss 的不同難度合併並倒轉順序
-  const processedData = useMemo(() => {
-    const data = []
+  const processedData = useMemo<ProcessedBoss[]>(() => {
+    const data: ProcessedBoss[] = []
 
     Object.entries(bossData).reverse().forEach(([bossKey, boss]) => {
       data.push({
@@ -162,12 +177,13 @@ export default function BossTable() {
       // 掉落物篩選
       const matchesItem = itemFilter === 'all' ||
         boss.difficulties.some(diff =>
-          diff.drops && diff.drops.some(drop => drop === itemFilter)
+          diff.drops && diff.drops.some(drop => drop && drop.src === itemFilter)
         )
 
       return matchesSearch && matchesReset && matchesItem
     })
   }, [processedData, searchTerm, resetFilter, itemFilter])
+
 
   return (
     <Card>
@@ -206,14 +222,16 @@ export default function BossTable() {
             <SelectContent>
               <SelectItem value="all">所有掉落物</SelectItem>
               {filterableItems.map((item, index) => (
-                <SelectItem key={index} value={item.image}>
+                <SelectItem key={index} value={item.image?.src ?? ''}>
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      style={{ width: '20px', height: 'auto' }}
-                      className="rounded-sm"
-                    />
+                    {item.image && (
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        style={{ width: '20px', height: 'auto' }}
+                        className="rounded-sm"
+                      />
+                    )}
                     <span className="text-sm">{item.name}</span>
                   </div>
                 </SelectItem>
@@ -341,7 +359,7 @@ export default function BossTable() {
                     <div className="flex flex-col gap-2">
                       {boss.difficulties.map((diff, index) => {
                         // 檢查是否有掉落物（非 null 且非空字串）
-                        const validDrops = diff.drops ? diff.drops.filter(drop => drop && drop !== null) : []
+                        const validDrops = diff.drops ? diff.drops.filter((drop): drop is StaticImageData => drop !== null) : []
 
                         return (
                           <div key={index} className="flex gap-1 py-1 min-h-[32px] items-end justify-start overflow-x-auto">

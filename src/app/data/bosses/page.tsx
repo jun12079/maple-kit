@@ -1,3 +1,4 @@
+import React from "react";
 import BossTable from "@/components/data/BossTable";
 
 export const metadata = {
@@ -5,7 +6,7 @@ export const metadata = {
   description: "新楓之谷 Boss 資訊查詢表格，包含難度、等級、血量、防禦、掉落物、結晶石等詳細資訊",
 };
 
-export default function BossesDataPage() {
+export default function BossesDataPage(): React.ReactElement {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">

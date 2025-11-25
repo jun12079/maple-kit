@@ -1,3 +1,5 @@
+import { StaticImageData } from 'next/image';
+
 import zakumIcon from '@/assets/images/bosses/icons/Zakum_icon.png';
 import horntailIcon from '@/assets/images/bosses/icons/Horntail_icon.png';
 import hillaIcon from '@/assets/images/bosses/icons/Hilla_icon.png';
@@ -98,7 +100,25 @@ import {
   whiteJadeBossRingBoxIcon
 } from '@/data/items/itemDatabase';
 
-export const bossData = {
+export interface BossDifficulty {
+  level: number | number[];
+  health: (number | string | (number | string)[])[];
+  defense: number;
+  symbol: number | number[] | null;
+  reset: 'daily' | 'weekly' | 'monthly';
+  drops: (StaticImageData | null)[];
+  solErda: number | null;
+  mesos: number | null;
+}
+
+export interface Boss {
+  name: string;
+  image: StaticImageData;
+  players: number;
+  difficulties: Record<string, BossDifficulty>;
+}
+
+export const bossData: Record<string, Boss> = {
   zakum: {
     name: '殘暴炎魔',
     image: zakumIcon,
