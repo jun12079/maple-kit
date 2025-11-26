@@ -8,17 +8,31 @@
 
 import SolErdaIcon from '@/assets/images/items/icons/SolErda_icon.png';
 import SolErdaFragmentIcon from '@/assets/images/items/icons/SolErdaFragment_icon.png';
+import { StaticImageData } from 'next/image';
+
+// 核心類型
+export type CoreType = 'skill' | 'mastery' | 'reinforced' | 'common';
 
 // 核心類型與名稱對照
-export const CORE_TYPES = {
+export const CORE_TYPES: Record<CoreType, string> = {
   skill: '技能核心',
   mastery: '精通核心',
   reinforced: '強化核心',
   common: '共通核心'
 };
 
+// 材料介面
+export interface Material {
+  name: string;
+  icon: StaticImageData;
+  shortName: string;
+}
+
 // 升級材料 - 包含圖示和名稱
-export const MATERIALS = {
+export const MATERIALS: {
+  solErda: Material;
+  solErdaFragment: Material;
+} = {
   solErda: {
     name: '艾爾達氣息',
     icon: SolErdaIcon,
@@ -31,8 +45,21 @@ export const MATERIALS = {
   }
 };
 
+// 升級費用介面
+export interface UpgradeCost {
+  level: number;
+  solErda: number;
+  solErdaFragment: number;
+}
+
+// 材料費用介面
+export interface MaterialCost {
+  solErda: number;
+  solErdaFragment: number;
+}
+
 // HEXA 核心升級費用表 (等級 1-30)
-export const HEXA_UPGRADE_COSTS = {
+export const HEXA_UPGRADE_COSTS: Record<CoreType, UpgradeCost[]> = {
   // 技能核心 (Skill Core)
   skill: [
     { level: 1, solErda: 5, solErdaFragment: 100 },
@@ -171,7 +198,7 @@ export const HEXA_UPGRADE_COSTS = {
 };
 
 // 每種核心類型升級到滿等 (30級) 所需的總材料數量
-export const TOTAL_UPGRADE_COSTS = {
+export const TOTAL_UPGRADE_COSTS: Record<CoreType, MaterialCost> = {
   skill: {
     solErda: 150,
     solErdaFragment: 4500
@@ -192,12 +219,16 @@ export const TOTAL_UPGRADE_COSTS = {
 
 /**
  * 計算從當前等級升級到目標等級所需的材料
- * @param {string} coreType - 核心類型 (CORE_TYPES 中的值)
- * @param {number} currentLevel - 當前等級 (0-29)
- * @param {number} targetLevel - 目標等級 (1-30)
- * @returns {Object} 包含所需 solErda 和 solErdaFragment 數量的物件
+ * @param coreType - 核心類型
+ * @param currentLevel - 當前等級 (0-29)
+ * @param targetLevel - 目標等級 (1-30)
+ * @returns 包含所需 solErda 和 solErdaFragment 數量的物件
  */
-export const calculateUpgradeCost = (coreType, currentLevel, targetLevel) => {
+export const calculateUpgradeCost = (
+  coreType: CoreType,
+  currentLevel: number,
+  targetLevel: number
+): MaterialCost => {
   if (!HEXA_UPGRADE_COSTS[coreType]) {
     throw new Error(`未知的核心類型: ${coreType}`);
   }
@@ -231,11 +262,11 @@ export const calculateUpgradeCost = (coreType, currentLevel, targetLevel) => {
 
 /**
  * 取得特定等級的升級費用
- * @param {string} coreType - 核心類型
- * @param {number} level - 等級 (1-30)
- * @returns {Object} 該等級的升級費用
+ * @param coreType - 核心類型
+ * @param level - 等級 (1-30)
+ * @returns 該等級的升級費用
  */
-export const getUpgradeCostForLevel = (coreType, level) => {
+export const getUpgradeCostForLevel = (coreType: CoreType, level: number): UpgradeCost => {
   if (!HEXA_UPGRADE_COSTS[coreType]) {
     throw new Error(`未知的核心類型: ${coreType}`);
   }
@@ -252,12 +283,19 @@ export const getUpgradeCostForLevel = (coreType, level) => {
   };
 };
 
+// 核心資料介面
+export interface CoreData {
+  type: CoreType;
+  currentLevel: number;
+  targetLevel: number;
+}
+
 /**
  * 計算多個核心的總升級費用
- * @param {Array} cores - 核心陣列，每個元素包含 { type, currentLevel, targetLevel }
- * @returns {Object} 總升級費用
+ * @param cores - 核心陣列，每個元素包含 { type, currentLevel, targetLevel }
+ * @returns 總升級費用
  */
-export const calculateMultipleCoresCost = (cores) => {
+export const calculateMultipleCoresCost = (cores: CoreData[]): MaterialCost => {
   let totalSolErda = 0;
   let totalSolErdaFragment = 0;
 
