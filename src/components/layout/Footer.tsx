@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 export default function Footer() {
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
@@ -19,5 +19,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

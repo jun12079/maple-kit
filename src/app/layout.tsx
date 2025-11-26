@@ -3,8 +3,9 @@ import { Analytics } from '@vercel/analytics/next';
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "MapleKit",
   description: "MapleKit為新楓之谷玩家提供的一個工具平台",
   icons: {
@@ -30,11 +31,16 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <div className="min-h-screen flex flex-col">
             <Header />
             <main className="flex-1">
