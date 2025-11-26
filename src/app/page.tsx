@@ -49,7 +49,6 @@ export default function Home(): React.ReactElement {
                     src={GenesisRitualFanIcon}
                     alt="Genesis Weapon icon"
                     width={32}
-                    height={32}
                     className="mr-2"
                   />
                   <h3 className="text-xl font-bold mb-1">創世武器進度</h3>
@@ -67,7 +66,6 @@ export default function Home(): React.ReactElement {
                     src={ArcaneAuthenticSymbolSelectCoupon}
                     alt="Symbol icon"
                     width={32}
-                    height={32}
                     className="mr-2"
                   />
                   <h3 className="text-xl font-bold mb-1">符文系統</h3>
@@ -85,7 +83,6 @@ export default function Home(): React.ReactElement {
                     src={BaldrixIcon}
                     alt="Boss icon"
                     width={32}
-                    height={32}
                     className="mr-2"
                   />
                   <h3 className="text-xl font-bold mb-1">Boss 資訊</h3>
@@ -103,7 +100,6 @@ export default function Home(): React.ReactElement {
                     src={SolErdaFragmentIcon}
                     alt="Hexa Skill icon"
                     width={32}
-                    height={32}
                     className="mr-2"
                   />
                   <h3 className="text-xl font-bold mb-1">HEXA技能</h3>

@@ -15,14 +15,18 @@ import Image from "next/image";
 import React from "react";
 import { menu } from "@/components/navbar/config";
 
-export const NavMenu = (props) => (
+interface NavMenuProps {
+  className?: string;
+}
+
+export const NavMenu = (props: NavMenuProps) => (
   <NavigationMenu {...props} viewport={false}>
     <NavigationMenuList className="gap-1 space-x-0 text-sm">
       <NavigationMenuItem>
         <NavigationMenuTrigger className="bg-muted">{menu[0].title}</NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul>
-            {menu[0].items.map((item) => (
+            {menu[0].items?.map((item) => (
               <li key={item.title}>
                 <NavigationMenuLink asChild>
                   <Link
@@ -35,7 +39,6 @@ export const NavMenu = (props) => (
                           src={item.icon} 
                           alt={item.title}
                           width={20} 
-                          height="auto" 
                           className="flex-shrink-0" 
                         />
                       )}
@@ -54,7 +57,7 @@ export const NavMenu = (props) => (
         <NavigationMenuTrigger className="bg-muted">{menu[1].title}</NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul>
-            {menu[1].items.map((menuItem) => (
+            {menu[1].items?.map((menuItem) => (
               <li key={menuItem.title}>
                 <NavigationMenuLink asChild>
                   <Link
@@ -67,7 +70,6 @@ export const NavMenu = (props) => (
                           src={menuItem.icon} 
                           alt={menuItem.title}
                           width={20} 
-                          height="auto" 
                           className="flex-shrink-0" 
                         />
                       )}
@@ -95,5 +97,3 @@ export const NavMenu = (props) => (
     </NavigationMenuList>
   </NavigationMenu>
 );
-
-

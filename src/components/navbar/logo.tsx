@@ -8,7 +8,6 @@ export const Logo = () => (
       src={logo.src}
       alt={logo.alt}
       width={32}
-      height="auto"
     />
     <span className="font-heading text-xl font-semibold">
       {logo.title}
