@@ -1,18 +1,38 @@
+import { StaticImageData } from "next/image";
 import Logo from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
-import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_icon.png";
-import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
+import SolErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
+import ArcaneAuthenticSymbolSelectCoupon from "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
 import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
 
-export const logo = {
+export interface LogoConfig {
+  title: string;
+  src: StaticImageData;
+  url: string;
+  alt: string;
+}
+
+export interface MenuItem {
+  title: string;
+  icon?: StaticImageData;
+  url: string;
+}
+
+export interface MenuGroup {
+  title: string;
+  url: string;
+  items?: MenuItem[];
+}
+
+export const logo: LogoConfig = {
   title: "MapleKit",
   src: Logo,
   url: "/",
   alt: "MapleKit",
 };
 
-export const menu = [
+export const menu: MenuGroup[] = [
   // { title: "Home", url: "/" },
   {
     title: "工具",

@@ -49,7 +49,6 @@ export const NavigationSheet = () => {
                                 src={subItem.icon} 
                                 alt={subItem.title}
                                 width={20} 
-                                height="auto" 
                                 className="mr-2" 
                               />
                             )}
