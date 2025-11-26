@@ -13,16 +13,29 @@ import {
   MATERIALS, 
   calculateUpgradeCost,
   TOTAL_UPGRADE_COSTS,
-  HEXA_UPGRADE_COSTS 
+  HEXA_UPGRADE_COSTS,
+  CoreType
 } from "@/data/hexa/hexaSkillData";
 import Image from "next/image";
 
+interface Core {
+  level: number;
+}
+
+interface Calculations {
+  totalUsedSolErda: number;
+  totalUsedSolErdaFragment: number;
+  totalRequiredSolErda: number;
+  totalRequiredSolErdaFragment: number;
+  overallProgress: number;
+}
+
 export default function HexaSkillCalculator() {
   // 技能核心 1 種
-  const [skillCores, setSkillCores] = useState([{ level: 0 }]);
+  const [skillCores, setSkillCores] = useState<Core[]>([{ level: 0 }]);
   
   // 精通核心 4 種
-  const [masteryCores, setMasteryCores] = useState([
+  const [masteryCores, setMasteryCores] = useState<Core[]>([
     { level: 0 },
     { level: 0 },
     { level: 0 },
@@ -30,7 +43,7 @@ export default function HexaSkillCalculator() {
   ]);
   
   // 強化核心 4 種
-  const [reinforcedCores, setReinforcedCores] = useState([
+  const [reinforcedCores, setReinforcedCores] = useState<Core[]>([
     { level: 0 },
     { level: 0 },
     { level: 0 },
@@ -38,16 +51,16 @@ export default function HexaSkillCalculator() {
   ]);
   
   // 共通核心 1 種
-  const [commonCores, setCommonCores] = useState([{ level: 0 }]);
+  const [commonCores, setCommonCores] = useState<Core[]>([{ level: 0 }]);
   
   // 手機版核心類型切換
-  const [selectedCoreType, setSelectedCoreType] = useState('skill');
+  const [selectedCoreType, setSelectedCoreType] = useState<CoreType>('skill');
   
   // 是否包含共用核心
   const [includeCommonCore, setIncludeCommonCore] = useState(true);
 
   // 更新核心等級
-  const updateCoreLevel = (type, index, level) => {
+  const updateCoreLevel = (type: CoreType, index: number, level: string) => {
     const parsedLevel = parseInt(level) || 0;
     const clampedLevel = Math.min(Math.max(parsedLevel, 0), 30);
     
@@ -84,7 +97,7 @@ export default function HexaSkillCalculator() {
   };
 
   // 計算總消耗和進度
-  const calculations = useMemo(() => {
+  const calculations: Calculations = useMemo(() => {
     let totalUsedSolErda = 0;
     let totalUsedSolErdaFragment = 0;
     
@@ -151,7 +164,7 @@ export default function HexaSkillCalculator() {
   }, [skillCores, masteryCores, reinforcedCores, commonCores, includeCommonCore]);
 
   // 渲染核心輸入區塊
-  const renderCoreInputs = (coreType, cores, typeName) => {
+  const renderCoreInputs = (coreType: CoreType, cores: Core[], typeName: string) => {
     return (
       <div className="space-y-3">
         <h3 className="text-lg font-semibold">{typeName}</h3>
@@ -193,7 +206,7 @@ export default function HexaSkillCalculator() {
               <Checkbox
                 id="includeCommonCore"
                 checked={includeCommonCore}
-                onCheckedChange={setIncludeCommonCore}
+                onCheckedChange={(checked) => setIncludeCommonCore(checked as boolean)}
               />
               <Label htmlFor="includeCommonCore" className="text-sm font-normal cursor-pointer">
                 包含共用核心
@@ -277,10 +290,10 @@ export default function HexaSkillCalculator() {
           <div className="block md:hidden mb-6">
             <div className="grid grid-cols-2 gap-2">
               {[
-                { key: 'skill', name: '技能核心', color: 'text-[#7a44d6] border-[#7a44d6]/30' },
-                { key: 'mastery', name: '精通核心', color: 'text-[#9d3e85] border-[#9d3e85]/30' },
-                { key: 'reinforced', name: '強化核心', color: 'text-[#4389ae] border-[#4389ae]/30' },
-                { key: 'common', name: '共通核心', color: 'text-[#7277a6] border-[#7277a6]/30' }
+                { key: 'skill' as CoreType, name: '技能核心', color: 'text-[#7a44d6] border-[#7a44d6]/30' },
+                { key: 'mastery' as CoreType, name: '精通核心', color: 'text-[#9d3e85] border-[#9d3e85]/30' },
+                { key: 'reinforced' as CoreType, name: '強化核心', color: 'text-[#4389ae] border-[#4389ae]/30' },
+                { key: 'common' as CoreType, name: '共通核心', color: 'text-[#7277a6] border-[#7277a6]/30' }
               ].map((core) => (
                 <Button
                   key={core.key}
@@ -300,16 +313,16 @@ export default function HexaSkillCalculator() {
               <thead className="bg-muted/80 dark:bg-muted/60 sticky top-0">
                 <tr className="border-b">
                   <th className="text-center py-3 px-2 font-semibold">升級</th>
-                  <th className="text-center py-3 px-2 font-semibold" colSpan="2">
+                  <th className="text-center py-3 px-2 font-semibold" colSpan={2}>
                     技能核心
                   </th>
-                  <th className="text-center py-3 px-2 font-semibold" colSpan="2">
+                  <th className="text-center py-3 px-2 font-semibold" colSpan={2}>
                     精通核心
                   </th>
-                  <th className="text-center py-3 px-2 font-semibold" colSpan="2">
+                  <th className="text-center py-3 px-2 font-semibold" colSpan={2}>
                     強化核心
                   </th>
-                  <th className="text-center py-3 px-2 font-semibold" colSpan="2">
+                  <th className="text-center py-3 px-2 font-semibold" colSpan={2}>
                     共通核心
                   </th>
                 </tr>

@@ -1,6 +1,7 @@
+import { Metadata } from "next";
 import HexaSkillCalculator from "@/components/calc/hexa-skill/HexaSkillCalculator";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "HEXA 技能進度計算器 | Maple Kit",
   description: "新楓之谷 HEXA 技能進度計算工具，幫助玩家計算技能核心、精通核心、強化核心和共通核心的升級進度",
   keywords: "新楓之谷, HEXA技能, 進度計算器, 技能核心, Sol Erda",
