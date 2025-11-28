@@ -18,17 +18,37 @@ import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Cle
 import monthlyBossClearCountResetTicketIcon from "@/assets/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png";
 import { 
   genesisBossData as bossData, 
-  genesisBossIcon as bossIcon, 
+  genesisBossIcon, 
   genesisStageIcon as stageBossIcon, 
-  genesisStageCumulative as stageCumulative 
+  genesisStageCumulative as stageCumulative,
+  BossInfo,
+  MAX_ENERGY,
+  MONTHLY_BOSSES
 } from "@/data/bosses/genesisWeaponData";
 
+interface BossConfigStateItem {
+  players: number;
+  difficulty: string;
+  origin: string;
+  enabled: boolean;
+  reset: boolean;
+}
+
+interface BossConfigState {
+  [key: string]: BossConfigStateItem;
+}
+
+interface StageProgress {
+  weeks: number;
+  finishDate: string;
+}
+
 export default function GenesisWeaponCalculator() {
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState<Date>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [startEnergy, setStartEnergy] = useState(0);
   const [isBossResetDialogOpen, setIsBossResetDialogOpen] = useState(false);
-  const [bossConfig, setBossConfig] = useState({
+  const [bossConfig, setBossConfig] = useState<BossConfigState>({
     lotus: { players: 1, difficulty: "extreme", origin: "lotus", enabled: true, reset: false },
     damien: { players: 1, difficulty: "hard", origin: "damien", enabled: true, reset: false },
     lucid: { players: 1, difficulty: "hard", origin: "lucid", enabled: true, reset: false },
@@ -39,10 +59,9 @@ export default function GenesisWeaponCalculator() {
     blackMage: { players: 1, difficulty: "hard", origin: "blackMage", enabled: true, reset: false }
   });
 
-  const updateBossConfig = (boss, field, value) => {
+  const updateBossConfig = (boss: string, field: keyof BossConfigStateItem, value: any) => {
     if (field === 'difficulty') {
-      const testConfig = { ...bossConfig };
-      testConfig[boss] = { ...testConfig[boss], [field]: value };
+      // Just for testing/validation if needed, but logic is same as below
     }
 
     const newConfig = { ...bossConfig };
@@ -54,7 +73,14 @@ export default function GenesisWeaponCalculator() {
     setIsBossResetDialogOpen(true);
   };
 
-  const calculateEnergy = (bossData, origin, difficulty, players, reset, enabled) => {
+  const calculateEnergy = (
+    bossData: Record<string, BossInfo>,
+    origin: string,
+    difficulty: string,
+    players: number,
+    reset: boolean,
+    enabled: boolean
+  ) => {
     if (!enabled) return 0;
     const baseEnergy = bossData[origin].difficulties[difficulty].energy;
     const totalEnergy = reset ? baseEnergy * 2 : baseEnergy;
@@ -77,7 +103,7 @@ export default function GenesisWeaponCalculator() {
         config.enabled
       );
 
-      if (config.origin === 'blackMage') {
+      if (MONTHLY_BOSSES.includes(config.origin)) {
         monthlyTotal += perEnergy;
       } else {
         weeklyTotal += perEnergy;
@@ -88,12 +114,17 @@ export default function GenesisWeaponCalculator() {
   };
 
   // 判斷兩個日期是否在同一個月
-  const isSameMonth = (date1, date2) => {
+  const isSameMonth = (date1: Date, date2: Date) => {
     return date1.getFullYear() === date2.getFullYear() &&
       date1.getMonth() === date2.getMonth();
   };
 
-  const calculateStageProgress = (weeklyEnergy, monthlyEnergy, startEnergy, startDate) => {
+  const calculateStageProgress = (
+    weeklyEnergy: number,
+    monthlyEnergy: number,
+    startEnergy: number,
+    startDate: Date
+  ): StageProgress[] => {
     return stageCumulative.map(targetEnergy => {
       if (startEnergy >= targetEnergy) {
         return {
@@ -140,6 +171,23 @@ export default function GenesisWeaponCalculator() {
   const { weeklyTotal, monthlyTotal } = calculateWeeklyAndMonthlyEnergy();
   const stageProgressData = calculateStageProgress(weeklyTotal, monthlyTotal, startEnergy, startDate);
   const percentage = Math.min((startEnergy / stageCumulative[7]) * 100, 100).toFixed(1);
+
+  const getStageText = (currentEnergy: number) => {
+    if (currentEnergy >= stageCumulative[7]) return `解放完成 ${currentEnergy.toLocaleString()}/${stageCumulative[7].toLocaleString()}`;
+    
+    const stages = [
+      "第一階段", "第二階段", "第三階段", "第四階段", 
+      "第五階段", "第六階段", "第七階段", "第八階段"
+    ];
+
+    for (let i = 6; i >= 0; i--) {
+      if (currentEnergy >= stageCumulative[i]) {
+        return `${stages[i + 1]} ${currentEnergy.toLocaleString()}/${stageCumulative[i + 1].toLocaleString()}`;
+      }
+    }
+    
+    return `${stages[0]} ${currentEnergy.toLocaleString()}/${stageCumulative[0].toLocaleString()}`;
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -190,9 +238,9 @@ export default function GenesisWeaponCalculator() {
               id="startEnergy"
               value={startEnergy || ''}
               min="0"
-              max="6500"
+              max={MAX_ENERGY}
               onChange={(e) => setStartEnergy(Number(e.target.value) || 0)}
-              placeholder="輸入目前痕跡數值 (0-6500)"
+              placeholder={`輸入目前痕跡數值 (0-${MAX_ENERGY})`}
             />
           </div>
           <Button
@@ -251,11 +299,11 @@ export default function GenesisWeaponCalculator() {
                     <TableCell className="py-2 px-2">
                       <div className="flex justify-center items-center gap-1">
                         <Image
-                          src={bossIcon[origin]}
+                          src={genesisBossIcon[origin]}
                           alt={origin}
                           className="w-8 h-auto flex-shrink-0"
                         />
-                        {reset && boss !== "blackMage" && (
+                        {reset && !MONTHLY_BOSSES.includes(boss) && (
                           <>
                             <span>+</span>
                             <Image
@@ -265,7 +313,7 @@ export default function GenesisWeaponCalculator() {
                             />
                           </>
                         )}
-                        {reset && boss === "blackMage" && (
+                        {reset && MONTHLY_BOSSES.includes(boss) && (
                           <>
                             <span>+</span>
                             <Image
@@ -401,17 +449,7 @@ export default function GenesisWeaponCalculator() {
             <CardContent className="pt-6 pr-5 md:pt-6 md:pr-3">
               {/* 進度狀態文字 */}
               <div className="text-center font-medium">
-                目前進度：{
-                  startEnergy >= stageCumulative[7] ? `解放完成 ${startEnergy.toLocaleString()}/${stageCumulative[7].toLocaleString()}` :
-                    startEnergy >= stageCumulative[6] ? `第八階段 ${startEnergy.toLocaleString()}/${stageCumulative[7].toLocaleString()}` :
-                      startEnergy >= stageCumulative[5] ? `第七階段 ${startEnergy.toLocaleString()}/${stageCumulative[6].toLocaleString()}` :
-                        startEnergy >= stageCumulative[4] ? `第六階段 ${startEnergy.toLocaleString()}/${stageCumulative[5].toLocaleString()}` :
-                          startEnergy >= stageCumulative[3] ? `第五階段 ${startEnergy.toLocaleString()}/${stageCumulative[4].toLocaleString()}` :
-                            startEnergy >= stageCumulative[2] ? `第四階段 ${startEnergy.toLocaleString()}/${stageCumulative[3].toLocaleString()}` :
-                              startEnergy >= stageCumulative[1] ? `第三階段 ${startEnergy.toLocaleString()}/${stageCumulative[2].toLocaleString()}` :
-                                startEnergy >= stageCumulative[0] ? `第二階段 ${startEnergy.toLocaleString()}/${stageCumulative[1].toLocaleString()}` :
-                                  `第一階段 ${startEnergy.toLocaleString()}/${stageCumulative[0].toLocaleString()}`
-                } ({percentage}%)
+                目前進度：{getStageText(startEnergy)} ({percentage}%)
               </div>
 
               {/* 統計卡片 */}
@@ -443,7 +481,7 @@ export default function GenesisWeaponCalculator() {
                 <Card>
                   <CardContent className="text-center">
                     <div className="text-2xl font-bold mb-1">
-                      {startEnergy >= 6500 ? 0 : stageProgressData[7]?.weeks || 0}
+                      {startEnergy >= MAX_ENERGY ? 0 : stageProgressData[7]?.weeks || 0}
                     </div>
                     <div className="text-sm text-muted-foreground font-normal">剩餘週數</div>
                   </CardContent>
@@ -452,13 +490,13 @@ export default function GenesisWeaponCalculator() {
             </CardContent>
 
             {/* 特殊狀態覆蓋層 */}
-            {startEnergy >= 6500 && (
+            {startEnergy >= MAX_ENERGY && (
               <div className="absolute inset-0 bg-green-100/30 dark:bg-green-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
                 <h3 className="text-2xl text-green-500 dark:text-green-400 font-bold">已解放！</h3>
               </div>
             )}
 
-            {weeklyTotal === 0 && monthlyTotal === 0 && startEnergy < 6500 && (
+            {weeklyTotal === 0 && monthlyTotal === 0 && startEnergy < MAX_ENERGY && (
               <div className="absolute inset-0 bg-yellow-100/30 dark:bg-yellow-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
                 <h3 className="text-2xl text-yellow-500 dark:text-yellow-400 font-bold">去課金！</h3>
               </div>

@@ -9,8 +9,20 @@ import verusHillaIcon from "@/assets/images/bosses/icons/VerusHilla_icon.png";
 import gloomIcon from "@/assets/images/bosses/icons/Gloom_icon.png";
 import darknellIcon from "@/assets/images/bosses/icons/Darknell_icon.png";
 import blackMageIcon from "@/assets/images/bosses/icons/BlackMage_icon.png";
+import { StaticImageData } from "next/image";
 
-export const genesisBossData = {
+export interface Difficulty {
+  name: string;
+  energy: number;
+}
+
+export interface BossInfo {
+  name: string;
+  players: number;
+  difficulties: Record<string, Difficulty>;
+}
+
+export const genesisBossData: Record<string, BossInfo> = {
   lotus: {
     name: '史烏',
     players: 6,
@@ -79,7 +91,7 @@ export const genesisBossData = {
   }
 };
 
-export const genesisBossIcon = {
+export const genesisBossIcon: Record<string, StaticImageData> = {
   lotus: lotusIcon,
   damien: damienIcon,
   lucid: lucidIcon,
@@ -90,7 +102,7 @@ export const genesisBossIcon = {
   blackMage: blackMageIcon
 };
 
-export const genesisStageIcon = {
+export const genesisStageIcon: Record<string, StaticImageData> = {
   vonLeon: vonLeonIcon,
   arkarium: arkariumIcon,
   magnus: magnusIcon,
@@ -101,4 +113,8 @@ export const genesisStageIcon = {
   verusHilla: verusHillaIcon,
 };
 
-export const genesisStageCumulative = [500, 1000, 1500, 2500, 3500, 4500, 5500, 6500];
+export const genesisStageCumulative: number[] = [500, 1000, 1500, 2500, 3500, 4500, 5500, 6500];
+
+export const MAX_ENERGY = 6500;
+export const WEEKLY_BOSSES = ['lotus', 'damien', 'lucid', 'will', 'gloom', 'darknell', 'verusHilla'];
+export const MONTHLY_BOSSES = ['blackMage'];
