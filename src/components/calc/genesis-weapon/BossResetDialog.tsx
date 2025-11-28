@@ -8,58 +8,43 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png";
 import monthlyBossClearCountResetTicketIcon from "@/assets/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png";
-import lotusIcon from "@/assets/images/bosses/icons/Lotus_icon.png";
-import damienIcon from "@/assets/images/bosses/icons/Damien_icon.png";
-import willIcon from "@/assets/images/bosses/icons/Will_icon.png";
-import lucidIcon from "@/assets/images/bosses/icons/Lucid_icon.png";
-import verusHillaIcon from "@/assets/images/bosses/icons/VerusHilla_icon.png";
-import gloomIcon from "@/assets/images/bosses/icons/Gloom_icon.png";
-import darknellIcon from "@/assets/images/bosses/icons/Darknell_icon.png";
-import blackMageIcon from "@/assets/images/bosses/icons/BlackMage_icon.png";
-
-const bossIcon = {
-  lotus: lotusIcon,
-  damien: damienIcon,
-  lucid: lucidIcon,
-  will: willIcon,
-  gloom: gloomIcon,
-  darknell: darknellIcon,
-  verusHilla: verusHillaIcon,
-  blackMage: blackMageIcon
-};
-
-// Boss中文名稱對應
-const bossNames = {
-  lotus: '史烏',
-  damien: '戴米安',
-  lucid: '露希妲',
-  will: '威爾',
-  gloom: '戴斯克',
-  darknell: '頓凱爾',
-  verusHilla: '真希拉',
-  blackMage: '黑魔法師'
-};
+import { genesisBossIcon, genesisBossData, WEEKLY_BOSSES, MONTHLY_BOSSES } from "@/data/bosses/genesisWeaponData";
 
 // 定義Boss類型跟上限
-const WEEKLY_BOSSES = ['lotus', 'damien', 'lucid', 'will', 'gloom', 'darknell', 'verusHilla'];
-const MONTHLY_BOSSES = ['blackMage'];
 const MAX_WEEKLY_SELECTION = 3;
 const MAX_MONTHLY_SELECTION = 1;
 
-export default function BossResetDialog({ 
+interface BossConfigItem {
+  origin: string;
+  reset: boolean;
+  [key: string]: any; // Allow other properties
+}
+
+interface BossConfig {
+  [key: string]: BossConfigItem;
+}
+
+interface BossResetDialogProps<T extends BossConfig> {
+  bossConfig: T;
+  setBossConfig: (config: T) => void;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export default function BossResetDialog<T extends BossConfig>({ 
   bossConfig, 
   setBossConfig, 
   isOpen, 
   onOpenChange 
-}) {
-  const [selectedBosses, setSelectedBosses] = useState([]);
+}: BossResetDialogProps<T>) {
+  const [selectedBosses, setSelectedBosses] = useState<string[]>([]);
 
   // 從bossConfig取得所有boss
   const allBosses = useMemo(() => {
     return Object.entries(bossConfig).map(([boss, config]) => ({
       id: boss,
       origin: config.origin,
-      name: bossNames[config.origin]
+      name: genesisBossData[config.origin].name
     }));
   }, [bossConfig]);
 
@@ -78,7 +63,7 @@ export default function BossResetDialog({
     return { weekly: weeklyCount, monthly: monthlyCount };
   }, [selectedBosses, allBosses]);
 
-  const handleBossToggle = (bossId) => {
+  const handleBossToggle = (bossId: string) => {
     const isCurrentlySelected = selectedBosses.includes(bossId);
 
     if (isCurrentlySelected) {
@@ -91,10 +76,17 @@ export default function BossResetDialog({
   const handleBossReset = () => {
     // 更新boss配置
     const updatedConfig = { ...bossConfig };
-    Object.keys(updatedConfig).forEach(boss => {
-      updatedConfig[boss] = {
-        ...updatedConfig[boss],
-        reset: selectedBosses.includes(boss)
+    Object.keys(updatedConfig).forEach(key => {
+      const boss = key as keyof BossConfig;
+      // 這裡我們需要確保 updatedConfig[boss] 是可以被寫入的
+      // 由於 T extends BossConfig，我們知道它有這些屬性，但 TS 可能會因為泛型而報錯
+      // 我們可以使用一個更安全的類型斷言
+      const currentConfig = updatedConfig[boss];
+      
+      // 創建一個新的物件來更新，避免直接修改
+      (updatedConfig as any)[boss] = {
+        ...currentConfig,
+        reset: selectedBosses.includes(boss as string)
       };
     });
 
@@ -103,8 +95,10 @@ export default function BossResetDialog({
     onOpenChange(false); // 關閉dialog
   };
 
-  const isCheckboxDisabled = (bossId) => {
+  const isCheckboxDisabled = (bossId: string) => {
     const boss = allBosses.find(b => b.id === bossId);
+    if (!boss) return true;
+
     const isSelected = selectedBosses.includes(bossId);
 
     if (isSelected) return false; // 已選中的不禁用
@@ -170,8 +164,8 @@ export default function BossResetDialog({
                   />
 
                   <Image
-                    src={bossIcon[boss.origin]}
-                    alt={bossNames[boss.origin]}
+                    src={genesisBossIcon[boss.origin]}
+                    alt={genesisBossData[boss.origin].name}
                     className="object-contain w-8 h-8"
                   />
                   
