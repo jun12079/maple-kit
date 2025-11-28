@@ -1,10 +1,28 @@
+import { StaticImageData } from "next/image";
 import serenIcon from "@/assets/images/bosses/icons/Seren_icon.png";
 import kalosIcon from "@/assets/images/bosses/icons/Kalos_icon.png";
 import kalingIcon from "@/assets/images/bosses/icons/Kaling_icon.png";
 import limboIcon from "@/assets/images/bosses/icons/Limbo_icon.png";
 import baldrixIcon from "@/assets/images/bosses/icons/Baldrix_icon.png";
 
-export const destinyBossData = {
+export interface Difficulty {
+  name: string;
+  energy: number;
+}
+
+export interface BossInfo {
+  name: string;
+  players: number;
+  difficulties: {
+    [key: string]: Difficulty;
+  };
+}
+
+export interface DestinyBossData {
+  [key: string]: BossInfo;
+}
+
+export const destinyBossData: DestinyBossData = {
   seren: {
     name: '賽連',
     players: 6,
@@ -49,7 +67,7 @@ export const destinyBossData = {
   }
 };
 
-export const destinyBossIcon = {
+export const destinyBossIcon: { [key: string]: StaticImageData } = {
   seren: serenIcon,
   serenReset: serenIcon,
   kalos: kalosIcon,
@@ -59,5 +77,5 @@ export const destinyBossIcon = {
   baldrix: baldrixIcon
 };
 
-export const destinyStageEnergy = [2000, 2500, 3000];
-export const destinyStageCumulative = [2000, 4500, 7500];
+export const destinyStageEnergy: number[] = [2000, 2500, 3000];
+export const destinyStageCumulative: number[] = [2000, 4500, 7500];

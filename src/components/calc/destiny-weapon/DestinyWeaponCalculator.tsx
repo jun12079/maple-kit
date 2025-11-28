@@ -22,11 +22,22 @@ import {
   destinyStageCumulative as stageCumulative 
 } from "@/data/bosses/destinyWeaponData";
 
+interface BossConfigItem {
+  players: number;
+  difficulty: string;
+  origin: string;
+  enabled: boolean;
+}
+
+interface BossConfig {
+  [key: string]: BossConfigItem;
+}
+
 export default function DestinyWeaponCalculator() {
-  const [startDate, setStartDate] = useState(new Date());
-  const [calendarOpen, setCalendarOpen] = useState(false);
-  const [startEnergy, setStartEnergy] = useState(0);
-  const [bossConfig, setBossConfig] = useState({
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
+  const [startEnergy, setStartEnergy] = useState<number>(0);
+  const [bossConfig, setBossConfig] = useState<BossConfig>({
     seren: { players: 1, difficulty: "hard", origin: "seren", enabled: true },
     serenReset: { players: 1, difficulty: "hard", origin: "seren", enabled: true },
     kalos: { players: 1, difficulty: "normal", origin: "kalos", enabled: true },
@@ -36,7 +47,16 @@ export default function DestinyWeaponCalculator() {
     baldrix: { players: 1, difficulty: "normal", origin: "baldrix", enabled: true },
   });
 
-  const updateBossConfig = (boss, field, value) => {
+  const checkRules = (boss: string, testConfig: BossConfig) => {
+    const rows = Object.values(testConfig).filter(row => row.origin === boss && row.enabled);
+    const diffs = rows.map(row => row.difficulty);
+    if ((boss === 'seren' || boss === 'kalos') && diffs.filter(d => d === 'extreme').length > 1) {
+      return false;
+    }
+    return true;
+  };
+
+  const updateBossConfig = (boss: string, field: keyof BossConfigItem, value: any) => {
     if (field === 'difficulty') {
       const testConfig = { ...bossConfig };
       testConfig[boss] = { ...testConfig[boss], [field]: value };
@@ -48,6 +68,7 @@ export default function DestinyWeaponCalculator() {
     }
 
     const newConfig = { ...bossConfig };
+    // @ts-ignore
     newConfig[boss] = { ...newConfig[boss], [field]: value };
     setBossConfig(newConfig);
   };
@@ -61,17 +82,8 @@ export default function DestinyWeaponCalculator() {
     return total;
   };
 
-  const checkRules = (boss, testConfig) => {
-    const rows = Object.values(testConfig).filter(row => row.origin === boss && row.enabled);
-    const diffs = rows.map(row => row.difficulty);
-    if ((boss === 'seren' || boss === 'kalos') && diffs.filter(d => d === 'extreme').length > 1) {
-      return false;
-    }
-    return true;
-  };
-
-  function calculateStageWeeks(totalWeekEnergy, startEnergy) {
-    let stageWeeks = [];
+  function calculateStageWeeks(totalWeekEnergy: number, startEnergy: number) {
+    let stageWeeks: number[] = [];
 
     stageEnergy.forEach((req, index) => {
       const cumulativeNeeded = stageCumulative[index];
