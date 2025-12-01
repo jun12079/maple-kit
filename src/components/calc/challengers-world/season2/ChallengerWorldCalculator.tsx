@@ -28,7 +28,7 @@ import {
   BOSS_ORDER,
   DIFFICULTY_ORDER,
   BOSS_REWARDS_DATA
-} from "@/data/challengers-world/season1";
+} from "@/data/challengers-world/season2";
 
 const getDifficultyDisplay = (difficulty: string) => {
   const displays: Record<string, { text: string, className: string }> = {
@@ -50,7 +50,7 @@ export default function ChallengerWorldCalculator() {
 
   // Load from localStorage
   useEffect(() => {
-    const savedData = localStorage.getItem("maple-kit-challengers-world-season1");
+    const savedData = localStorage.getItem("maple-kit-challengers-world-season2");
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
@@ -74,13 +74,14 @@ export default function ChallengerWorldCalculator() {
       bossStatus,
       manualDailyPoints
     };
-    localStorage.setItem("maple-kit-challengers-world-season1", JSON.stringify(dataToSave));
+    localStorage.setItem("maple-kit-challengers-world-season2", JSON.stringify(dataToSave));
   }, [dailyMissions, selectedLevel, bossStatus, manualDailyPoints, isLoaded]);
 
   // 計算總分
   const totals = useMemo(() => {
     let points = 0;
     let coins = 0;
+    let advancedCoins = 0;
 
     let dailyPoints = 0;
     let dailyCoins = 0;
@@ -88,6 +89,7 @@ export default function ChallengerWorldCalculator() {
     let levelCoins = 0;
     let bossPoints = 0;
     let bossCoins = 0;
+    let bossAdvancedCoins = 0;
 
     // 手動輸入 (假設與每日任務相關)
     const manualPoints = parseInt(manualDailyPoints) || 0;
@@ -115,16 +117,21 @@ export default function ChallengerWorldCalculator() {
         if (rewards) {
           bossPoints += rewards.points;
           bossCoins += rewards.coins;
+          if (rewards.advancedCoins) {
+            bossAdvancedCoins += rewards.advancedCoins;
+          }
         }
       });
     });
 
     points = dailyPoints + levelPoints + bossPoints;
     coins = dailyCoins + levelCoins + bossCoins;
+    advancedCoins = bossAdvancedCoins;
 
     return {
       points,
       coins,
+      advancedCoins,
       breakdown: {
         dailyPoints,
         levelPoints,
@@ -215,7 +222,7 @@ export default function ChallengerWorldCalculator() {
         <div className="space-y-2">
           <h2 className="text-sm font-bold mb-2">每日任務</h2>
           <p className="text-xs text-muted-foreground">
-            活動 16 週，一週最多完成 5 次，每次可獲得
+            活動 18 週，一週最多完成 5 次，每次可獲得
             <Image
               src={challengerPointIcon}
               alt="Challenger Point"
@@ -256,14 +263,14 @@ export default function ChallengerWorldCalculator() {
               ))}
             </div>
             <div className="flex flex-col gap-2 max-w-xs">
-              <Label htmlFor="manual-points">每日任務累計</Label>
+              <Label htmlFor="manual-points" className="text-sm font-bold mb-2">每日任務累計</Label>
               <Input
                 id="manual-points"
                 type="number"
-                placeholder="0~12000"
+                placeholder="0~9000"
                 value={manualDailyPoints}
                 min={0}
-                max={12000}
+                max={9000}
                 onChange={(e) => setManualDailyPoints(e.target.value)}
               />
             </div>
@@ -297,7 +304,7 @@ export default function ChallengerWorldCalculator() {
         {/* Boss */}
         <div className="space-y-2">
           <h2 className="text-sm font-bold mb-2">已攻略 Boss</h2>
-          <div className="grid grid-cols-5 gap-2 w-fit">
+          <div className="grid grid-cols-6 gap-2 w-fit">
             {BOSS_ORDER.map((bossKey) => {
               const boss = bossData[bossKey];
               if (!boss) return null;
@@ -346,7 +353,7 @@ export default function ChallengerWorldCalculator() {
                       </div>
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-60">
+                  <PopoverContent className="w-70">
                     <div className="space-y-1">
                       <h4 className="font-medium leading-none mb-2 px-2">{boss.name}</h4>
                       {Object.entries(BOSS_REWARDS_DATA[bossKey] || {}).sort((a, b) => {
@@ -377,6 +384,12 @@ export default function ChallengerWorldCalculator() {
                                 <Image src={challengerCoinIcon} alt="CC" width={16} height={16} className="w-4 h-4" />
                                 <span className={cn(isCompleted && "text-yellow-600 font-bold")}>{rewards.coins}</span>
                               </div>
+                              {rewards.advancedCoins && (
+                                <div className="flex items-center gap-1 w-14" title="高級挑戰者硬幣">
+                                  <Image src={challengerCoinIcon} alt="ACC" width={16} height={16} className="hue-rotate-220 w-4 h-4" />
+                                  <span className={cn(isCompleted && "text-purple-600 font-bold")}>{rewards.advancedCoins}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         )
@@ -407,7 +420,7 @@ export default function ChallengerWorldCalculator() {
 
           <div className="border-t border-border/50" />
 
-          <div className="grid grid-cols-2 gap-4 border-b border-border/50 pb-4">
+          <div className="grid grid-cols-3 gap-2 border-b border-border/50 pb-4">
             <div className="flex flex-col items-center justify-center gap-1">
               <div className="flex items-center gap-2">
                 <Image src={challengerPointIcon} alt="Challenger Point" width={16} height={16} className="w-4 h-4" />
@@ -422,6 +435,14 @@ export default function ChallengerWorldCalculator() {
                 <h3 className="font-semibold text-muted-foreground text-sm">挑戰者硬幣</h3>
               </div>
               <p className="text-xl font-bold text-yellow-500">{totals.coins.toLocaleString()}</p>
+            </div>
+
+            <div className="flex flex-col items-center justify-center gap-1">
+              <div className="flex items-center gap-2">
+                <Image src={challengerCoinIcon} alt="Advanced Challenger Coin" width={16} height={16} className="hue-rotate-220 w-4 h-4" />
+                <h3 className="font-semibold text-muted-foreground text-sm">高級硬幣</h3>
+              </div>
+              <p className="text-xl font-bold text-purple-500">{totals.advancedCoins.toLocaleString()}</p>
             </div>
           </div>
 
@@ -443,12 +464,12 @@ export default function ChallengerWorldCalculator() {
           <div className="space-y-6">
             <div className="space-y-2">
               <div className="flex justify-end text-sm">
-                <span>{totals.points.toLocaleString()} / 40,000</span>
+                <span>{totals.points.toLocaleString()} / 75,000</span>
               </div>
-              <Progress value={Math.min((totals.points / 40000) * 100, 100)} className="h-4" />
+              <Progress value={Math.min((totals.points / 75000) * 100, 100)} className="h-4" />
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center">
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-1 text-center">
               {RANKS.map((rank) => {
                 const isReached = totals.points >= rank.points;
 
@@ -499,7 +520,7 @@ export default function ChallengerWorldCalculator() {
                         alt={rank.name}
                         width={40}
                         height={40}
-                        className={cn("object-contain w-10 h-10", !isReached && "grayscale")}
+                        className={cn("w-8 h-8 sm:w-10 sm:h-10 object-contain", !isReached && "grayscale")}
                       />
                     </div>
                     <div className="space-y-1 w-full">

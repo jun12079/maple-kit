@@ -6,6 +6,7 @@ import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
 import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_icon.png";
 import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
 import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
+import challengerMedal from "@/assets/images/challengers-world/icons/challenger-medal.png";
 
 export const metadata = {
   title: "MapleKit - 新楓之谷工具平台",
@@ -105,6 +106,23 @@ export default function Home(): React.ReactElement {
                   <h3 className="text-xl font-bold mb-1">HEXA技能</h3>
                 </div>
                 <p className="mb-0 text-gray-600 dark:text-gray-400">計算HEXA技能進度與升級所需數量</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/calc/challengers-world/season2" className="no-underline">
+            <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
+              <div className="p-8 text-left">
+                <div className="flex items-center mb-2">
+                  <Image
+                    src={challengerMedal}
+                    alt="Challenger World icon"
+                    width={32}
+                    className="mr-2"
+                  />
+                  <h3 className="text-xl font-bold mb-1">挑戰者世界S2計算器</h3>
+                </div>
+                <p className="mb-0 text-gray-600 dark:text-gray-400">計算挑戰者世界的點數與硬幣獲取進度</p>
               </div>
             </div>
           </Link>
