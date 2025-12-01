@@ -79,4 +79,8 @@ export const menu: MenuGroup[] = [
     title: "常見問題",
     url: "/faq",
   },
+  {
+    title: "挑戰者世界S2",
+    url: "/calc/challengers-world/season2",
+  },
 ];
