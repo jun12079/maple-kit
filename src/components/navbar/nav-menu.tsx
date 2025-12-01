@@ -22,78 +22,51 @@ interface NavMenuProps {
 export const NavMenu = (props: NavMenuProps) => (
   <NavigationMenu {...props} viewport={false}>
     <NavigationMenuList className="gap-1 space-x-0 text-sm">
-      <NavigationMenuItem>
-        <NavigationMenuTrigger className="bg-muted">{menu[0].title}</NavigationMenuTrigger>
-        <NavigationMenuContent>
-          <ul>
-            {menu[0].items?.map((item) => (
-              <li key={item.title}>
-                <NavigationMenuLink asChild>
-                  <Link
-                    className="block select-none space-y-2 rounded-md p-3 leading-none no-underline outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href={item.url}
-                  >
-                    <div className="flex items-center gap-3">
-                      {item.icon && (
-                        <Image 
-                          src={item.icon} 
-                          alt={item.title}
-                          width={20} 
-                          className="flex-shrink-0" 
-                        />
-                      )}
-                      <div className="space-y-2">
-                        <p className="text-sm font-semibold leading-none whitespace-nowrap">{item.title}</p>
-                      </div>
-                    </div>
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            ))}
-          </ul>
-        </NavigationMenuContent>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <NavigationMenuTrigger className="bg-muted">{menu[1].title}</NavigationMenuTrigger>
-        <NavigationMenuContent>
-          <ul>
-            {menu[1].items?.map((menuItem) => (
-              <li key={menuItem.title}>
-                <NavigationMenuLink asChild>
-                  <Link
-                    className="block select-none space-y-2 rounded-md p-3 leading-none no-underline outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href={menuItem.url}
-                  >
-                    <div className="flex items-center gap-3">
-                      {menuItem.icon && (
-                        <Image 
-                          src={menuItem.icon} 
-                          alt={menuItem.title}
-                          width={20} 
-                          className="flex-shrink-0" 
-                        />
-                      )}
-                      <div className="space-y-2">
-                        <p className="text-sm font-semibold leading-none whitespace-nowrap">{menuItem.title}</p>
-                      </div>
-                    </div>
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            ))}
-          </ul>
-        </NavigationMenuContent>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <Button variant="ghost" asChild>
-          <Link href="/character">角色查詢</Link>
-        </Button>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <Button variant="ghost" asChild>
-          <Link href="/faq">常見問題</Link>
-        </Button>
-      </NavigationMenuItem>
+      {menu.map((group) => {
+        if (group.items && group.items.length > 0) {
+          return (
+            <NavigationMenuItem key={group.title}>
+              <NavigationMenuTrigger className="bg-muted">{group.title}</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul>
+                  {group.items.map((item) => (
+                    <li key={item.title}>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          className="block select-none space-y-2 rounded-md p-3 leading-none no-underline outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          href={item.url}
+                        >
+                          <div className="flex items-center gap-3">
+                            {item.icon && (
+                              <Image 
+                                src={item.icon} 
+                                alt={item.title}
+                                width={20} 
+                                className="flex-shrink-0" 
+                              />
+                            )}
+                            <div className="space-y-2">
+                              <p className="text-sm font-semibold leading-none whitespace-nowrap">{item.title}</p>
+                            </div>
+                          </div>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          );
+        }
+
+        return (
+          <NavigationMenuItem key={group.title}>
+            <Button variant="ghost" asChild>
+              <Link href={group.url}>{group.title}</Link>
+            </Button>
+          </NavigationMenuItem>
+        );
+      })}
     </NavigationMenuList>
   </NavigationMenu>
 );
