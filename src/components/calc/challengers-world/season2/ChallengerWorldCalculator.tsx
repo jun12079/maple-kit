@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useMemo, useEffect } from "react";
-import { Check } from "lucide-react";
+import { Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { bossData } from "@/data/bosses/bossData";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 // 匯入挑戰者世界圖示
 import challengerPointIcon from "@/assets/images/challengers-world/icons/challenger-point.png";
@@ -205,6 +206,83 @@ export default function ChallengerWorldCalculator() {
     return "partial";
   };
 
+  const handleReset = () => {
+    setDailyMissions(0);
+    setSelectedLevel(null);
+    setBossStatus({});
+    setManualDailyPoints("");
+  };
+
+  const handleQuickResult = (target: number) => {
+    setDailyMissions(5);
+    setManualDailyPoints("8500");
+
+    let newLevel: number | null = null;
+    let newBossStatus: Record<string, string[]> = {};
+
+    const setBoss = (key: string, diff: string) => {
+      const rewardsData = BOSS_REWARDS_DATA[key] || {};
+      const availableDiffs = Object.keys(rewardsData).sort((a, b) => {
+        return DIFFICULTY_ORDER.indexOf(a) - DIFFICULTY_ORDER.indexOf(b);
+      });
+      const targetIndex = availableDiffs.indexOf(diff);
+      if (targetIndex !== -1) {
+        newBossStatus[key] = availableDiffs.slice(0, targetIndex + 1);
+      }
+    };
+
+    // Common bosses
+    setBoss("cygnus", "normal");
+    setBoss("hilla", "normal");
+    setBoss("pinkBean", "chaos");
+    setBoss("zakum", "chaos");
+    setBoss("pierre", "chaos");
+    setBoss("vonBon", "chaos");
+    setBoss("crimsonQueen", "chaos");
+    setBoss("magnus", "hard");
+    setBoss("vellum", "chaos");
+    setBoss("papulatus", "chaos");
+    setBoss("princessNo", "hard");
+
+    if (target === 40000) {
+      newLevel = 275;
+      setBoss("lotus", "hard");
+      setBoss("damien", "hard");
+      setBoss("guardianAngelSlime", "chaos");
+      setBoss("lucid", "hard");
+      setBoss("will", "hard");
+      setBoss("gloom", "normal");
+      setBoss("darknell", "normal");
+      setBoss("verusHilla", "normal");
+    } else if (target === 60000) {
+      newLevel = 280;
+      setBoss("lotus", "hard");
+      setBoss("damien", "hard");
+      setBoss("guardianAngelSlime", "chaos");
+      setBoss("lucid", "hard");
+      setBoss("will", "hard");
+      setBoss("gloom", "chaos");
+      setBoss("darknell", "hard");
+      setBoss("verusHilla", "hard");
+      setBoss("blackMage", "hard");
+    } else if (target === 75000) {
+      newLevel = 285;
+      setBoss("lotus", "hard");
+      setBoss("damien", "hard");
+      setBoss("guardianAngelSlime", "chaos");
+      setBoss("lucid", "hard");
+      setBoss("will", "hard");
+      setBoss("gloom", "chaos");
+      setBoss("darknell", "hard");
+      setBoss("verusHilla", "hard");
+      setBoss("blackMage", "hard");
+      setBoss("seren", "normal");
+    }
+
+    setSelectedLevel(newLevel);
+    setBossStatus(newBossStatus);
+  };
+
   // 計算剩餘天數和有效日期 (用於預估完成時間)
   const { effectiveToday, daysRemaining, msPerDay } = useMemo(() => {
     const today = new Date();
@@ -218,6 +296,49 @@ export default function ChallengerWorldCalculator() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
       {/* 左欄：控制項 */}
       <div className="space-y-8">
+        {/* 快速設定 */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold">快速試算</h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReset}
+              className="h-8 px-2 text-muted-foreground hover:text-destructive"
+            >
+              <RotateCcw className="w-4 h-4 mr-1" />
+              重置
+            </Button>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[40000, 60000, 75000].map((score) => {
+              const rank = RANKS.find((r) => r.points === score);
+              return (
+                <Button
+                  key={score}
+                  variant="outline"
+                  className="flex flex-row items-center justify-center h-auto py-2 px-1 gap-1.5 hover:border-primary hover:bg-primary/5"
+                  onClick={() => handleQuickResult(score)}
+                >
+                  {rank && (
+                    <Image
+                      src={rank.icon}
+                      alt={rank.name}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 object-contain"
+                    />
+                  )}
+                  <div className="flex flex-col items-start leading-none gap-0.5">
+                    <span className="text-xs font-bold">{rank?.name}</span>
+                    <span className="text-[10px] text-muted-foreground">{score.toLocaleString()}</span>
+                  </div>
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* 每日任務 */}
         <div className="space-y-2">
           <h2 className="text-sm font-bold mb-2">每日任務</h2>
@@ -267,10 +388,10 @@ export default function ChallengerWorldCalculator() {
               <Input
                 id="manual-points"
                 type="number"
-                placeholder="0~9000"
+                placeholder="0~8500"
                 value={manualDailyPoints}
                 min={0}
-                max={9000}
+                max={8500}
                 onChange={(e) => setManualDailyPoints(e.target.value)}
               />
             </div>
@@ -479,7 +600,7 @@ export default function ChallengerWorldCalculator() {
 
                 if (!isReached) {
                   const pointsNeeded = rank.points - totals.points;
-                  
+
                   // 假設每週最多完成 5 次每日任務 = 每週 500 點
                   // 我們根據每 7 天 5 個任務來計算所需天數
 
@@ -488,7 +609,7 @@ export default function ChallengerWorldCalculator() {
                   } else {
                     // 計算剩餘週數
                     const weeksRemaining = daysRemaining / 7;
-                    
+
                     // 計算所需任務數與週數
                     // 每個任務獲得 100 點，每週最多 5 個
                     const missionsNeeded = Math.ceil(pointsNeeded / DAILY_MISSION_POINTS);

@@ -260,10 +260,10 @@ export default function ChallengerWorldCalculator() {
               <Input
                 id="manual-points"
                 type="number"
-                placeholder="0~12000"
+                placeholder="0~11250"
                 value={manualDailyPoints}
                 min={0}
-                max={12000}
+                max={11250}
                 onChange={(e) => setManualDailyPoints(e.target.value)}
               />
             </div>
