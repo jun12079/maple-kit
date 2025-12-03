@@ -7,14 +7,40 @@ import level275Icon from "@/assets/images/challengers-world/icons/challenger-lev
 import level280Icon from "@/assets/images/challengers-world/icons/challenger-level-280.png";
 import level285Icon from "@/assets/images/challengers-world/icons/challenger-level-285.png";
 
-import bronzeMedal from "@/assets/images/challengers-world/icons/bronze-medal.png";
-import silverMedal from "@/assets/images/challengers-world/icons/silver-medal.png";
-import goldMedal from "@/assets/images/challengers-world/icons/gold-medal.png";
-import platinumMedal from "@/assets/images/challengers-world/icons/platinum-medal.png";
-import emeraldMedal from "@/assets/images/challengers-world/icons/emerald-medal.png";
-import diamondMedal from "@/assets/images/challengers-world/icons/diamond-medal.png";
-import masterMedal from "@/assets/images/challengers-world/icons/master-medal.png";
-import challengerMedal from "@/assets/images/challengers-world/icons/challenger-medal.png";
+import bronzeMedal from "@/assets/images/challengers-world/icons/challenger-s2-bronze-medal.png";
+import silverMedal from "@/assets/images/challengers-world/icons/challenger-s2-silver-medal.png";
+import goldMedal from "@/assets/images/challengers-world/icons/challenger-s2-gold-medal.png";
+import platinumMedal from "@/assets/images/challengers-world/icons/challenger-s2-platinum-medal.png";
+import emeraldMedal from "@/assets/images/challengers-world/icons/challenger-s2-emerald-medal.png";
+import diamondMedal from "@/assets/images/challengers-world/icons/challenger-s2-diamond-medal.png";
+import masterMedal from "@/assets/images/challengers-world/icons/challenger-s2-master-medal.png";
+import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s2-challenger-medal.png";
+
+import braveChallengerTotemCoupon from "@/assets/images/challengers-world/icons/brave-challenger-totem-coupon.png";
+import braveChallengerTotemEnhancementScroll from "@/assets/images/challengers-world/icons/brave-challenger-totem-enhancement-scroll.png";
+import challengerWorldSeason2ChallengerFurniture from "@/assets/images/challengers-world/icons/challenger-world-season2-challenger-furniture.png";
+import challengersLevel4SpecialSkillRingSelectionCoupon from "@/assets/images/challengers-world/icons/challengers-level4-special-skill-ring-selection-coupon.png";
+import ultmateUnionGrowthPotion from "@/assets/images/challengers-world/icons/ultmate-union-growth-potion.png";
+import valkyrieOnTheBattlefieldSetCoupon from "@/assets/images/challengers-world/icons/valkyrie-on-the-battlefield-set-coupon.png";
+import karmaLegendaryPotentialScroll from "@/assets/images/items/icons/karma-legendary-potential-scroll.png";
+import karmaAdditionalUniquePotentialScroll from "@/assets/images/items/icons/karma-additional-unique-potential-scroll.png";
+import karmaChoiceCube from "@/assets/images/items/icons/karma-choice-cube.png";
+import karmaChoiceAdditionalCube from "@/assets/images/items/icons/karma-choice-additional-cube.png";
+import solErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
+import solErdaIcon from "@/assets/images/items/icons/SolErda_icon.png";
+
+export interface ChallengerReward {
+  name: string;
+  image: StaticImageData;
+  count: number;
+}
+
+export interface ChallengerRank {
+  name: string;
+  points: number;
+  icon: StaticImageData;
+  rewards: ChallengerReward[];
+}
 
 export const DAILY_MISSION_POINTS = 100;
 export const DAILY_MISSION_COINS = 300;
@@ -38,15 +64,94 @@ export const LEVEL_REWARDS = {
   285: { points: 9000, coins: 7000 },
 };
 
-export const RANKS = [
-  { name: "青銅", points: 5000, icon: bronzeMedal },
-  { name: "白銀", points: 10000, icon: silverMedal },
-  { name: "黃金", points: 15000, icon: goldMedal },
-  { name: "白金", points: 20000, icon: platinumMedal },
-  { name: "翡翠", points: 30000, icon: emeraldMedal },
-  { name: "鑽石", points: 40000, icon: diamondMedal },
-  { name: "大師", points: 60000, icon: masterMedal },
-  { name: "挑戰者", points: 75000, icon: challengerMedal },
+export const RANKS: ChallengerRank[] = [
+  {
+    name: "青銅",
+    points: 5000,
+    icon: bronzeMedal,
+    rewards: [
+      { name: "挑戰者S2青銅勳章", image: bronzeMedal, count: 1 },
+      { name: "靈魂艾爾達碎片", image: solErdaFragmentIcon, count: 100 },
+      { name: "靈魂艾爾達", image: solErdaIcon, count: 3 },
+    ]
+  },
+  {
+    name: "白銀",
+    points: 10000,
+    icon: silverMedal,
+    rewards: [
+      { name: "挑戰者S2白銀勳章", image: silverMedal, count: 1 },
+      { name: "挑戰者4級特殊技能戒指選擇券", image: challengersLevel4SpecialSkillRingSelectionCoupon, count: 1 },
+    ]
+  },
+  {
+    name: "黃金",
+    points: 15000,
+    icon: goldMedal,
+    rewards: [
+      { name: "挑戰者S2黃金勳章", image: goldMedal, count: 1 },
+      { name: "靈魂艾爾達碎片", image: solErdaFragmentIcon, count: 200 },
+      { name: "靈魂艾爾達", image: solErdaIcon, count: 5 },
+      { name: "勇敢挑戰者的圖騰交換券", image: braveChallengerTotemCoupon, count: 1 },
+    ]
+  },
+  {
+    name: "白金",
+    points: 20000,
+    icon: platinumMedal,
+    rewards: [
+      { name: "挑戰者S2白金勳章", image: platinumMedal, count: 1 },
+      { name: "靈魂艾爾達碎片", image: solErdaFragmentIcon, count: 300 },
+      { name: "靈魂艾爾達", image: solErdaIcon, count: 5 },
+      { name: "勇敢挑戰者的圖騰強化卷軸", image: braveChallengerTotemEnhancementScroll, count: 1 },
+    ]
+  },
+  {
+    name: "翡翠",
+    points: 30000,
+    icon: emeraldMedal,
+    rewards: [
+      { name: "挑戰者S2翡翠勳章", image: emeraldMedal, count: 1 },
+      { name: "卡勒馬傳說潛在能力賦予卷軸", image: karmaLegendaryPotentialScroll, count: 1 },
+      { name: "究極聯盟成長秘藥", image: ultmateUnionGrowthPotion, count: 20 },
+      { name: "卡勒馬恢復方塊交換券", image: karmaChoiceCube, count: 30 },
+      { name: "勇敢挑戰者的圖騰強化卷軸", image: braveChallengerTotemEnhancementScroll, count: 1 },
+    ]
+  },
+  {
+    name: "鑽石",
+    points: 40000,
+    icon: diamondMedal,
+    rewards: [
+      { name: "挑戰者S2鑽石勳章", image: diamondMedal, count: 1 },
+      { name: "靈魂艾爾達碎片", image: solErdaFragmentIcon, count: 100 },
+      { name: "靈魂艾爾達", image: solErdaIcon, count: 3 },
+      { name: "卡勒馬附加罕見潛在能力賦予卷軸", image: karmaAdditionalUniquePotentialScroll, count: 1 },
+      { name: "卡勒馬傳說潛在能力賦予卷軸", image: karmaLegendaryPotentialScroll, count: 1 },
+      { name: "卡勒馬珍貴附加方塊交換券", image: karmaChoiceAdditionalCube, count: 30 },
+      { name: "戰場女武神套裝交換券", image: valkyrieOnTheBattlefieldSetCoupon, count: 1 },
+      { name: "勇敢挑戰者的圖騰強化卷軸", image: braveChallengerTotemEnhancementScroll, count: 1 },
+    ]
+  },
+  {
+    name: "大師",
+    points: 60000,
+    icon: masterMedal,
+    rewards: [
+      { name: "挑戰者S2大師勳章", image: masterMedal, count: 1 },
+      { name: "卡勒馬恢復方塊交換券", image: karmaChoiceCube, count: 30 },
+      { name: "卡勒馬珍貴附加方塊交換券", image: karmaChoiceAdditionalCube, count: 30 },
+    ]
+  },
+  {
+    name: "挑戰者",
+    points: 75000,
+    icon: challengerMedal,
+    rewards: [
+      { name: "挑戰者S2挑戰者勳章", image: challengerMedal, count: 1 },
+      { name: "挑戰者世界S2挑戰者家具", image: challengerWorldSeason2ChallengerFurniture, count: 1 },
+    ]
+  },
 ];
 
 export const BOSS_ORDER = [

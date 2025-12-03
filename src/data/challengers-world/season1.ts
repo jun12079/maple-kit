@@ -7,12 +7,12 @@ import level270Icon from "@/assets/images/challengers-world/icons/challenger-lev
 import level275Icon from "@/assets/images/challengers-world/icons/challenger-level-275.png";
 import level280Icon from "@/assets/images/challengers-world/icons/challenger-level-280.png";
 
-import bronzeMedal from "@/assets/images/challengers-world/icons/bronze-medal.png";
-import silverMedal from "@/assets/images/challengers-world/icons/silver-medal.png";
-import goldMedal from "@/assets/images/challengers-world/icons/gold-medal.png";
-import emeraldMedal from "@/assets/images/challengers-world/icons/emerald-medal.png";
-import diamondMedal from "@/assets/images/challengers-world/icons/diamond-medal.png";
-import challengerMedal from "@/assets/images/challengers-world/icons/challenger-medal.png";
+import bronzeMedal from "@/assets/images/challengers-world/icons/challenger-s1-bronze-medal.png";
+import silverMedal from "@/assets/images/challengers-world/icons/challenger-s1-silver-medal.png";
+import goldMedal from "@/assets/images/challengers-world/icons/challenger-s1-gold-medal.png";
+import emeraldMedal from "@/assets/images/challengers-world/icons/challenger-s1-emerald-medal.png";
+import diamondMedal from "@/assets/images/challengers-world/icons/challenger-s1-diamond-medal.png";
+import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s1-challenger-medal.png";
 
 export const DAILY_MISSION_POINTS = 150;
 export const DAILY_MISSION_COINS = 300;
