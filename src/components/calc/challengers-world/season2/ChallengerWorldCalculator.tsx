@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 // 匯入挑戰者世界圖示
 import challengerPointIcon from "@/assets/images/challengers-world/icons/challenger-point.png";
 import challengerCoinIcon from "@/assets/images/challengers-world/icons/challenger-coin-xs.png";
+import challengerAdvancedCoinIcon from "@/assets/images/challengers-world/icons/challenger-advanced-coin-xs.png";
 import dailyMissionIcon from "@/assets/images/challengers-world/icons/challenger-daily-mission.png";
 
 import {
@@ -507,7 +508,7 @@ export default function ChallengerWorldCalculator() {
                               </div>
                               {rewards.advancedCoins && (
                                 <div className="flex items-center gap-1 w-14" title="高級挑戰者硬幣">
-                                  <Image src={challengerCoinIcon} alt="ACC" width={16} height={16} className="hue-rotate-220 w-4 h-4" />
+                                  <Image src={challengerAdvancedCoinIcon} alt="ACC" width={16} height={16} className="w-4 h-4" />
                                   <span className={cn(isCompleted && "text-purple-600 font-bold")}>{rewards.advancedCoins}</span>
                                 </div>
                               )}
@@ -541,8 +542,8 @@ export default function ChallengerWorldCalculator() {
 
           <div className="border-t border-border/50" />
 
-          <div className="grid grid-cols-3 gap-2 border-b border-border/50 pb-4">
-            <div className="flex flex-col items-center justify-center gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-2 border-b border-border/50 pb-4">
+            <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-1 px-4 sm:px-0">
               <div className="flex items-center gap-2">
                 <Image src={challengerPointIcon} alt="Challenger Point" width={16} height={16} className="w-4 h-4" />
                 <h3 className="font-semibold text-muted-foreground text-sm">挑戰者點數</h3>
@@ -550,7 +551,7 @@ export default function ChallengerWorldCalculator() {
               <p className="text-xl font-bold text-primary">{totals.points.toLocaleString()}</p>
             </div>
 
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-1 px-4 sm:px-0">
               <div className="flex items-center gap-2">
                 <Image src={challengerCoinIcon} alt="Challenger Coin" width={16} height={16} className="w-4 h-4" />
                 <h3 className="font-semibold text-muted-foreground text-sm">挑戰者硬幣</h3>
@@ -558,10 +559,10 @@ export default function ChallengerWorldCalculator() {
               <p className="text-xl font-bold text-yellow-500">{totals.coins.toLocaleString()}</p>
             </div>
 
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-1 px-4 sm:px-0">
               <div className="flex items-center gap-2">
-                <Image src={challengerCoinIcon} alt="Advanced Challenger Coin" width={16} height={16} className="hue-rotate-220 w-4 h-4" />
-                <h3 className="font-semibold text-muted-foreground text-sm">高級硬幣</h3>
+                <Image src={challengerAdvancedCoinIcon} alt="Advanced Challenger Coin" width={16} height={16} className="w-4 h-4" />
+                <h3 className="font-semibold text-muted-foreground text-sm">高級挑戰者硬幣</h3>
               </div>
               <p className="text-xl font-bold text-purple-500">{totals.advancedCoins.toLocaleString()}</p>
             </div>
@@ -632,7 +633,7 @@ export default function ChallengerWorldCalculator() {
                     key={rank.name}
                     className={cn(
                       "flex flex-col items-center gap-2 p-2 rounded-lg transition-colors relative",
-                      isReached ? "bg-primary/10" : "opacity-70"
+                      !isReached && "opacity-70"
                     )}
                   >
                     <div className="relative">
@@ -661,6 +662,20 @@ export default function ChallengerWorldCalculator() {
                             <span className="text-[10px] font-medium text-red-500 block">無法完成</span>
                           )
                         )}
+                      </div>
+
+                      {/* 獎勵顯示 */}
+                      <div className="flex flex-wrap justify-center gap-2 pt-2">
+                        {rank.rewards?.map((reward, idx) => (
+                          <div 
+                            key={idx} 
+                            className="flex flex-col items-center gap-0.5" 
+                            title={reward.name}
+                          >
+                            <Image src={reward.image} alt={reward.name} width={24} height={24} className="w-6 h-6 object-contain" />
+                            <span className="text-[9px] leading-none">x{reward.count}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>

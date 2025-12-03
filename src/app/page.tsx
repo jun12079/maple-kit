@@ -6,7 +6,7 @@ import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
 import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_icon.png";
 import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
 import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
-import challengerMedal from "@/assets/images/challengers-world/icons/challenger-medal.png";
+import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s1-challenger-medal.png";
 
 export const metadata = {
   title: "MapleKit - 新楓之谷工具平台",
@@ -120,7 +120,7 @@ export default function Home(): React.ReactElement {
                     width={32}
                     className="mr-2"
                   />
-                  <h3 className="text-xl font-bold mb-1">挑戰者世界S2計算器</h3>
+                  <h3 className="text-xl font-bold mb-1">挑戰者世界S2</h3>
                 </div>
                 <p className="mb-0 text-gray-600 dark:text-gray-400">計算挑戰者世界的點數與硬幣獲取進度</p>
               </div>
