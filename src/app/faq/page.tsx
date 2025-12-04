@@ -8,13 +8,9 @@ import { Metadata } from "next";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "常見問題 | Maple Kit",
+  title: "常見問題",
   description: "MapleKit 網站常見問題解答，包含網站功能介紹、使用方法和問題回報等資訊",
   keywords: "MapleKit, 常見問題, FAQ, 新楓之谷工具",
-  openGraph: {
-    title: "常見問題 | Maple Kit",
-    description: "MapleKit 網站常見問題解答",
-  },
 };
 
 interface FaqItem {

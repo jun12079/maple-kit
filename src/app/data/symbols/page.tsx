@@ -6,13 +6,9 @@ import { arcaneSymbols, authenticSymbols, symbolCoupons, symbolUpgradeData, Symb
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "符文系統 | Maple Kit",
+  title: "符文系統",
   description: "新楓之谷符文系統查詢表格，包含秘法符文、真實符文的升級成本與升級數量資訊",
   keywords: "新楓之谷, 符文系統, 秘法符文, 真實符文, 符文升級",
-  openGraph: {
-    title: "符文系統 | Maple Kit",
-    description: "查詢新楓之谷符文系統的完整升級資料",
-  },
 };
 
 const formatNumber = (num: number) => {

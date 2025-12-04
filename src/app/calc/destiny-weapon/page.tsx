@@ -2,13 +2,9 @@ import DestinyWeaponCalculator from "@/components/calc/destiny-weapon/DestinyWea
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "命運武器進度計算器 | Maple Kit",
+  title: "命運武器進度計算器",
   description: "新楓之谷命運武器進度計算工具，幫助玩家計算各階段所需決心、完成時間與週數",
   keywords: "新楓之谷, 命運武器, 進度計算器, 決心, boss",
-  openGraph: {
-    title: "命運武器進度計算器 | Maple Kit",
-    description: "計算命運武器各階段所需決心、完成時間與週數",
-  },
 };
 
 export default function DestinyWeaponPage() {
