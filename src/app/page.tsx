@@ -7,22 +7,22 @@ import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_ic
 import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
 import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
 import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s1-challenger-medal.png";
+import logo from "../../public/logo.png";
 
 export const metadata = {
   title: "MapleKit - 新楓之谷工具平台",
   description: "MapleKit 為新楓之谷玩家提供命運武器進度計算、創世武器進度計算、HEXA技能計算等實用工具",
   keywords: "新楓之谷, MapleStory, 命運武器, 創世武器, HEXA技能, 遊戲工具",
-  openGraph: {
-    title: "MapleKit - 新楓之谷工具平台",
-    description: "為新楓之谷玩家提供各種實用的遊戲進度計算工具",
-  },
 };
 
 export default function Home(): React.ReactElement {
   return (
     <div className="mx-auto px-4 py-8">
       <div className="flex flex-col items-center text-center pt-10">
-        <h1 className="text-6xl font-semibold mb-12">MapleKit</h1>
+        <div className="flex flex-row items-center justify-center mb-12">
+          <Image src={logo} alt="MapleKit Logo" width={80} height={80} />
+          <h1 className="text-6xl font-semibold flex items-center h-[80px]">MapleKit</h1>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
           <Link href="/calc/destiny-weapon" className="no-underline">

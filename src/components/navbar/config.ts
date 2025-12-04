@@ -1,5 +1,5 @@
 import { StaticImageData } from "next/image";
-import Logo from "@/assets/images/Destiny_Ritual_Fan_icon.png";
+import Logo from "../../../public/logo.png";
 import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
 import SolErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
