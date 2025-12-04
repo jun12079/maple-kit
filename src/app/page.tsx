@@ -10,7 +10,6 @@ import challengerMedal from "@/assets/images/challengers-world/icons/challenger-
 import logo from "../../public/logo.png";
 
 export const metadata = {
-  title: "MapleKit - 新楓之谷工具平台",
   description: "MapleKit 為新楓之谷玩家提供命運武器進度計算、創世武器進度計算、HEXA技能計算等實用工具",
   keywords: "新楓之谷, MapleStory, 命運武器, 創世武器, HEXA技能, 遊戲工具",
 };

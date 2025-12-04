@@ -2,13 +2,9 @@ import GenesisWeaponCalculator from "@/components/calc/genesis-weapon/GenesisWea
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "創世武器進度計算器 | Maple Kit",
+  title: "創世武器進度計算器",
   description: "新楓之谷創世武器進度計算工具，幫助玩家計算各階段所需痕跡、完成時間與週數",
   keywords: "新楓之谷, 創世武器, 進度計算器, 痕跡, boss",
-  openGraph: {
-    title: "創世武器進度計算器 | Maple Kit",
-    description: "計算創世武器各階段所需痕跡、完成時間與週數",
-  },
 };
 
 export default function GenesisWeaponPage() {

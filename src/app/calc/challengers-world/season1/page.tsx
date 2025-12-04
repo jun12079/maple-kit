@@ -2,13 +2,9 @@ import ChallengerWorldCalculator from "@/components/calc/challengers-world/seaso
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "挑戰者世界S1計算器 | Maple Kit",
+  title: "挑戰者世界S1計算器",
   description: "新楓之谷挑戰者世界S1計算工具，幫助玩家預估達成目標所需的時間與週數",
   keywords: "新楓之谷, 挑戰者世界, 計算器, Season 1, MapleStory, Maple Kit",
-  openGraph: {
-    title: "挑戰者世界S1計算器 | Maple Kit",
-    description: "計算挑戰者世界達成目標所需的時間與週數",
-  },
 };
 
 export default function ChallengerWorldPage() {
