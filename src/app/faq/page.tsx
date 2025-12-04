@@ -27,16 +27,11 @@ const faqData: FaqItem[] = [
   },
   {
     id: "item-2",
-    question: "為什麼會做 MapleKit?",
-    answer: "興趣使然。"
+    question: "為什麼會做 MapleKit？",
+    answer: "希望能讓所有新楓之谷玩家，都能用簡單、直覺的方式規劃自己的遊戲體驗。"
   },
   {
     id: "item-3",
-    question: "為什麼只有命運武器進度工具？",
-    answer: "最初是為了給台版即將開放的命運武器而製作的，之後有想到什麼功能會再陸續加入。"
-  },
-  {
-    id: "item-4",
     question: "如何回報網站問題或建議？",
     answer: (
       <span>
@@ -54,7 +49,7 @@ const faqData: FaqItem[] = [
     )
   },
   {
-    id: "item-5",
+    id: "item-4",
     question: "為什麼角色查詢的資料結果有缺少？",
     answer: (
       <span>
