@@ -3,13 +3,14 @@ import Link from "next/link";
 import { logo } from "./config";
 
 export const Logo = () => (
-  <Link href={logo.url} className="flex items-center space-x-2">
+  <Link href={logo.url} className="flex flex-row items-center">
     <Image
       src={logo.src}
       alt={logo.alt}
-      width={32}
+      width={40}
+      height={40}
     />
-    <span className="font-heading text-xl font-semibold">
+    <span className="text-xl font-semibold flex items-center h-[40px]">
       {logo.title}
     </span>
   </Link>
