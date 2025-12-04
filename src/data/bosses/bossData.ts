@@ -46,7 +46,6 @@ import {
   ferociousBeastEternalArmorBoxIcon,
   ferociousEntanglementRingFragmentIcon,
   golluxCoinIcon,
-  greenStoneIcon,
   grindstoneOfFaithIcon,
   grindstoneOfLifeIcon,
   kalossResidualDeterminationIcon,
@@ -55,7 +54,6 @@ import {
   mitrasNodestoneIcon,
   oathswornEthernalArmorBoxIcon,
   princessNoEffectCouponIcon,
-  redStoneIcon,
   ruinForceShieldIcon,
   superiorEngravedGolluxBeltIcon,
   superiorGolluxEarringsIcon,
@@ -130,7 +128,7 @@ export const bossData: Record<string, Boss> = {
         defense: 30,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 115800
       },
@@ -140,7 +138,7 @@ export const bossData: Record<string, Boss> = {
         defense: 40,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 354800
       },
@@ -150,7 +148,7 @@ export const bossData: Record<string, Boss> = {
         defense: 100,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 7059750
       }
@@ -167,7 +165,7 @@ export const bossData: Record<string, Boss> = {
         defense: 40,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 511000
       },
@@ -177,7 +175,7 @@ export const bossData: Record<string, Boss> = {
         defense: 40,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 586600
       },
@@ -187,7 +185,7 @@ export const bossData: Record<string, Boss> = {
         defense: 50,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 783300
       }
@@ -204,7 +202,7 @@ export const bossData: Record<string, Boss> = {
         defense: 50,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 463500
       },
@@ -214,7 +212,7 @@ export const bossData: Record<string, Boss> = {
         defense: 100,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 6677700
       }
@@ -231,7 +229,7 @@ export const bossData: Record<string, Boss> = {
         defense: 50,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 560800
       },
@@ -241,7 +239,7 @@ export const bossData: Record<string, Boss> = {
         defense: 80,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 7313306
       }
@@ -258,7 +256,7 @@ export const bossData: Record<string, Boss> = {
         defense: 50,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 560800
       },
@@ -268,7 +266,7 @@ export const bossData: Record<string, Boss> = {
         defense: 100,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 7693781
       }
@@ -285,7 +283,7 @@ export const bossData: Record<string, Boss> = {
         defense: 50,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 560800
       },
@@ -295,7 +293,7 @@ export const bossData: Record<string, Boss> = {
         defense: 120,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 7682035
       }
@@ -312,7 +310,7 @@ export const bossData: Record<string, Boss> = {
         defense: 55,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 560800
       },
@@ -322,7 +320,7 @@ export const bossData: Record<string, Boss> = {
         defense: 200,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 9070003
       }
@@ -339,7 +337,7 @@ export const bossData: Record<string, Boss> = {
         defense: 50,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 612900
       },
@@ -349,7 +347,7 @@ export const bossData: Record<string, Boss> = {
         defense: 80,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 844700
       },
@@ -359,7 +357,7 @@ export const bossData: Record<string, Boss> = {
         defense: 90,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 1419500
       }
@@ -376,7 +374,7 @@ export const bossData: Record<string, Boss> = {
         defense: 60,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 667400
       },
@@ -386,7 +384,7 @@ export const bossData: Record<string, Boss> = {
         defense: 90,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 1460300
       }
@@ -403,7 +401,7 @@ export const bossData: Record<string, Boss> = {
         defense: 50,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 418300
       },
@@ -413,7 +411,7 @@ export const bossData: Record<string, Boss> = {
         defense: 80,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 1501700
       },
@@ -423,7 +421,7 @@ export const bossData: Record<string, Boss> = {
         defense: 90,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 8819007
       }
@@ -440,7 +438,7 @@ export const bossData: Record<string, Boss> = {
         defense: 70,
         symbol: null,
         reset: 'daily',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 813700
       },
@@ -450,7 +448,7 @@ export const bossData: Record<string, Boss> = {
         defense: 180,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 7630700
       }
@@ -467,7 +465,7 @@ export const bossData: Record<string, Boss> = {
         defense: 100,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 5307400
       },
@@ -477,7 +475,7 @@ export const bossData: Record<string, Boss> = {
         defense: 100,
         symbol: null,
         reset: 'weekly',
-        drops: [greenStoneIcon, redStoneIcon],
+        drops: [],
         solErda: null,
         mesos: 8709400
       }
@@ -1097,7 +1095,7 @@ export const bossData: Record<string, Boss> = {
         defense: 380,
         symbol: null,
         reset: 'weekly',
-        drops: [blackJadeBossRingBoxIcon, arcaneUmbraArmorBoxIcon, arcaneUmbraWeaponBoxIcon, MalitiaDrops2Icon],
+        drops: [blackJadeBossRingBoxIcon, MalitiaDrops2Icon],
         solErda: 120,
         mesos: 150000000
       },
