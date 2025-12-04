@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetHeader, SheetTitle, SheetDescription, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Menu } from "lucide-react";
+import { Menu, Coffee } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { menu } from "./config";
@@ -70,6 +70,16 @@ export const NavigationSheet = () => {
             </Accordion>
 
             <div className="flex items-center justify-between px-3 py-4">
+              <a 
+                href="https://buymeacoffee.com/niyd70rkzs" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Coffee className="h-4 w-4" />
+                  贊助支持
+                </Button>
+              </a>
               <ModeToggle />
             </div>
           </div>
