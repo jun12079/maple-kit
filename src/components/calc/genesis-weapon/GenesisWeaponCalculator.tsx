@@ -18,7 +18,8 @@ import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Cle
 import monthlyBossClearCountResetTicketIcon from "@/assets/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png";
 import { 
   genesisBossData as bossData, 
-  genesisBossIcon, 
+  genesisItemIcon as itemIcon,
+  genesisBossIcon as bossIcon,
   genesisStageIcon as stageBossIcon, 
   genesisStageCumulative as stageCumulative,
   BossInfo,
@@ -48,6 +49,7 @@ export default function GenesisWeaponCalculator() {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [startEnergy, setStartEnergy] = useState(0);
   const [isBossResetDialogOpen, setIsBossResetDialogOpen] = useState(false);
+  const [genesisPassEnabled, setGenesisPassEnabled] = useState(false);
   const [bossConfig, setBossConfig] = useState<BossConfigState>({
     lotus: { players: 1, difficulty: "extreme", origin: "lotus", enabled: true, reset: false },
     damien: { players: 1, difficulty: "hard", origin: "damien", enabled: true, reset: false },
@@ -79,11 +81,17 @@ export default function GenesisWeaponCalculator() {
     difficulty: string,
     players: number,
     reset: boolean,
+    genesisPass: boolean,
     enabled: boolean
   ) => {
     if (!enabled) return 0;
     const baseEnergy = bossData[origin].difficulties[difficulty].energy;
-    const totalEnergy = reset ? baseEnergy * 2 : baseEnergy;
+    let totalEnergy = reset ? baseEnergy * 2 : baseEnergy;
+    
+    if (genesisPass) {
+      totalEnergy *= 3;
+    }
+
     return Math.round(totalEnergy / players);
   };
 
@@ -100,6 +108,7 @@ export default function GenesisWeaponCalculator() {
         config.difficulty,
         config.players,
         config.reset,
+        genesisPassEnabled,
         config.enabled
       );
 
@@ -243,35 +252,51 @@ export default function GenesisWeaponCalculator() {
               placeholder={`輸入目前痕跡數值 (0-${MAX_ENERGY})`}
             />
           </div>
-          <Button
-            variant="outline"
-            className="rounded-full px-3 py-2 mb-2 shadow-sm"
-            onClick={handleOpenBossResetDialog}
-          >
-            <div className="flex items-center">
+            <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="rounded-full px-3 py-2 mb-2 shadow-sm"
+              onClick={handleOpenBossResetDialog}
+            >
+              <div className="flex items-center justify-center">
               <span className="mr-1">使用</span>
               <div className="relative w-8 h-7">
                 {/* 左圖：左下 → 左上 → 右上 */}
                 <Image
-                  src={weeklyBossClearCountResetTicketIcon}
-                  alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
-                  className="w-full h-full object-cover absolute top-0 left-0"
-                  style={{
-                    clipPath: "polygon(0 100%, 0 0, 100% 0)", // 左下 → 左上 → 右上
-                  }}
+                src={weeklyBossClearCountResetTicketIcon}
+                alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
+                className="w-full h-full object-cover absolute top-0 left-0"
+                style={{
+                  clipPath: "polygon(0 100%, 0 0, 100% 0)", // 左下 → 左上 → 右上
+                }}
                 />
                 {/* 右圖：右上 → 右下 → 左下 */}
                 <Image
-                  src={monthlyBossClearCountResetTicketIcon}
-                  alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
-                  className="w-full h-full object-cover absolute top-0 left-0"
-                  style={{
-                    clipPath: "polygon(100% 0, 100% 100%, 0 100%)", // 右上 → 右下 → 左下
-                  }}
+                src={monthlyBossClearCountResetTicketIcon}
+                alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
+                className="w-full h-full object-cover absolute top-0 left-0"
+                style={{
+                  clipPath: "polygon(100% 0, 100% 100%, 0 100%)", // 右上 → 右下 → 左下
+                }}
                 />
               </div>
+              </div>
+            </Button>
+            <Button
+              variant={genesisPassEnabled ? "default" : "outline"}
+              className="rounded-full px-3 py-2 mb-2 shadow-sm"
+              onClick={() => setGenesisPassEnabled(!genesisPassEnabled)}
+            >
+              <div className="flex items-center justify-center gap-2">
+              <span>使用</span>
+              <Image
+                src={itemIcon.genesisPass}
+                alt="Genesis Pass"
+                className="w-full h-full"
+              />
+              </div>
+            </Button>
             </div>
-          </Button>
           {/* BOSS選單 */}
           <div className="overflow-x-auto">
             <Table>
@@ -281,7 +306,9 @@ export default function GenesisWeaponCalculator() {
                   <TableHead className="text-center">BOSS</TableHead>
                   <TableHead className="text-center">難度</TableHead>
                   <TableHead className="text-center">人數</TableHead>
-                  <TableHead className="text-center">痕跡</TableHead>
+                  <TableHead className="text-center">
+                    <Image src={itemIcon.tracesOfDarkness} alt="Traces of Darkness" className="w-6 h-6 mx-auto" />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -299,7 +326,7 @@ export default function GenesisWeaponCalculator() {
                     <TableCell className="py-2 px-2">
                       <div className="flex justify-center items-center gap-1">
                         <Image
-                          src={genesisBossIcon[origin]}
+                          src={bossIcon[origin]}
                           alt={origin}
                           className="w-8 h-auto flex-shrink-0"
                         />
@@ -365,7 +392,7 @@ export default function GenesisWeaponCalculator() {
                           variant={enabled ? "default" : "secondary"}
                           className="text-xs font-mono min-w-[3rem] justify-center"
                         >
-                          {calculateEnergy(bossData, origin, difficulty, players, reset, enabled)}
+                          {calculateEnergy(bossData, origin, difficulty, players, reset, genesisPassEnabled, enabled)}
                         </Badge>
                       </div>
                     </TableCell>
