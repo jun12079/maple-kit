@@ -4,6 +4,7 @@ import kalosIcon from "@/assets/images/bosses/icons/Kalos_icon.png";
 import kalingIcon from "@/assets/images/bosses/icons/Kaling_icon.png";
 import limboIcon from "@/assets/images/bosses/icons/Limbo_icon.png";
 import baldrixIcon from "@/assets/images/bosses/icons/Baldrix_icon.png";
+import adversarysDetermination from "@/assets/images/items/icons/adversary's-determination.png";
 
 export interface Difficulty {
   name: string;
@@ -67,7 +68,11 @@ export const destinyBossData: DestinyBossData = {
   }
 };
 
-export const destinyBossIcon: { [key: string]: StaticImageData } = {
+export const destinyItemIcon: Record<string, StaticImageData> = {
+  adversarysDetermination: adversarysDetermination
+};
+
+export const destinyBossIcon: Record<string, StaticImageData> = {
   seren: serenIcon,
   serenReset: serenIcon,
   kalos: kalosIcon,

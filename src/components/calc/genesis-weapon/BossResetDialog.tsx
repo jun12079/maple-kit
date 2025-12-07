@@ -141,7 +141,7 @@ export default function BossResetDialog<T extends BossConfig>({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto p-2">
           {allBosses.map((boss) => {
             const isSelected = selectedBosses.includes(boss.id);
             const isDisabled = isCheckboxDisabled(boss.id);
@@ -149,14 +149,14 @@ export default function BossResetDialog<T extends BossConfig>({
             return (
               <Card 
                 key={boss.id}
-                className={`cursor-pointer transition-all duration-200 ${
+                className={`cursor-pointer transition-all duration-200 rounded-xl shadow-sm overflow-hidden py-0 ${
                   isSelected ? 'border-green-500 bg-green-50 dark:bg-green-950' : ''
                 } ${
                   isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted/50'
                 }`}
                 onClick={() => !isDisabled && handleBossToggle(boss.id)}
               >
-                <CardContent className="flex items-center gap-3">
+                <CardContent className="flex items-center gap-3 p-3">
                   <Checkbox
                     checked={isSelected}
                     disabled={isDisabled}

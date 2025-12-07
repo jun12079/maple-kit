@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png";
 import { 
   destinyBossData as bossData, 
+  destinyItemIcon as itemIcon,
   destinyBossIcon as bossIcon, 
   destinyStageEnergy as stageEnergy, 
   destinyStageCumulative as stageCumulative 
@@ -176,7 +177,9 @@ export default function DestinyWeaponCalculator() {
                     <TableHead className="text-center">BOSS</TableHead>
                     <TableHead className="text-center">難度</TableHead>
                     <TableHead className="text-center">人數</TableHead>
-                    <TableHead className="text-center">決心</TableHead>
+                    <TableHead className="text-center">
+                      <Image src={itemIcon.adversarysDetermination} alt="Adversary's Determination" className="w-6 h-6 mx-auto" />
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

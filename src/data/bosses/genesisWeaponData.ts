@@ -9,6 +9,8 @@ import verusHillaIcon from "@/assets/images/bosses/icons/VerusHilla_icon.png";
 import gloomIcon from "@/assets/images/bosses/icons/Gloom_icon.png";
 import darknellIcon from "@/assets/images/bosses/icons/Darknell_icon.png";
 import blackMageIcon from "@/assets/images/bosses/icons/BlackMage_icon.png";
+import tracesOfDarkness from "@/assets/images/items/icons/traces-of-darkness.png";
+import genesisPass from "@/assets/images/items/icons/genesis-pass.png";
 import { StaticImageData } from "next/image";
 
 export interface Difficulty {
@@ -89,6 +91,11 @@ export const genesisBossData: Record<string, BossInfo> = {
       extreme: { name: '極限', energy: 600 }
     }
   }
+};
+
+export const genesisItemIcon: Record<string, StaticImageData> = {
+  tracesOfDarkness: tracesOfDarkness,
+  genesisPass: genesisPass
 };
 
 export const genesisBossIcon: Record<string, StaticImageData> = {
