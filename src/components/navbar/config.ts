@@ -3,6 +3,7 @@ import Logo from "../../../public/logo.png";
 import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
 import SolErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
+import ExpCoupon from "@/assets/images/items/icons/EXPCoupon_icon.png";
 import ArcaneAuthenticSymbolSelectCoupon from "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
 import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
 
@@ -52,6 +53,11 @@ export const menu: MenuGroup[] = [
         title: "HEXA技能",
         icon: SolErdaFragmentIcon,
         url: "/calc/hexa-skill",
+      },
+      {
+        title: "EXP交換券",
+        icon: ExpCoupon,
+        url: "/calc/exp-coupon",
       },
     ],
   },
