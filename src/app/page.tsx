@@ -7,6 +7,7 @@ import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_ic
 import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
 import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
 import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s1-challenger-medal.png";
+import ExpCoupon from "@/assets/images/items/icons/EXPCoupon_icon.png";
 import logo from "../../public/logo.png";
 
 export const metadata = {
@@ -122,6 +123,23 @@ export default function Home(): React.ReactElement {
                   <h3 className="text-xl font-bold mb-1">挑戰者世界S2</h3>
                 </div>
                 <p className="mb-0 text-gray-600 dark:text-gray-400">計算挑戰者世界的點數與硬幣獲取進度</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/calc/exp-coupon" className="no-underline">
+            <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
+              <div className="p-8 text-left">
+                <div className="flex items-center mb-2">
+                  <Image
+                    src={ExpCoupon}
+                    alt="EXP Coupon icon"
+                    width={32}
+                    className="mr-2"
+                  />
+                  <h3 className="text-xl font-bold mb-1">EXP 交換券</h3>
+                </div>
+                <p className="mb-0 text-gray-600 dark:text-gray-400">計算經驗券使用結果</p>
               </div>
             </div>
           </Link>
