@@ -1,0 +1,13 @@
+import { NextRequest } from 'next/server'
+import { makeNexonAPIRequest, validateRequiredParams } from '@/services/nexonAPI'
+
+// GET /api/id - 角色 OCID 查詢
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const characterName = searchParams.get('character_name')
+
+  const validationError = validateRequiredParams({ character_name: characterName })
+  if (validationError) return validationError
+
+  return makeNexonAPIRequest('/id', { character_name: characterName })
+}
