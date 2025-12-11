@@ -1,28 +1,30 @@
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import type { CharacterSkill, CharacterHexaMatrixStat, CharacterLinkSkill, Skill, LinkSkill, HexaStatCore } from '@/types/mapleAPI'
 
-/**
- * 技能顯示組件
- * @param {Object} props
- * @param {Object} props.hexaMatrix - HEXA矩陣技能資訊
- * @param {Object} props.hexaStatData - HEXA屬性核心資訊
- * @param {Object} props.vMatrixData - V矩陣技能資訊
- * @param {Object} props.linkSkillData - 連結技能資訊
- * @returns {JSX.Element}
- */
+interface SkillWithOwned extends LinkSkill {
+  isOwnedSkill?: boolean
+}
 
-export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillData }) {
+interface SkillDisplayProps {
+  hexaMatrix?: CharacterSkill | null
+  hexaStatData?: CharacterHexaMatrixStat | null
+  vMatrixData?: CharacterSkill | null
+  linkSkillData?: CharacterLinkSkill | null
+}
+
+export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillData }: SkillDisplayProps) {
   // 判斷當前裝備對應哪個預設
-  const getCurrentPreset = () => {
+  const getCurrentPreset = (): string => {
     if (!linkSkillData || !linkSkillData.character_link_skill) return "1"
 
     const currentSkills = linkSkillData.character_link_skill
     if (currentSkills.length === 0) return "1"
 
     // 比較當前技能與各個預設
-    const compareSkills = (preset) => {
+    const compareSkills = (preset: LinkSkill[] | undefined): boolean => {
       if (!preset || preset.length !== currentSkills.length) return false
 
       // 簡單比較：檢查技能名稱是否匹配
@@ -40,9 +42,9 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
   }
 
   // 連結技能預設狀態 - 使用getCurrentPreset來初始化
-  const [activeLinkSkillPreset, setActiveLinkSkillPreset] = useState(() => getCurrentPreset())
+  const [activeLinkSkillPreset, setActiveLinkSkillPreset] = useState<string>(() => getCurrentPreset())
 
-  const getSkillGradeColor = (level) => {
+  const getSkillGradeColor = (level: number): string => {
     if (level >= 30) return 'bg-yellow-500'
     if (level >= 25) return 'bg-orange-500'
     if (level >= 20) return 'bg-red-500'
@@ -52,7 +54,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
   }
 
   // Hexa、V技能顯示
-  const renderSkills = (skills) => (
+  const renderSkills = (skills?: Skill[]) => (
     <div className="flex flex-wrap gap-2">
       {skills?.map((skill, index) => (
         <div key={index} className="flex items-center justify-center">
@@ -63,7 +65,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
                 src={skill.skill_icon}
                 alt={skill.skill_name}
                 className="w-12 h-12 rounded"
-                onError={(e) => { e.target.style.display = 'none' }}
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
               />
               {/* 等級標記 */}
               <Badge
@@ -80,7 +82,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
   )
 
   // 連結技能顯示
-  const renderLinkSkills = (linkSkillData) => {
+  const renderLinkSkills = (linkSkillData?: CharacterLinkSkill | null) => {
     if (!linkSkillData) {
       return (
         <>
@@ -93,9 +95,9 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
     }
 
     // 渲染連結技能列表（包含擁有的連結技能）
-    const renderLinkSkillList = (skills) => {
+    const renderLinkSkillList = (skills?: LinkSkill[]) => {
       // 合併擁有的連結技能到技能列表中
-      let allSkills = [...(skills || [])];
+      let allSkills: SkillWithOwned[] = [...(skills || [])];
 
       // 檢查擁有的連結技能是否已存在於當前技能列表中
       if (linkSkillData.character_owned_link_skill) {
@@ -125,7 +127,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
                         src={skill.skill_icon}
                         alt={skill.skill_name}
                         className="w-12 h-12 rounded"
-                        onError={(e) => { e.target.style.display = 'none' }}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                       />
                       <Badge
                         variant="secondary"
@@ -191,7 +193,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
   }
 
   // HEXA 屬性核心顯示
-  const renderHexaStatCores = (hexaStatData) => {
+  const renderHexaStatCores = (hexaStatData?: CharacterHexaMatrixStat | null) => {
     if (!hexaStatData) {
       return (
         <div className="text-center py-8 text-muted-foreground">
@@ -201,7 +203,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
     }
 
     // 取得三個屬性核心
-    const statCores = [
+    const statCores: (HexaStatCore | undefined)[] = [
       hexaStatData.character_hexa_stat_core?.[0],
       hexaStatData.character_hexa_stat_core_2?.[0],
       hexaStatData.character_hexa_stat_core_3?.[0]
@@ -219,40 +221,44 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {statCores.map((core, index) => (
-          <Card key={index} className="gap-1 border-none shadow-none">
-            <CardHeader>
-              <CardTitle className="text-sm text-primary">
-                {coreNames[index]}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {/* 主屬性 */}
-              <div className="p-3 bg-muted dark:bg-muted border-none">
-                <Badge variant="default">
-                  Lv. {core.main_stat_level}
-                </Badge>
-                <span className="text-sm text-card-foreground ms-1">{core.main_stat_name}</span>
-              </div>
+        {statCores.map((core, index) => {
+          if (!core) return null
+          
+          return (
+            <Card key={index} className="gap-1 border-none shadow-none">
+              <CardHeader>
+                <CardTitle className="text-sm text-primary">
+                  {coreNames[index]}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {/* 主屬性 */}
+                <div className="p-3 bg-muted dark:bg-muted border-none">
+                  <Badge variant="default">
+                    Lv. {core.main_stat_level}
+                  </Badge>
+                  <span className="text-sm text-card-foreground ms-1">{core.main_stat_name}</span>
+                </div>
 
-              {/* 副屬性 1 */}
-              <div className="p-3 bg-muted dark:bg-muted border-none">
-                <Badge variant="default">
-                  Lv. {core.sub_stat_level_1}
-                </Badge>
-                <span className="text-sm text-muted-foreground ms-1">{core.sub_stat_name_1}</span>
-              </div>
+                {/* 副屬性 1 */}
+                <div className="p-3 bg-muted dark:bg-muted border-none">
+                  <Badge variant="default">
+                    Lv. {core.sub_stat_level_1}
+                  </Badge>
+                  <span className="text-sm text-muted-foreground ms-1">{core.sub_stat_name_1}</span>
+                </div>
 
-              {/* 副屬性 2 */}
-              <div className="p-3 bg-muted dark:bg-muted border-none">
-                <Badge variant="default">
-                  Lv. {core.sub_stat_level_2}
-                </Badge>
-                <span className="text-sm text-muted-foreground ms-1">{core.sub_stat_name_2}</span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                {/* 副屬性 2 */}
+                <div className="p-3 bg-muted dark:bg-muted border-none">
+                  <Badge variant="default">
+                    Lv. {core.sub_stat_level_2}
+                  </Badge>
+                  <span className="text-sm text-muted-foreground ms-1">{core.sub_stat_name_2}</span>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
     )
   }

@@ -1,34 +1,38 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Mars, Venus } from 'lucide-react'
 import { ExperienceChart } from './ExperienceChart'
+import type { CharacterBasic, CharacterPopularity, CharacterDojang, CharacterUnion } from '@/types/mapleAPI'
 
-/**
- * 角色基本資訊卡片組件
- * @param {Object} props
- * @param {Object} props.basicInfo - 角色基本資訊
- * @param {Object} props.popularityInfo - 名聲資訊
- * @param {Object} props.dojangData - 武陵道場資訊
- * @param {Object} props.unionData - 戰地資訊
- * @param {string} props.ocid - 角色辨識器
- * @param {Array} props.experienceData - 七天經驗值數據
- * @returns {JSX.Element}
- */
-export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData, experienceData }) {
-  const formatNumber = (num) => {
+interface ExperienceDataPoint {
+  date: string
+  fullDate: string
+  exp: number
+}
+
+interface CharacterCardProps {
+  basicInfo: CharacterBasic
+  popularityInfo: CharacterPopularity
+  dojangData?: CharacterDojang | null
+  unionData?: CharacterUnion | null
+  experienceData?: ExperienceDataPoint[] | null
+}
+
+export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData, experienceData }: CharacterCardProps) {
+  const formatNumber = (num: number | string): string => {
     if (!num) return '0'
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number): string => {
     if (!seconds) return '00:00'
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     if (!dateString) return '未知'
     return new Date(dateString).toLocaleDateString('zh-TW', {
       year: 'numeric',
@@ -37,7 +41,7 @@ export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData
     })
   }
 
-  const renderGenderIcon = (gender) => {
+  const renderGenderIcon = (gender: string) => {
     if (gender === '여' || gender === '女') {
       return <Mars className="w-4 h-4 text-pink-500" />
     } else if (gender === '남' || gender === '男') {

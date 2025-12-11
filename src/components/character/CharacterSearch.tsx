@@ -18,26 +18,67 @@ import { FavoritesList } from '@/components/character/FavoritesList'
 // 導入最愛管理 hook
 import { useFavorites } from '@/hooks/useFavorites'
 
+// 導入型別
+import type { 
+  CharacterBasic, 
+  CharacterPopularity, 
+  CharacterStat, 
+  CharacterHyperStat, 
+  CharacterAbility, 
+  CharacterItemEquipment,
+  CharacterDojang,
+  CharacterSymbolEquipment,
+  CharacterSkill,
+  CharacterHexaMatrixStat,
+  CharacterLinkSkill,
+  CharacterUnion
+} from '@/types/mapleAPI'
+
+interface BasicData {
+  basic: CharacterBasic
+  popularity: CharacterPopularity
+  stat: CharacterStat
+  hyperStat: CharacterHyperStat
+  ability: CharacterAbility
+  equipment: CharacterItemEquipment
+}
+
+interface SkillData {
+  hexaMatrix: CharacterSkill | null
+  hexaMatrixStat: CharacterHexaMatrixStat | null
+  vMatrix: CharacterSkill | null
+  linkSkill: CharacterLinkSkill | null
+}
+
+// 注意：mapleAPI 的 getCharacterHexaMatrix 和 getCharacterVMatrix 實際返回 CharacterSkill
+// 因為它們都是調用 /character/skill API，只是 character_skill_grade 參數不同
+
+interface ExperienceDataPoint {
+  date: string
+  fullDate: string
+  exp: number
+}
+
 export default function CharacterSearch() {
-  const [characterName, setCharacterName] = useState('')
-  const [ocid, setOcid] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [characterName, setCharacterName] = useState<string>('')
+  const [ocid, setOcid] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
   // 最愛管理
   const { favorites, isLoaded: favoritesLoaded, removeFavorite, isFavorite, toggleFavorite } = useFavorites()
 
   // 各種資料狀態
-  const [basicData, setBasicData] = useState(null)
-  const [symbolData, setSymbolData] = useState(null)
-  const [dojangData, setDojangData] = useState(null)
-  const [skillData, setSkillData] = useState(null)
-  const [unionData, setUnionData] = useState(null)
-  const [experienceData, setExperienceData] = useState(null)
+  const [basicData, setBasicData] = useState<BasicData | null>(null)
+  const [symbolData, setSymbolData] = useState<CharacterSymbolEquipment | null>(null)
+  const [dojangData, setDojangData] = useState<CharacterDojang | null>(null)
+  const [skillData, setSkillData] = useState<SkillData | null>(null)
+  const [unionData, setUnionData] = useState<CharacterUnion | null>(null)
+  const [experienceData, setExperienceData] = useState<ExperienceDataPoint[] | null>(null)
 
   // 簡化的頻率限制狀態
-  const [isSearchDisabled, setIsSearchDisabled] = useState(false)
-  const cooldownTimerRef = useRef(null)
+  const [isSearchDisabled, setIsSearchDisabled] = useState<boolean>(false)
+  const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // 設定：簡短的冷卻時間
   const COOLDOWN_MS = 2000 // 2秒
@@ -51,8 +92,6 @@ export default function CharacterSearch() {
     }
   }, [])
 
-
-
   const resetAllData = () => {
     setBasicData(null)
     setSymbolData(null)
@@ -62,7 +101,7 @@ export default function CharacterSearch() {
     setExperienceData(null)
   }
 
-  const loadAllData = async (characterOcid) => {
+  const loadAllData = async (characterOcid: string) => {
     try {
       // 載入基本資料和符文資料
       const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union] = await Promise.allSettled([
@@ -111,10 +150,11 @@ export default function CharacterSearch() {
       }
 
       // 設定技能資料
-      const skillResults = {
-        hexaMatrix: hexaMatrix.status === 'fulfilled' ? hexaMatrix.value : null,
+      // 注意：API 型別定義有誤，getCharacterHexaMatrix 和 getCharacterVMatrix 實際返回 CharacterSkill
+      const skillResults: SkillData = {
+        hexaMatrix: hexaMatrix.status === 'fulfilled' ? (hexaMatrix.value as unknown as CharacterSkill) : null,
         hexaMatrixStat: hexaMatrixStat.status === 'fulfilled' ? hexaMatrixStat.value : null,
-        vMatrix: vMatrix.status === 'fulfilled' ? vMatrix.value : null,
+        vMatrix: vMatrix.status === 'fulfilled' ? (vMatrix.value as unknown as CharacterSkill) : null,
         linkSkill: linkSkill.status === 'fulfilled' ? linkSkill.value : null
       }
       setSkillData(skillResults)
@@ -130,9 +170,9 @@ export default function CharacterSearch() {
   }
 
   // 獲取七天經驗值數據
-  const loadExperienceData = async (characterOcid, todayExpRate) => {
+  const loadExperienceData = async (characterOcid: string, todayExpRate: string) => {
     try {
-      const data = []
+      const data: ExperienceDataPoint[] = []
       const today = new Date()
 
       // 獲取過去6天的數據（加上今天共7天）
@@ -146,7 +186,7 @@ export default function CharacterSearch() {
           
           data.push({
             date: `${date.getMonth() + 1}/${date.getDate()}`,
-            exp: parseFloat(basicInfo.character_exp_rate || 0),
+            exp: parseFloat(basicInfo.character_exp_rate || '0'),
             fullDate: dateString
           })
         } catch {
@@ -165,7 +205,7 @@ export default function CharacterSearch() {
       // 添加今天的數據（不帶 date 參數）
       data.push({
         date: `${today.getMonth() + 1}/${today.getDate()}`,
-        exp: parseFloat(todayExpRate || 0),
+        exp: parseFloat(todayExpRate || '0'),
         fullDate: today.toISOString().split('T')[0]
       })
 
@@ -176,10 +216,8 @@ export default function CharacterSearch() {
     }
   }
 
-
-
   // 修改搜尋函數，支援傳入角色名稱
-  const handleSearchWithName = async (searchName = null) => {
+  const handleSearchWithName = async (searchName: string | null = null) => {
     const nameToSearch = searchName || characterName.trim()
 
     if (!nameToSearch) {
@@ -224,7 +262,7 @@ export default function CharacterSearch() {
   const handleSearch = () => handleSearchWithName()
 
   // 處理最愛角色選擇
-  const handleFavoriteSelect = (favoriteName) => {
+  const handleFavoriteSelect = (favoriteName: string) => {
     setCharacterName(favoriteName)
     // 自動觸發搜尋
     if (!isSearchDisabled && !isLoading) {
@@ -237,7 +275,7 @@ export default function CharacterSearch() {
   }
 
   // 處理最愛角色移除
-  const handleFavoriteRemove = (favoriteName) => {
+  const handleFavoriteRemove = (favoriteName: string) => {
     removeFavorite(favoriteName)
   }
 
@@ -251,7 +289,7 @@ export default function CharacterSearch() {
     }
   }
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !isSearchDisabled && !isLoading && characterName.trim()) {
       handleSearch()
     }
@@ -373,7 +411,7 @@ export default function CharacterSearch() {
                     />
                   </div>
                   <div className="lg:col-span-8">
-                    <EquipmentDisplay equipmentData={basicData.equipment} symbolData={symbolData} />
+                    <EquipmentDisplay equipmentData={basicData.equipment} symbolData={symbolData as any} />
                   </div>
                 </div>
               </>

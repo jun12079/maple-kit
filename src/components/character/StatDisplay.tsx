@@ -2,25 +2,36 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import type { CharacterStat, CharacterHyperStat, CharacterAbility, HyperStatPreset, AbilityInfo } from '@/types/mapleAPI'
 
-/**
- * 統計資訊顯示組件
- * @param {Object} props
- * @param {Object} props.statData - 統計資訊
- * @param {Object} props.hyperStatData - 極限屬性資訊
- * @param {Object} props.abilityData - 能力資訊
- * @returns {JSX.Element}
- */
-export function StatDisplay({ statData, hyperStatData, abilityData }) {
-  const [activeHyperStatPreset, setActiveHyperStatPreset] = useState(hyperStatData?.use_preset_no?.toString() || '1')
-  const [activeAbilityPreset, setActiveAbilityPreset] = useState(abilityData?.preset_no?.toString() || '1')
-  const formatNumber = (num) => {
+interface StatConfig {
+  display: string
+  apiName: string | string[]
+}
+
+interface OrderedStat {
+  stat_name: string
+  stat_value: string
+  has_data: boolean
+}
+
+interface StatDisplayProps {
+  statData: CharacterStat
+  hyperStatData?: CharacterHyperStat | null
+  abilityData?: CharacterAbility | null
+}
+
+export function StatDisplay({ statData, hyperStatData, abilityData }: StatDisplayProps) {
+  const [activeHyperStatPreset, setActiveHyperStatPreset] = useState<string>(hyperStatData?.use_preset_no?.toString() || '1')
+  const [activeAbilityPreset, setActiveAbilityPreset] = useState<string>(abilityData?.preset_no?.toString() || '1')
+  
+  const formatNumber = (num: number | string): string => {
     if (!num) return '0'
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
 
   // 定義顯示順序和API欄位名稱對應表
-  const statConfig = [
+  const statConfig: StatConfig[] = [
     { display: 'HP', apiName: 'HP' },
     { display: 'MP', apiName: 'MP' },
     { display: 'STR', apiName: 'STR' },
@@ -58,7 +69,7 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
   ]
 
   // 格式化特殊數值
-  const formatStatValue = (stat, value) => {
+  const formatStatValue = (stat: StatConfig, value: string): string => {
     // 屬性攻擊力特殊處理（範圍顯示）
     if (stat.display === '屬性攻擊力') {
       const minStat = statData.final_stat?.find(s => s.stat_name === '最低屬性攻擊力')
@@ -99,8 +110,7 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
   }
 
   // 依照順序整理資料
-  const orderedStats = statConfig.map(config => {
-    let stat = null
+  const orderedStats: OrderedStat[] = statConfig.map(config => {
     let value = '0'
     let hasData = false
 
@@ -111,17 +121,15 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
         const minStat = statData.final_stat?.find(s => s.stat_name === '最低屬性攻擊力')
         const maxStat = statData.final_stat?.find(s => s.stat_name === '最高屬性攻擊力')
         if (minStat && maxStat) {
-          stat = { stat_name: config.display, stat_value: 'range' }
           value = formatStatValue(config, '0')
           hasData = true
         }
       }
       // 特殊處理：冷卻時間減少
       else if (config.display === '冷卻時間減少') {
-        const percentStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(％)')
+        const percentStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(%)')
         const secondStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(秒)')
         if ((percentStat && percentStat.stat_value !== '0') || (secondStat && secondStat.stat_value !== '0')) {
-          stat = { stat_name: config.display, stat_value: 'combined' }
           value = formatStatValue(config, '0')
           hasData = true
         }
@@ -131,7 +139,6 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
         for (const apiName of config.apiName) {
           const foundStat = statData.final_stat?.find(s => s.stat_name === apiName)
           if (foundStat && foundStat.stat_value !== '0') {
-            stat = foundStat
             value = formatStatValue(config, foundStat.stat_value)
             hasData = true
             break
@@ -140,7 +147,7 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
       }
     } else {
       // 單一欄位名稱
-      stat = statData.final_stat?.find(s => s.stat_name === config.apiName)
+      const stat = statData.final_stat?.find(s => s.stat_name === config.apiName)
       if (stat && stat.stat_value !== '0') {
         value = formatStatValue(config, stat.stat_value)
         hasData = true
@@ -155,10 +162,10 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
   }).filter(stat => stat.has_data)
 
   // 取得戰鬥力數據並轉換為中文單位
-  const formatChineseNumber = (num) => {
+  const formatChineseNumber = (num: number | string): string => {
     if (!num || num === '0') return '0'
 
-    const number = parseInt(num.replace(/,/g, ''))
+    const number = parseInt(num.toString().replace(/,/g, ''))
 
     if (number >= 100000000) {
       const yi = Math.floor(number / 100000000)
@@ -191,13 +198,13 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
   const combatPower = combatPowerStat ? formatChineseNumber(combatPowerStat.stat_value) : '0'
 
   // 極限屬性相關函數
-  const getRemainPoints = (presetNo) => {
+  const getRemainPoints = (presetNo: string): number => {
     if (!hyperStatData) return 0
-    const remainPointKey = `hyper_stat_preset_${presetNo}_remain_point`
-    return hyperStatData[remainPointKey] || 0
+    const remainPointKey = `hyper_stat_preset_${presetNo}_remain_point` as keyof CharacterHyperStat
+    return (hyperStatData[remainPointKey] as number) || 0
   }
 
-  const renderHyperStatList = (hyperStatPreset) => {
+  const renderHyperStatList = (hyperStatPreset?: HyperStatPreset[]) => {
     if (!hyperStatPreset || hyperStatPreset.length === 0) {
       return (
         <div className="text-center py-4 text-xs text-muted-foreground">
@@ -236,7 +243,7 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
   }
 
   // 角色內在潛能相關函數
-  const getGradeColor = (grade) => {
+  const getGradeColor = (grade: string): string => {
     switch (grade) {
       case '傳說':
         return 'text-green-700 dark:text-green-300 border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-950/50'
@@ -251,9 +258,9 @@ export function StatDisplay({ statData, hyperStatData, abilityData }) {
     }
   }
 
-  const renderAbilityList = (abilityInfo) => (
+  const renderAbilityList = (abilityInfo?: AbilityInfo[]) => (
     <div className="space-y-1">
-      {abilityInfo?.length > 0 ? (
+      {abilityInfo && abilityInfo.length > 0 ? (
         abilityInfo.map((ability, index) => (
           <div key={index} className={`p-2 rounded ${getGradeColor(ability.ability_grade)}`}>
             <p className="text-xs">{ability.ability_value}</p>
