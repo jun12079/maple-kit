@@ -1,10 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
 import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
 import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
-import SolErdaFragmentIcon from  "@/assets/images/items/icons/SolErdaFragment_icon.png";
-import ArcaneAuthenticSymbolSelectCoupon from  "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
+import SolErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
+import ArcaneAuthenticSymbolSelectCoupon from "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
 import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
 import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s1-challenger-medal.png";
 import ExpCoupon from "@/assets/images/items/icons/EXPCoupon_icon.png";
@@ -15,7 +14,7 @@ export const metadata = {
   keywords: "新楓之谷, MapleStory, 命運武器, 創世武器, HEXA技能, 遊戲工具",
 };
 
-export default function Home(): React.ReactElement {
+export default function Home() {
   return (
     <div className="mx-auto px-4 py-8">
       <div className="flex flex-col items-center text-center pt-10">

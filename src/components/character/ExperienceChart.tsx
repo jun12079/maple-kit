@@ -7,13 +7,17 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 
-/**
- * 角色經驗值圖表組件 - 顯示近7天的經驗值變化
- * @param {Object} props
- * @param {Array} props.experienceData - 七天經驗值數據
- * @returns {JSX.Element}
- */
-export function ExperienceChart({ experienceData }) {
+interface ExperienceDataPoint {
+  date: string
+  fullDate: string
+  exp: number
+}
+
+interface ExperienceChartProps {
+  experienceData?: ExperienceDataPoint[] | null
+}
+
+export function ExperienceChart({ experienceData }: ExperienceChartProps) {
   const chartConfig = {
     exp: {
       label: '經驗值',
@@ -22,7 +26,7 @@ export function ExperienceChart({ experienceData }) {
   }
 
   // 計算經驗值變化百分比（當天 - 7天前）
-  const calculateExpChange = () => {
+  const calculateExpChange = (): string | null => {
     if (!experienceData || experienceData.length < 2) return null
     
     const today = experienceData[experienceData.length - 1] // 最新一筆（當天）

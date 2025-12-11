@@ -3,13 +3,21 @@
 import { Heart, X, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
+interface FavoritesListProps {
+  favorites: string[]
+  isLoaded: boolean
+  onSelectFavorite: (characterName: string) => void
+  onRemoveFavorite: (characterName: string) => void
+  className?: string
+}
+
 export function FavoritesList({ 
   favorites, 
   isLoaded, 
   onSelectFavorite, 
   onRemoveFavorite,
   className = "" 
-}) {
+}: FavoritesListProps) {
   // 如果還沒載入完成，顯示載入狀態
   if (!isLoaded) {
     return (
