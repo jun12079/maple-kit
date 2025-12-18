@@ -57,6 +57,7 @@ interface ExperienceDataPoint {
   date: string
   fullDate: string
   exp: number
+  level: number
 }
 
 export default function CharacterSearch() {
@@ -174,6 +175,16 @@ export default function CharacterSearch() {
     try {
       const data: ExperienceDataPoint[] = []
       const today = new Date()
+      let currentLevel = 0
+
+      // 獲取今天的等級
+      try {
+        const todayBasic = await mapleAPI.getCharacterBasic(characterOcid, null)
+        currentLevel = todayBasic.character_level
+      } catch {
+        // 如果獲取失敗，使用預設值
+        currentLevel = 0
+      }
 
       // 獲取過去6天的數據（加上今天共7天）
       for (let i = 6; i >= 1; i--) {
@@ -187,6 +198,7 @@ export default function CharacterSearch() {
           data.push({
             date: `${date.getMonth() + 1}/${date.getDate()}`,
             exp: parseFloat(basicInfo.character_exp_rate || '0'),
+            level: basicInfo.character_level,
             fullDate: dateString
           })
         } catch {
@@ -194,6 +206,7 @@ export default function CharacterSearch() {
           data.push({
             date: `${date.getMonth() + 1}/${date.getDate()}`,
             exp: 0,
+            level: 0,
             fullDate: dateString
           })
         }
@@ -206,6 +219,7 @@ export default function CharacterSearch() {
       data.push({
         date: `${today.getMonth() + 1}/${today.getDate()}`,
         exp: parseFloat(todayExpRate || '0'),
+        level: currentLevel,
         fullDate: today.toISOString().split('T')[0]
       })
 

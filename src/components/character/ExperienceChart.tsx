@@ -11,6 +11,7 @@ interface ExperienceDataPoint {
   date: string
   fullDate: string
   exp: number
+  level: number
 }
 
 interface ExperienceChartProps {
@@ -25,17 +26,27 @@ export function ExperienceChart({ experienceData }: ExperienceChartProps) {
     },
   }
 
-  // 計算經驗值變化百分比（當天 - 7天前）
+  // 計算經驗值總變化（7天前到今天的經驗差異，考慮升級）
   const calculateExpChange = (): string | null => {
     if (!experienceData || experienceData.length < 2) return null
     
-    const today = experienceData[experienceData.length - 1] // 最新一筆（當天）
-    const weekAgo = experienceData[0] // 最早一筆（7天前）
+    const first = experienceData[0] // 7天前
+    const last = experienceData[experienceData.length - 1] // 今天
     
-    if (!today || !weekAgo) return null
+    if (first.level === 0 || last.level === 0) return null
     
-    const change = today.exp - weekAgo.exp
-    return change >= 0 ? `+${change.toFixed(3)}%` : `${change.toFixed(3)}%`
+    let change: number
+    if (first.level === last.level) {
+      // 同等級：直接計算經驗值百分比差異
+      change = last.exp - first.exp
+    } else {
+      // 跨等級：計算實際的經驗值變化
+      // 第一天到滿級的經驗值 + 中間等級的經驗值 + 最後一天的經驗值
+      const levelDiff = last.level - first.level
+      change = (100 - first.exp) + (levelDiff - 1) * 100 + last.exp
+    }
+    
+    return change >= 0 ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`
   }
 
   const expChange = calculateExpChange()
