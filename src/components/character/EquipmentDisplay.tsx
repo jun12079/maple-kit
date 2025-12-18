@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import Image from 'next/image'
 import { Star, Package } from 'lucide-react'
-import type { CharacterItemEquipment, CharacterSymbolEquipment, ItemEquipment, Title, Symbol } from '@/types/mapleAPI'
+import type { CharacterItemEquipment, CharacterSymbolEquipment, ItemEquipment, Title, Symbol, CharacterPetEquipment, PetEquipment } from '@/types/mapleAPI'
 
 interface EquipmentDisplayProps {
   equipmentData: CharacterItemEquipment
   symbolData?: CharacterSymbolEquipment
+  petData?: CharacterPetEquipment
 }
 
 interface SymbolInfo {
@@ -46,18 +46,28 @@ interface EquipmentInfo {
 
 type EquipmentItem = ItemEquipment | Title
 
-export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplayProps) {
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentItem | null>(null)
+interface PetInfo {
+  name: string
+  icon: string
+  equipment: PetEquipment
+  slotName: string
+}
 
-  // 裝備位置映射 (7x4 grid for desktop)
+type SelectedItem = EquipmentItem | PetInfo
+
+export function EquipmentDisplay({ equipmentData, symbolData, petData }: EquipmentDisplayProps) {
+  const [selectedEquipment, setSelectedEquipment] = useState<SelectedItem | null>(null)
+  const [activePreset, setActivePreset] = useState<string>(equipmentData.preset_no?.toString() || '1')
+
+  // 裝備位置映射 (6x6 grid for desktop)
   const equipmentSlots: string[][] = [
-    ['戒指1', '臉飾', '墜飾', '帽子', '披風', '武器', '稱號'],
-    ['戒指2', '眼飾', '墜飾2', '上衣', '手套', '輔助武器', ''],
-    ['戒指3', '腰帶', '胸章', '褲/裙', '鞋子', '徽章', ''],
-    ['戒指4', '耳環', '勳章', '肩膀裝飾', '機器心臟', '口袋道具', '']
+    ['戒指1', '臉飾', '耳環', '帽子', '披風', '稱號', '勳章', '機器心臟'],
+    ['戒指2', '眼飾', '墜飾', '上衣', '手套', '武器', '輔助武器', '徽章'],
+    ['戒指3', '腰帶', '墜飾2', '褲/裙', '鞋子', '寵物1', '寵物2', '寵物3'],
+    ['戒指4', '胸章', '口袋道具', '肩膀裝飾', '', '寵物裝備1', '寵物裝備2', '寵物裝備3']
   ]
 
-  // 手機版裝備位置映射 (4x7 grid for mobile)
+  // 手機版裝備位置映射 (4x9 grid for mobile)
   const equipmentSlotsMobile: string[][] = [
     ['戒指1', '戒指2', '戒指3', '戒指4'],
     ['臉飾', '眼飾', '腰帶', '耳環'],
@@ -65,7 +75,9 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
     ['帽子', '上衣', '褲/裙', '肩膀裝飾'],
     ['披風', '手套', '鞋子', '機器心臟'],
     ['武器', '輔助武器', '徽章', '口袋道具'],
-    ['稱號', '', '', '']
+    ['稱號', '', '', ''],
+    ['寵物1', '寵物裝備1', '寵物2', '寵物裝備2'],
+    ['寵物3', '寵物裝備3', '', '']
   ]
 
   const formatNumber = (num: number | string): string => {
@@ -184,36 +196,131 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
     return itemList.find(item => slot(item) === partName) || null
   }
 
+  // 根據寵物槽位找出對應的寵物資訊
+  const findPetBySlot = (slotName: string): PetInfo | null => {
+    if (!petData) return null
+
+    if (slotName === '寵物1' && petData.pet_1_name) {
+      return {
+        name: petData.pet_1_name,
+        icon: petData.pet_1_icon,
+        equipment: petData.pet_1_equipment,
+        slotName
+      }
+    } else if (slotName === '寵物裝備1' && petData.pet_1_equipment?.item_name) {
+      return {
+        name: petData.pet_1_name,
+        icon: petData.pet_1_icon,
+        equipment: petData.pet_1_equipment,
+        slotName
+      }
+    } else if (slotName === '寵物2' && petData.pet_2_name) {
+      return {
+        name: petData.pet_2_name,
+        icon: petData.pet_2_icon,
+        equipment: petData.pet_2_equipment,
+        slotName
+      }
+    } else if (slotName === '寵物裝備2' && petData.pet_2_equipment?.item_name) {
+      return {
+        name: petData.pet_2_name,
+        icon: petData.pet_2_icon,
+        equipment: petData.pet_2_equipment,
+        slotName
+      }
+    } else if (slotName === '寵物3' && petData.pet_3_name) {
+      return {
+        name: petData.pet_3_name,
+        icon: petData.pet_3_icon,
+        equipment: petData.pet_3_equipment,
+        slotName
+      }
+    } else if (slotName === '寵物裝備3' && petData.pet_3_equipment?.item_name) {
+      return {
+        name: petData.pet_3_name,
+        icon: petData.pet_3_icon,
+        equipment: petData.pet_3_equipment,
+        slotName
+      }
+    }
+    return null
+  }
+
   // 類型守衛函數
-  const isTitle = (item: EquipmentItem): item is Title => {
+  const isTitle = (item: SelectedItem): item is Title => {
     return 'title_name' in item
   }
 
-  const isItemEquipment = (item: EquipmentItem): item is ItemEquipment => {
-    return 'item_name' in item
+  const isItemEquipment = (item: SelectedItem): item is ItemEquipment => {
+    return 'item_name' in item && !('equipment' in item)
+  }
+
+  const isPetInfo = (item: SelectedItem): item is PetInfo => {
+    return 'equipment' in item && 'name' in item
+  }
+
+  // 判斷是否選中
+  const isSelected = (candidate: SelectedItem | null) => {
+    if (!selectedEquipment || !candidate) return false
+    
+    // 如果是寵物，比較 slotName
+    if (isPetInfo(selectedEquipment) && isPetInfo(candidate)) {
+      return selectedEquipment.slotName === candidate.slotName
+    }
+    
+    // 其他情況比較引用
+    return selectedEquipment === candidate
   }
 
   // 渲染裝備網格中的單個裝備槽
   const renderEquipmentSlot = (partName: string, itemList: ItemEquipment[] | undefined, titleData?: Title, slotIndex?: number) => {
-    const item = findEquipmentByPart(itemList, partName, titleData)
-    const isEmpty = !partName || !item
+    // 檢查是否為寵物槽位
+    const isPetSlot = partName.includes('寵物')
+    const petInfo = isPetSlot ? findPetBySlot(partName) : null
+    const item = isPetSlot ? null : findEquipmentByPart(itemList, partName, titleData)
+    const isEmpty = !partName || (!item && !petInfo)
     const isTitleItem = item && isTitle(item)
+    const isPetEquipmentSlot = partName.includes('裝備') && isPetSlot
+
+    const currentItem = petInfo || item
+    const selected = isSelected(currentItem)
 
     return (
       <div key={partName || `empty-${slotIndex}`} className="flex flex-col items-center">
         <Button
-          variant={selectedEquipment === item ? "default" : "outline"}
+          variant="outline"
           className={`
             h-16 w-16 p-1 relative
-            ${isEmpty ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent/50 dark:hover:bg-accent/50'}
-            ${selectedEquipment === item ? 'bg-primary/10 border-primary dark:bg-primary/20 dark:border-primary' : ''}
+            ${isEmpty ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+            ${selected 
+              ? 'bg-primary/10 dark:bg-primary/20 border-primary hover:bg-primary/10 dark:hover:bg-primary/20' 
+              : (!isEmpty ? 'hover:bg-accent/50 dark:hover:bg-accent/50' : '')
+            }
           `}
-          onClick={() => isEmpty ? null : setSelectedEquipment(item)}
-          disabled={isEmpty}
+          onClick={() => !isEmpty && setSelectedEquipment(currentItem)}
         >
           {isEmpty ? (
             <div className="flex flex-col items-center justify-center">
               <Package className="h-4 w-4 text-gray-400" />
+            </div>
+          ) : petInfo ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="flex flex-col items-center justify-center flex-1">
+                {(isPetEquipmentSlot ? petInfo.equipment.item_icon : petInfo.icon) ? (
+                  <Image
+                    src={isPetEquipmentSlot ? petInfo.equipment.item_icon : petInfo.icon}
+                    alt={isPetEquipmentSlot ? petInfo.equipment.item_name : petInfo.name}
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 object-contain"
+                    style={{ imageRendering: 'crisp-edges' }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                    priority={false}
+                  />
+                ) : (
+                  <Package className="h-6 w-6 text-gray-600" />
+                )}
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full">
@@ -235,7 +342,7 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
                 )}
               </div>
               {/* 只有裝備才顯示星力，固定在底部 */}
-              {!isTitleItem && isItemEquipment(item) && item.starforce && parseInt(item.starforce) > 0 && (
+              {!isTitleItem && item && isItemEquipment(item) && item.starforce && parseInt(item.starforce) > 0 && (
                 <div className="flex items-center text-yellow-600 mt-0.5">
                   <Star className="h-3 w-3 fill-current" />
                   <span className="text-xs font-bold">{item.starforce}</span>
@@ -301,9 +408,107 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
     )
   }
 
+  // 渲染寵物裝備詳細資訊
+  const renderPetEquipmentDetail = (petInfo: PetInfo) => {
+    if (!petInfo || !petInfo.equipment) return null
+
+    const equipment = petInfo.equipment
+
+    return (
+      <div className="space-y-4">
+        {/* 寵物標題 */}
+        <div className="flex items-start gap-3 pb-2 border-b">
+          {petInfo.icon && (
+            <Image
+              src={petInfo.icon}
+              alt={petInfo.name}
+              width={32}
+              height={32}
+              className="w-8 h-8 flex-shrink-0"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            />
+          )}
+          <div className="flex-1 min-w-0">
+            <h4 className="font-semibold text-sm">{petInfo.name}</h4>
+            <Badge variant="outline">寵物</Badge>
+          </div>
+        </div>
+
+        {/* 寵物裝備資訊 */}
+        {equipment.item_name && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              {equipment.item_icon && (
+                <Image
+                  src={equipment.item_icon}
+                  alt={equipment.item_name}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+              )}
+              <h5 className="font-semibold text-sm">{equipment.item_name}</h5>
+            </div>
+
+            {/* 裝備描述 */}
+            {equipment.item_description && (
+              <div className="bg-muted/30 p-3 rounded">
+                <p className="text-xs text-muted-foreground whitespace-pre-line">
+                  {equipment.item_description}
+                </p>
+              </div>
+            )}
+
+            {/* 裝備選項 */}
+            {equipment.item_option && equipment.item_option.length > 0 && (
+              <div className="space-y-2">
+                <h5 className="font-semibold text-sm">裝備屬性</h5>
+                <div className="space-y-1">
+                  {equipment.item_option.map((option, index) => (
+                    <div key={index} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
+                      <div className="text-xs text-muted-foreground">{option.option_type}</div>
+                      <div className="font-mono text-xs font-semibold text-foreground">+{option.option_value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 卷軸升級資訊 */}
+            {(equipment.scroll_upgrade > 0 || equipment.scroll_upgradable > 0) && (
+              <div className="space-y-2 pt-2 border-t">
+                <h5 className="font-semibold text-sm">升級資訊</h5>
+                <div className="space-y-1">
+                  {equipment.scroll_upgrade > 0 && (
+                    <div className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
+                      <div className="text-xs text-muted-foreground">已升級次數</div>
+                      <div className="font-mono text-xs font-semibold text-foreground">{equipment.scroll_upgrade}次</div>
+                    </div>
+                  )}
+                  {equipment.scroll_upgradable > 0 && (
+                    <div className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
+                      <div className="text-xs text-muted-foreground">可升級次數</div>
+                      <div className="font-mono text-xs font-semibold text-foreground">{equipment.scroll_upgradable}次</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   // 渲染裝備詳細資訊
-  const renderEquipmentDetail = (item: EquipmentItem) => {
+  const renderEquipmentDetail = (item: SelectedItem) => {
     if (!item) return null
+
+    // 如果是寵物，使用寵物專用渲染函數
+    if (isPetInfo(item)) {
+      return renderPetEquipmentDetail(item)
+    }
 
     // 如果是稱號，使用稱號專用渲染函數
     if (isTitle(item)) {
@@ -608,29 +813,24 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold">符文資訊</h3>
-          <Badge variant="outline" className="text-xs">共 {symbolData.symbol.length} 個符文</Badge>
         </div>
 
         {/* 符文統計 */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/30 p-3 rounded-lg">
-            <div className="text-xs text-muted-foreground mb-1">ARC</div>
+            <div className="text-xs text-muted-foreground mb-1">ARC: {symbolStats.arc.force}</div>
             <div className="space-y-0.5">
-              <div className="text-sm font-semibold">力量: {symbolStats.arc.force}</div>
               <div className="text-xs text-muted-foreground">屬性: +{symbolStats.arc.stats}</div>
             </div>
           </div>
           <div className="bg-muted/30 p-3 rounded-lg">
-            <div className="text-xs text-muted-foreground mb-1">AUT</div>
+            <div className="text-xs text-muted-foreground mb-1">AUT: {symbolStats.aut.force}</div>
             <div className="space-y-0.5">
-              <div className="text-sm font-semibold">力量: {symbolStats.aut.force}</div>
               <div className="text-xs text-muted-foreground">屬性: +{symbolStats.aut.stats}</div>
             </div>
           </div>
           <div className="bg-muted/30 p-3 rounded-lg">
-            <div className="text-xs text-muted-foreground mb-1">總計</div>
             <div className="space-y-0.5">
-              <div className="text-sm font-semibold">全屬性: +{symbolStats.total.stats}</div>
               {symbolStats.total.dropRate > 0 && <div className="text-xs text-muted-foreground">掉寶: +{symbolStats.total.dropRate}%</div>}
               {symbolStats.total.mesoRate > 0 && <div className="text-xs text-muted-foreground">楓掉: +{symbolStats.total.mesoRate}%</div>}
               {symbolStats.total.expRate > 0 && <div className="text-xs text-muted-foreground">經驗: +{symbolStats.total.expRate}%</div>}
@@ -666,13 +866,16 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
                     <div className="space-y-2">
                       <div className="font-semibold text-sm">{symbol.symbol_name}</div>
                       <div className="text-xs space-y-1">
-                        <div>力量: {symbol.symbol_force}</div>
+                        <div>符文: {symbol.symbol_force}</div>
                         <div>等級: {symbol.symbol_level}/{symbolInfo.maxLevel}</div>
-                        <div>STR/DEX/INT/LUK: +{symbol.symbol_str}/{symbol.symbol_dex}/{symbol.symbol_int}/{symbol.symbol_luk}</div>
+                        <div>STR: +{symbol.symbol_str}</div>
+                        <div>DEX: +{symbol.symbol_dex}</div>
+                        <div>INT: +{symbol.symbol_int}</div>
+                        <div>LUK: +{symbol.symbol_luk}</div>
                         <div>HP: +{symbol.symbol_hp}</div>
-                        {symbol.symbol_drop_rate !== '0' && <div>掉寶: +{symbol.symbol_drop_rate}%</div>}
-                        {symbol.symbol_meso_rate !== '0' && <div>楓掉: +{symbol.symbol_meso_rate}%</div>}
-                        {symbol.symbol_exp_rate !== '0' && <div>經驗: +{symbol.symbol_exp_rate}%</div>}
+                        {symbol.symbol_drop_rate !== '0' && <div>掉寶: +{symbol.symbol_drop_rate}</div>}
+                        {symbol.symbol_meso_rate !== '0' && <div>楓幣: +{symbol.symbol_meso_rate}</div>}
+                        {symbol.symbol_exp_rate !== '0' && <div>經驗: +{symbol.symbol_exp_rate}</div>}
                         <div className="pt-1 border-t">成長: {symbol.symbol_growth_count}/{symbol.symbol_require_growth_count}</div>
                       </div>
                     </div>
@@ -691,23 +894,29 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
     return (
       <div className="space-y-4">
         {/* 桌面版裝備網格 */}
-        <div className="hidden lg:grid lg:grid-cols-7 gap-2">
-          {equipmentSlots.map((row, rowIndex) =>
-            row.map((partName, colIndex) =>
-              renderEquipmentSlot(partName, itemList, equipmentData?.title, rowIndex * 7 + colIndex)
-            )
-          )}
+        <div className="hidden lg:flex lg:justify-center">
+          <div className="grid grid-cols-8 gap-2 w-fit">
+            {equipmentSlots.map((row, rowIndex) => (
+              <div key={rowIndex} className="contents">
+                {row.map((partName, colIndex) =>
+                  renderEquipmentSlot(partName, itemList, equipmentData?.title, rowIndex * 6 + colIndex)
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 手機版裝備網格 */}
-        <div className="grid grid-cols-4 gap-2 lg:hidden">
-          {equipmentSlotsMobile.map((row, rowIndex) => (
-            <div key={rowIndex} className="contents">
-              {row.map((partName, colIndex) =>
-                renderEquipmentSlot(partName, itemList, equipmentData?.title, rowIndex * 4 + colIndex)
-              )}
-            </div>
-          ))}
+        <div className="flex justify-center lg:hidden">
+          <div className="grid grid-cols-4 gap-2 w-fit">
+            {equipmentSlotsMobile.map((row, rowIndex) => (
+              <div key={rowIndex} className="contents">
+                {row.map((partName, colIndex) =>
+                  renderEquipmentSlot(partName, itemList, equipmentData?.title, rowIndex * 4 + colIndex)
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 選中裝備的詳細資訊 */}
@@ -757,7 +966,35 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">裝備資訊</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg">裝備資訊</CardTitle>
+          <div className="flex gap-1">
+            <Button
+              variant={activePreset === '1' ? 'default' : 'outline'}
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => { setActivePreset('1'); setSelectedEquipment(null); }}
+            >
+              預設 1
+            </Button>
+            <Button
+              variant={activePreset === '2' ? 'default' : 'outline'}
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => { setActivePreset('2'); setSelectedEquipment(null); }}
+            >
+              預設 2
+            </Button>
+            <Button
+              variant={activePreset === '3' ? 'default' : 'outline'}
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => { setActivePreset('3'); setSelectedEquipment(null); }}
+            >
+              預設 3
+            </Button>
+          </div>
+        </div>
         <CardDescription className="text-sm">
           {symbolData && symbolData.symbol && symbolData.symbol.length > 0 && (
             <>
@@ -767,29 +1004,11 @@ export function EquipmentDisplay({ equipmentData, symbolData }: EquipmentDisplay
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
-        <Tabs
-          defaultValue={equipmentData.preset_no?.toString() || "1"}
-          className="w-full"
-          onValueChange={() => setSelectedEquipment(null)}
-        >
-          <TabsList className="grid w-full grid-cols-3 h-9">
-            <TabsTrigger value="1" className="text-sm">預設 1</TabsTrigger>
-            <TabsTrigger value="2" className="text-sm">預設 2</TabsTrigger>
-            <TabsTrigger value="3" className="text-sm">預設 3</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="1" className="mt-3 space-y-0">
-            {renderEquipmentPreset(equipmentData.item_equipment_preset_1)}
-          </TabsContent>
-
-          <TabsContent value="2" className="mt-3 space-y-0">
-            {renderEquipmentPreset(equipmentData.item_equipment_preset_2)}
-          </TabsContent>
-
-          <TabsContent value="3" className="mt-3 space-y-0">
-            {renderEquipmentPreset(equipmentData.item_equipment_preset_3)}
-          </TabsContent>
-        </Tabs>
+        <div className="mt-3 space-y-0">
+          {activePreset === '1' && renderEquipmentPreset(equipmentData.item_equipment_preset_1)}
+          {activePreset === '2' && renderEquipmentPreset(equipmentData.item_equipment_preset_2)}
+          {activePreset === '3' && renderEquipmentPreset(equipmentData.item_equipment_preset_3)}
+        </div>
       </CardContent>
     </Card>
   )

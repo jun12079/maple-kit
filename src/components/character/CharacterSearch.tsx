@@ -31,7 +31,8 @@ import type {
   CharacterSkill,
   CharacterHexaMatrixStat,
   CharacterLinkSkill,
-  CharacterUnion
+  CharacterUnion,
+  CharacterPetEquipment
 } from '@/types/mapleAPI'
 
 interface BasicData {
@@ -76,6 +77,7 @@ export default function CharacterSearch() {
   const [skillData, setSkillData] = useState<SkillData | null>(null)
   const [unionData, setUnionData] = useState<CharacterUnion | null>(null)
   const [experienceData, setExperienceData] = useState<ExperienceDataPoint[] | null>(null)
+  const [petData, setPetData] = useState<CharacterPetEquipment | null>(null)
 
   // 簡化的頻率限制狀態
   const [isSearchDisabled, setIsSearchDisabled] = useState<boolean>(false)
@@ -98,6 +100,7 @@ export default function CharacterSearch() {
     setSymbolData(null)
     setDojangData(null)
     setSkillData(null)
+    setPetData(null)
     setUnionData(null)
     setExperienceData(null)
   }
@@ -105,7 +108,7 @@ export default function CharacterSearch() {
   const loadAllData = async (characterOcid: string) => {
     try {
       // 載入基本資料和符文資料
-      const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union] = await Promise.allSettled([
+      const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union, petEquipment] = await Promise.allSettled([
         mapleAPI.getCharacterBasic(characterOcid),
         mapleAPI.getCharacterPopularity(characterOcid),
         mapleAPI.getCharacterStat(characterOcid),
@@ -118,7 +121,8 @@ export default function CharacterSearch() {
         mapleAPI.getCharacterHexaMatrixStat(characterOcid),
         mapleAPI.getCharacterVMatrix(characterOcid), // character_skill_grade = 5
         mapleAPI.getCharacterLinkSkill(characterOcid),
-        mapleAPI.getUnion(characterOcid)
+        mapleAPI.getUnion(characterOcid),
+        mapleAPI.getCharacterPetEquipment(characterOcid)
       ])
 
       // 設定基本資料
@@ -148,6 +152,11 @@ export default function CharacterSearch() {
       // 設定符文資料
       if (symbols.status === 'fulfilled') {
         setSymbolData(symbols.value)
+      }
+
+      // 設定寵物資料
+      if (petEquipment.status === 'fulfilled') {
+        setPetData(petEquipment.value)
       }
 
       // 設定技能資料
@@ -417,15 +426,15 @@ export default function CharacterSearch() {
             {basicData ? (
               <>
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                  <div className="lg:col-span-4">
+                  <div className="lg:col-span-5">
                     <StatDisplay
                       statData={basicData.stat}
                       hyperStatData={basicData.hyperStat}
                       abilityData={basicData.ability}
                     />
                   </div>
-                  <div className="lg:col-span-8">
-                    <EquipmentDisplay equipmentData={basicData.equipment} symbolData={symbolData as any} />
+                  <div className="lg:col-span-7">
+                    <EquipmentDisplay equipmentData={basicData.equipment} symbolData={symbolData as any} petData={petData as any} />
                   </div>
                 </div>
               </>
