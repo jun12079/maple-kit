@@ -9,6 +9,7 @@ interface ExperienceDataPoint {
   date: string
   fullDate: string
   exp: number
+  level: number
 }
 
 interface CharacterCardProps {
