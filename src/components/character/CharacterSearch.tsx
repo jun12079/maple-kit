@@ -14,6 +14,7 @@ import { StatDisplay } from '@/components/character/StatDisplay'
 import { EquipmentDisplay } from '@/components/character/EquipmentDisplay'
 import { SkillDisplay } from '@/components/character/SkillDisplay'
 import { FavoritesList } from '@/components/character/FavoritesList'
+import { UnionRaiderDisplay } from '@/components/character/UnionRaiderDisplay'
 
 // 導入最愛管理 hook
 import { useFavorites } from '@/hooks/useFavorites'
@@ -32,6 +33,7 @@ import type {
   CharacterHexaMatrixStat,
   CharacterLinkSkill,
   CharacterUnion,
+  CharacterUnionRaider,
   CharacterPetEquipment
 } from '@/types/mapleAPI'
 
@@ -76,6 +78,7 @@ export default function CharacterSearch() {
   const [dojangData, setDojangData] = useState<CharacterDojang | null>(null)
   const [skillData, setSkillData] = useState<SkillData | null>(null)
   const [unionData, setUnionData] = useState<CharacterUnion | null>(null)
+  const [unionRaiderData, setUnionRaiderData] = useState<CharacterUnionRaider | null>(null)
   const [experienceData, setExperienceData] = useState<ExperienceDataPoint[] | null>(null)
   const [petData, setPetData] = useState<CharacterPetEquipment | null>(null)
 
@@ -102,13 +105,14 @@ export default function CharacterSearch() {
     setSkillData(null)
     setPetData(null)
     setUnionData(null)
+    setUnionRaiderData(null)
     setExperienceData(null)
   }
 
   const loadAllData = async (characterOcid: string) => {
     try {
       // 載入基本資料和符文資料
-      const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union, petEquipment] = await Promise.allSettled([
+      const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union, unionRaider, petEquipment] = await Promise.allSettled([
         mapleAPI.getCharacterBasic(characterOcid),
         mapleAPI.getCharacterPopularity(characterOcid),
         mapleAPI.getCharacterStat(characterOcid),
@@ -122,6 +126,7 @@ export default function CharacterSearch() {
         mapleAPI.getCharacterVMatrix(characterOcid), // character_skill_grade = 5
         mapleAPI.getCharacterLinkSkill(characterOcid),
         mapleAPI.getUnion(characterOcid),
+        mapleAPI.getUnionRaider(characterOcid),
         mapleAPI.getCharacterPetEquipment(characterOcid)
       ])
 
@@ -147,6 +152,11 @@ export default function CharacterSearch() {
       // 設定戰地資料
       if (union.status === 'fulfilled') {
         setUnionData(union.value)
+      }
+
+      // 設定戰地攻擊隊資料
+      if (unionRaider.status === 'fulfilled') {
+        setUnionRaiderData(unionRaider.value)
       }
 
       // 設定符文資料
@@ -412,12 +422,15 @@ export default function CharacterSearch() {
       {/* 詳細資料分頁 */}
       {ocid && (
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="basic" className="flex items-center gap-1">
               基本
             </TabsTrigger>
             <TabsTrigger value="skill" className="flex items-center gap-1">
               技能
+            </TabsTrigger>
+            <TabsTrigger value="union" className="flex items-center gap-1">
+              戰地
             </TabsTrigger>
           </TabsList>
 
@@ -457,6 +470,17 @@ export default function CharacterSearch() {
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 搜尋中...
+              </div>
+            )}
+          </TabsContent>
+
+          {/* 戰地分頁 */}
+          <TabsContent value="union">
+            {unionRaiderData ? (
+              <UnionRaiderDisplay unionRaiderData={unionRaiderData} />
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                {isLoading ? '搜尋中...' : '無戰地資料'}
               </div>
             )}
           </TabsContent>
