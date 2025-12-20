@@ -34,6 +34,7 @@ import type {
   CharacterLinkSkill,
   CharacterUnion,
   CharacterUnionRaider,
+  CharacterUnionArtifact,
   CharacterPetEquipment
 } from '@/types/mapleAPI'
 
@@ -78,6 +79,7 @@ export default function CharacterSearch() {
   const [dojangData, setDojangData] = useState<CharacterDojang | null>(null)
   const [skillData, setSkillData] = useState<SkillData | null>(null)
   const [unionData, setUnionData] = useState<CharacterUnion | null>(null)
+  const [unionArtifactData, setUnionArtifactData] = useState<CharacterUnionArtifact | null>(null)
   const [unionRaiderData, setUnionRaiderData] = useState<CharacterUnionRaider | null>(null)
   const [experienceData, setExperienceData] = useState<ExperienceDataPoint[] | null>(null)
   const [petData, setPetData] = useState<CharacterPetEquipment | null>(null)
@@ -105,14 +107,14 @@ export default function CharacterSearch() {
     setSkillData(null)
     setPetData(null)
     setUnionData(null)
-    setUnionRaiderData(null)
+    setUnionArtifactData(null)
     setExperienceData(null)
   }
 
   const loadAllData = async (characterOcid: string) => {
     try {
       // 載入基本資料和符文資料
-      const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union, unionRaider, petEquipment] = await Promise.allSettled([
+      const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union, unionRaider, unionArtifact, petEquipment] = await Promise.allSettled([
         mapleAPI.getCharacterBasic(characterOcid),
         mapleAPI.getCharacterPopularity(characterOcid),
         mapleAPI.getCharacterStat(characterOcid),
@@ -127,6 +129,7 @@ export default function CharacterSearch() {
         mapleAPI.getCharacterLinkSkill(characterOcid),
         mapleAPI.getUnion(characterOcid),
         mapleAPI.getUnionRaider(characterOcid),
+        mapleAPI.getUnionArtifact(characterOcid),
         mapleAPI.getCharacterPetEquipment(characterOcid)
       ])
 
@@ -157,6 +160,11 @@ export default function CharacterSearch() {
       // 設定戰地攻擊隊資料
       if (unionRaider.status === 'fulfilled') {
         setUnionRaiderData(unionRaider.value)
+      }
+
+      // 設定戰地神器資料
+      if (unionArtifact.status === 'fulfilled') {
+        setUnionArtifactData(unionArtifact.value)
       }
 
       // 設定符文資料
@@ -477,7 +485,11 @@ export default function CharacterSearch() {
           {/* 戰地分頁 */}
           <TabsContent value="union">
             {unionRaiderData ? (
-              <UnionRaiderDisplay unionRaiderData={unionRaiderData} />
+              <UnionRaiderDisplay 
+                unionRaiderData={unionRaiderData} 
+                unionArtifactData={unionArtifactData}
+                unionData={unionData}
+              />
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 {isLoading ? '搜尋中...' : '無戰地資料'}

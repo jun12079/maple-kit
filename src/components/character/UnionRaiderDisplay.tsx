@@ -1,10 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CharacterUnionRaider, UnionBlock } from '@/types/mapleAPI';
+import { CharacterUnionRaider, UnionBlock, CharacterUnionArtifact, CharacterUnion } from '@/types/mapleAPI';
+import { getArtifactImage } from '@/data/union/artifactData';
+import { getUnionGradeImage } from '@/data/union/raiderData';
 
 interface UnionRaiderDisplayProps {
   unionRaiderData: CharacterUnionRaider;
+  unionArtifactData?: CharacterUnionArtifact | null;
+  unionData?: CharacterUnion | null;
 }
 
 // 網格設定
@@ -64,8 +69,7 @@ const getBlockColor = (blockType: string, blockClass: string) => {
   const type = getJobType(blockType, blockClass);
   return BLOCK_COLORS[type] || BLOCK_COLORS.default;
 };
-
-export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRaiderData }) => {
+export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRaiderData, unionArtifactData, unionData }) => {
   const [selectedPreset, setSelectedPreset] = useState<number>(unionRaiderData.use_preset_no || 1);
 
   // 取得當前選擇的預設資料
@@ -162,10 +166,11 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
           <div className="w-4 h-4 rounded" style={{ background: BLOCK_COLORS[type] }}></div>
           <span>{label}{detailString}</span>
         </div>
-        <div className="pl-6 text-xs text-muted-foreground space-y-1 max-h-[200px] overflow-y-auto">
+        <div className="pl-6 text-xs text-muted-foreground space-y-1">
           {typeBlocks.map((block, idx) => (
-            <div key={idx}>
-              {block.block_class || block.block_type} (Lv.{block.block_level})
+            <div key={idx} className="flex justify-start items-center gap-2 border-slate-200 dark:border-slate-700 last:border-0 last:pb-0">
+              <span className="bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded inline-flex justify-center min-w-[3.5rem]">Lv.{block.block_level}</span>
+              <span>{block.block_class || block.block_type}</span>
             </div>
           ))}
         </div>
@@ -283,10 +288,28 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
   };
 
   return (
+    <div className="space-y-6">
     <Card className="w-full">
       <CardHeader>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <CardTitle>戰地攻擊隊</CardTitle>
+          <div>
+            <CardTitle>戰地攻擊隊</CardTitle>
+            {unionData && (
+              <CardDescription className="mt-1 flex items-center gap-2">
+                <span>聯盟等級: {unionData.union_level}</span>
+                {getUnionGradeImage(unionData.union_grade) && (
+                  <Image
+                    src={getUnionGradeImage(unionData.union_grade)!}
+                    alt={unionData.union_grade}
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
+                )}
+                <span>{unionData.union_grade}</span>
+              </CardDescription>
+            )}
+          </div>
           <div className="flex gap-2">
             {[1, 2, 3, 4, 5].map((preset) => (
               <Button
@@ -304,72 +327,145 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-          <div className="flex-shrink-0 overflow-auto max-w-full p-4 rounded-lg bg-white dark:bg-slate-900 mx-auto lg:mx-0">
-            <svg
-              width={GRID_WIDTH * CELL_SIZE}
-              height={GRID_HEIGHT * CELL_SIZE}
-              viewBox={`0 0 ${GRID_WIDTH * CELL_SIZE} ${GRID_HEIGHT * CELL_SIZE}`}
-            >
-              {renderGrid()}
-              {renderBlocks()}
-            </svg>
-          </div>
-          
-          <div className="flex-grow grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm w-full">
-            {renderLegendItem('warrior', '戰士')}
-            {renderLegendItem('magician', '法師')}
-            {renderLegendItem('bowman', '弓箭手')}
-            {renderLegendItem('thief', '盜賊')}
-            {renderLegendItem('pirate', '海盜')}
-            {renderLegendItem('default', 'LAB / 遠征隊')}
-          </div>
-        </div>
-
-        {/* 戰地效果顯示 */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* 攻擊隊員效果 */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-lg flex items-center gap-2">
-              <span className="w-1 h-5 bg-blue-500 rounded-full"></span>
-              攻擊隊員效果
-            </h3>
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 text-sm max-h-[300px] overflow-y-auto">
-              {raiderStats.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
-                  {raiderStats.map((stat, index) => (
-                    <div key={`raider-${index}`} className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-1">•</span>
-                      <span>{stat}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-muted-foreground text-center py-2">無攻擊隊員效果</div>
-              )}
+          {/* 左側：拼圖和職業圖例 */}
+          <div className="flex flex-col gap-6 flex-shrink-0">
+            <div className="overflow-auto max-w-full p-4 rounded-lg bg-white dark:bg-slate-900 mx-auto lg:mx-0">
+              <svg
+                width={GRID_WIDTH * CELL_SIZE}
+                height={GRID_HEIGHT * CELL_SIZE}
+                viewBox={`0 0 ${GRID_WIDTH * CELL_SIZE} ${GRID_HEIGHT * CELL_SIZE}`}
+              >
+                {renderGrid()}
+                {renderBlocks()}
+              </svg>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm w-full">
+              {renderLegendItem('warrior', '戰士')}
+              {renderLegendItem('magician', '法師')}
+              {renderLegendItem('bowman', '弓箭手')}
+              {renderLegendItem('thief', '盜賊')}
+              {renderLegendItem('pirate', '海盜')}
+              {renderLegendItem('default', 'LAB / 遠征隊')}
             </div>
           </div>
 
-          {/* 攻擊隊佔領效果 */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-lg flex items-center gap-2">
-              <span className="w-1 h-5 bg-green-500 rounded-full"></span>
-              攻擊隊佔領效果
-            </h3>
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 text-sm space-y-1 max-h-[300px] overflow-y-auto">
-              {occupiedStats.length > 0 ? (
-                occupiedStats.map((stat, index) => (
-                  <div key={`occupied-${index}`} className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">•</span>
-                    <span>{stat}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-muted-foreground text-center py-2">無佔領效果</div>
-              )}
+          {/* 右側：攻擊隊效果 */}
+          <div className="flex-grow w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 攻擊隊員效果 */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  攻擊隊員效果
+                </h3>
+                <div className="space-y-1">
+                  {raiderStats.length > 0 ? (
+                    raiderStats.map((stat, index) => (
+                      <div key={`raider-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>•</span>
+                        <span>{stat}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted-foreground text-center py-2 text-xs">無攻擊隊員效果</div>
+                  )}
+                </div>
+              </div>
+
+              {/* 攻擊隊佔領效果 */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  攻擊隊佔領效果
+                </h3>
+                <div className="space-y-1">
+                  {occupiedStats.length > 0 ? (
+                    occupiedStats.map((stat, index) => (
+                      <div key={`occupied-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>•</span>
+                        <span>{stat}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted-foreground text-center py-2 text-xs">無佔領效果</div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </CardContent>
     </Card>
+
+    {unionArtifactData && (
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>聯盟神器</CardTitle>
+            {unionData && (
+              <CardDescription>
+                神器等級: {unionData.union_artifact_level}
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left: Crystals */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  神器水晶
+                </h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {unionArtifactData.union_artifact_crystal.map((crystal, index) => {
+                    const artifactImage = getArtifactImage(crystal.name);
+                    return (
+                      <div key={index} className="flex flex-col items-center gap-2 text-center bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">
+                        <div className="text-blue-500 text-[10px] tracking-tighter leading-none">
+                          {'◆'.repeat(crystal.level)}
+                          <span className="text-slate-300 dark:text-slate-600">{'◇'.repeat(5 - crystal.level)}</span>
+                        </div>
+                        <div className="w-12 h-12 relative flex items-center justify-center">
+                          {artifactImage ? (
+                            <Image 
+                              src={artifactImage} 
+                              alt={crystal.name} 
+                              className="max-w-full max-h-full object-contain"
+                              width={48}
+                              height={48}
+                            />
+                          ) : (
+                            <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-xs text-muted-foreground">
+                              ?
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-xs font-medium">{crystal.name}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right: Effects */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  神器效果
+                </h3>
+                <div className="text-xs text-muted-foreground bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 space-y-2">
+                  {unionArtifactData.union_artifact_effect.length > 0 ? (
+                    unionArtifactData.union_artifact_effect.map((effect, index) => (
+                      <div key={index} className="flex justify-start items-center gap-2 border-slate-200 dark:border-slate-700 last:border-0 last:pb-0">
+                        <span className="bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded inline-flex justify-center min-w-[3.5rem]">Lv.{effect.level}</span>
+                        <span>{effect.name}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted-foreground text-center py-2">無神器效果</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 };
