@@ -1,15 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CharacterUnionRaider, UnionBlock, CharacterUnionArtifact, CharacterUnion } from '@/types/mapleAPI';
+import { CharacterUnionRaider, UnionBlock, CharacterUnionArtifact, CharacterUnion, CharacterUnionChampion } from '@/types/mapleAPI';
 import { getArtifactImage } from '@/data/union/artifactData';
 import { getUnionGradeImage } from '@/data/union/raiderData';
+import { getJobTypeByName, getChampionImage, getChampionTypeByJobName } from '@/data/job/jobData';
+import { BADGE_ORDER, getBadgeImage } from '@/data/union/championBadgeData';
+import { MapleAPI } from '@/services/mapleAPI';
 
 interface UnionRaiderDisplayProps {
   unionRaiderData: CharacterUnionRaider;
   unionArtifactData?: CharacterUnionArtifact | null;
   unionData?: CharacterUnion | null;
+  unionChampionData?: CharacterUnionChampion | null;
 }
 
 // 網格設定
@@ -30,21 +34,11 @@ const BLOCK_COLORS: Record<string, string> = {
   default: '#6b7280', // 灰色 (Lab、遠征隊)
 };
 
-// 職業關鍵字映射表
-const JOB_KEYWORDS: Record<string, string[]> = {
-  warrior: ['戰士', '劍士', '英雄', '聖騎士', '黑騎士', '聖魂', '米哈逸', '狂狼', '爆拳', '惡魔', '凱撒', '阿戴爾', '劍豪', '神之子'],
-  magician: ['法師', '火毒', '冰雷', '主教', '烈焰', '龍魔', '夜光', '煉獄', '凱內', '琳恩', '陰陽師', '拉拉', '伊利恩'],
-  bowman: ['弓箭手', '箭神', '神射手', '開拓者', '破風', '精靈', '狂豹', '該隱'],
-  thief: ['盜賊', '夜使者', '暗影', '影武者', '暗夜', '幻影', '卡莉', '虎影', '卡德娜'],
-  pirate: ['海盜', '拳霸', '槍神', '重砲', '閃雷', '隱月', '機甲', '天使', '亞克', '墨玄'],
-  hybrid: ['傑諾'],
-};
-
 // 根據職業名稱猜測類型
 const getJobType = (blockType: string, blockClass: string): string => {
   // 1. 嘗試直接匹配 blockType (如果是英文 key)
   if (blockType && BLOCK_COLORS[blockType]) return blockType;
-  
+
   // 2. 嘗試匹配 blockType 的中文名稱
   if (blockType === '戰士') return 'warrior';
   if (blockType === '法師') return 'magician';
@@ -56,21 +50,74 @@ const getJobType = (blockType: string, blockClass: string): string => {
   if (!blockClass) return 'default';
 
   // 3. 根據職業名稱關鍵字匹配
-  for (const [type, keywords] of Object.entries(JOB_KEYWORDS)) {
-    if (keywords.some(keyword => blockClass.includes(keyword))) {
-      return type;
-    }
-  }
-  
-  return 'default';
+  return getJobTypeByName(blockClass);
 };
 
 const getBlockColor = (blockType: string, blockClass: string) => {
   const type = getJobType(blockType, blockClass);
   return BLOCK_COLORS[type] || BLOCK_COLORS.default;
 };
-export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRaiderData, unionArtifactData, unionData }) => {
+export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRaiderData, unionArtifactData, unionData, unionChampionData }) => {
   const [selectedPreset, setSelectedPreset] = useState<number>(unionRaiderData.use_preset_no || 1);
+  // 新增：存儲每個冠軍角色的詳細資訊 (圖片、等級、名稱)
+  const [championInfos, setChampionInfos] = useState<Record<string, { image: string; level: number; name: string }>>({});
+  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({});
+
+  // 初始化 MapleAPI
+  const mapleAPI = useMemo(() => new MapleAPI(), []);
+
+  // 當 unionChampionData 改變時，載入每個冠軍角色的圖片
+  useEffect(() => {
+    if (!unionChampionData) return;
+
+    const fetchChampionImages = async () => {
+      // 找出需要獲取圖片的角色
+      const championsToFetch = unionChampionData.union_champion.filter(
+        champion => !championInfos[champion.champion_name] && !loadingImages[champion.champion_name]
+      );
+
+      if (championsToFetch.length === 0) return;
+
+      // 批量標記為載入中
+      setLoadingImages(prev => {
+        const next = { ...prev };
+        championsToFetch.forEach(c => next[c.champion_name] = true);
+        return next;
+      });
+
+      // 平行請求所有角色的資料
+      await Promise.all(championsToFetch.map(async (champion) => {
+        const championName = champion.champion_name;
+        try {
+          // 1. 通過角色名稱獲取 OCID
+          const { ocid } = await mapleAPI.getCharacterOCID(championName);
+          
+          // 2. 通過 OCID 獲取角色基本資訊
+          const basicInfo = await mapleAPI.getCharacterBasic(ocid, null);
+          
+          // 3. 存儲角色資訊
+          if (basicInfo) {
+            setChampionInfos(prev => ({ 
+              ...prev, 
+              [championName]: {
+                image: basicInfo.character_image,
+                level: basicInfo.character_level,
+                name: basicInfo.character_name
+              }
+            }));
+          }
+        } catch (error) {
+          console.error(`Failed to load character image for ${championName}:`, error);
+        } finally {
+          setLoadingImages(prev => ({ ...prev, [championName]: false }));
+        }
+      }));
+    };
+
+    fetchChampionImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unionChampionData, mapleAPI]);
+
 
   // 取得當前選擇的預設資料
   const getCurrentPresetData = () => {
@@ -103,7 +150,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
     blocks.forEach(block => {
       let type = getJobType(block.block_type, block.block_class);
       if (type === 'hybrid') type = 'thief'; // 傑諾歸類為盜賊 (紫色)
-      
+
       if (!stats[type]) return;
 
       const level = parseInt(block.block_level);
@@ -157,7 +204,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
     if (stat?.S > 0) details.push(`S: ${stat.S}`);
     if (stat?.A > 0) details.push(`A: ${stat.A}`);
     if (stat?.B > 0) details.push(`B: ${stat.B}`);
-    
+
     const detailString = details.length > 0 ? ` (${details.join(', ')})` : '';
 
     return (
@@ -183,7 +230,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
   // SVG 座標 (0,0) 在左上角
   // Grid X: -11 ~ 10 -> SVG X: 0 ~ 21
   // Grid Y: -10 ~ 9  -> SVG Y: 19 ~ 0 (Y軸翻轉)
-  
+
   const offsetX = GRID_WIDTH / 2; // 11
   const offsetY = GRID_HEIGHT / 2; // 10
 
@@ -230,17 +277,17 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
 
     return blocks.map((block, index) => {
       const color = getBlockColor(block.block_type, block.block_class);
-      
+
       // 建立該方塊的座標 Set，方便查詢
       const positionSet = new Set(block.block_position.map(p => `${p.x},${p.y}`));
-      
+
       // 計算邊界路徑
       const pathCommands: string[] = [];
-      
+
       block.block_position.forEach(pos => {
         const px = transformX(pos.x);
         const py = transformY(pos.y);
-        
+
         // 檢查上方 (y+1)
         if (!positionSet.has(`${pos.x},${pos.y + 1}`)) {
           pathCommands.push(`M ${px} ${py} h ${CELL_SIZE}`);
@@ -275,11 +322,11 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
             />
           ))}
           {/* 繪製外框 */}
-          <path 
-            d={pathCommands.join(' ')} 
-            stroke="rgba(0,0,0,0.7)" 
-            strokeWidth={1.5} 
-            fill="none" 
+          <path
+            d={pathCommands.join(' ')}
+            stroke="rgba(0,0,0,0.7)"
+            strokeWidth={1.5}
+            fill="none"
             strokeLinecap="square"
           />
         </g>
@@ -289,114 +336,114 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
 
   return (
     <div className="space-y-6">
-    <Card className="w-full">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <CardTitle>戰地攻擊隊</CardTitle>
-            {unionData && (
-              <CardDescription className="mt-1 flex items-center gap-2">
-                <span>聯盟等級: {unionData.union_level}</span>
-                {getUnionGradeImage(unionData.union_grade) && (
-                  <Image
-                    src={getUnionGradeImage(unionData.union_grade)!}
-                    alt={unionData.union_grade}
-                    width={24}
-                    height={24}
-                    className="object-contain"
-                  />
-                )}
-                <span>{unionData.union_grade}</span>
-              </CardDescription>
-            )}
-          </div>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((preset) => (
-              <Button
-                key={preset}
-                variant={selectedPreset === preset ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedPreset(preset)}
-                className="w-8 h-8 p-0"
-              >
-                {preset}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6">
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          {/* 左側：拼圖和職業圖例 */}
-          <div className="flex flex-col gap-6 flex-shrink-0">
-            <div className="overflow-auto max-w-full p-4 rounded-lg bg-white dark:bg-slate-900 mx-auto lg:mx-0">
-              <svg
-                width={GRID_WIDTH * CELL_SIZE}
-                height={GRID_HEIGHT * CELL_SIZE}
-                viewBox={`0 0 ${GRID_WIDTH * CELL_SIZE} ${GRID_HEIGHT * CELL_SIZE}`}
-              >
-                {renderGrid()}
-                {renderBlocks()}
-              </svg>
-            </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm w-full">
-              {renderLegendItem('warrior', '戰士')}
-              {renderLegendItem('magician', '法師')}
-              {renderLegendItem('bowman', '弓箭手')}
-              {renderLegendItem('thief', '盜賊')}
-              {renderLegendItem('pirate', '海盜')}
-              {renderLegendItem('default', 'LAB / 遠征隊')}
-            </div>
-          </div>
-
-          {/* 右側：攻擊隊效果 */}
-          <div className="flex-grow w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* 攻擊隊員效果 */}
-              <div className="space-y-2">
-                <h3 className="font-semibold text-sm flex items-center gap-2">
-                  攻擊隊員效果
-                </h3>
-                <div className="space-y-1">
-                  {raiderStats.length > 0 ? (
-                    raiderStats.map((stat, index) => (
-                      <div key={`raider-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>•</span>
-                        <span>{stat}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-muted-foreground text-center py-2 text-xs">無攻擊隊員效果</div>
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <CardTitle>戰地攻擊隊</CardTitle>
+              {unionData && (
+                <CardDescription className="mt-1 flex items-center gap-2">
+                  <span>聯盟等級: {unionData.union_level}</span>
+                  {getUnionGradeImage(unionData.union_grade) && (
+                    <Image
+                      src={getUnionGradeImage(unionData.union_grade)!}
+                      alt={unionData.union_grade}
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
                   )}
-                </div>
+                  <span>{unionData.union_grade}</span>
+                </CardDescription>
+              )}
+            </div>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((preset) => (
+                <Button
+                  key={preset}
+                  variant={selectedPreset === preset ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedPreset(preset)}
+                  className="w-8 h-8 p-0"
+                >
+                  {preset}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-6">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* 左側：拼圖和職業圖例 */}
+            <div className="flex flex-col gap-6 flex-shrink-0">
+              <div className="overflow-auto max-w-full p-4 rounded-lg bg-white dark:bg-slate-900 mx-auto lg:mx-0">
+                <svg
+                  width={GRID_WIDTH * CELL_SIZE}
+                  height={GRID_HEIGHT * CELL_SIZE}
+                  viewBox={`0 0 ${GRID_WIDTH * CELL_SIZE} ${GRID_HEIGHT * CELL_SIZE}`}
+                >
+                  {renderGrid()}
+                  {renderBlocks()}
+                </svg>
               </div>
 
-              {/* 攻擊隊佔領效果 */}
-              <div className="space-y-2">
-                <h3 className="font-semibold text-sm flex items-center gap-2">
-                  攻擊隊佔領效果
-                </h3>
-                <div className="space-y-1">
-                  {occupiedStats.length > 0 ? (
-                    occupiedStats.map((stat, index) => (
-                      <div key={`occupied-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>•</span>
-                        <span>{stat}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-muted-foreground text-center py-2 text-xs">無佔領效果</div>
-                  )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm w-full">
+                {renderLegendItem('warrior', '戰士')}
+                {renderLegendItem('magician', '法師')}
+                {renderLegendItem('bowman', '弓箭手')}
+                {renderLegendItem('thief', '盜賊')}
+                {renderLegendItem('pirate', '海盜')}
+                {renderLegendItem('default', 'LAB / 遠征隊')}
+              </div>
+            </div>
+
+            {/* 右側：攻擊隊效果 */}
+            <div className="flex-grow w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 攻擊隊員效果 */}
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-sm flex items-center gap-2">
+                    攻擊隊員效果
+                  </h3>
+                  <div className="space-y-1">
+                    {raiderStats.length > 0 ? (
+                      raiderStats.map((stat, index) => (
+                        <div key={`raider-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>•</span>
+                          <span>{stat}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-muted-foreground text-center py-2 text-xs">無攻擊隊員效果</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 攻擊隊佔領效果 */}
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-sm flex items-center gap-2">
+                    攻擊隊佔領效果
+                  </h3>
+                  <div className="space-y-1">
+                    {occupiedStats.length > 0 ? (
+                      occupiedStats.map((stat, index) => (
+                        <div key={`occupied-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>•</span>
+                          <span>{stat}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-muted-foreground text-center py-2 text-xs">無佔領效果</div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
 
-    {unionArtifactData && (
+      {unionArtifactData && (
         <Card className="w-full">
           <CardHeader>
             <CardTitle>聯盟神器</CardTitle>
@@ -424,9 +471,9 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
                         </div>
                         <div className="w-12 h-12 relative flex items-center justify-center">
                           {artifactImage ? (
-                            <Image 
-                              src={artifactImage} 
-                              alt={crystal.name} 
+                            <Image
+                              src={artifactImage}
+                              alt={crystal.name}
                               className="max-w-full max-h-full object-contain"
                               width={48}
                               height={48}
@@ -462,6 +509,132 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
                   )}
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 聯盟冠軍 */}
+      {unionChampionData && (
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>聯盟冠軍</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left: Champion List */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  冠軍角色
+                </h3>
+                <div className="grid grid-cols-3 gap-3">
+                  {unionChampionData.union_champion.map((champion, index) => {
+                    const championImage = getChampionImage(getChampionTypeByJobName(champion.champion_class));
+                    const championInfo = championInfos[champion.champion_name];
+                    const characterImage = championInfo?.image;
+                    const characterLevel = championInfo?.level;
+                    const characterName = championInfo?.name || champion.champion_name;
+                    const isLoadingCharacterImage = loadingImages[champion.champion_name];
+
+                    return (
+                      <div key={index} className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 relative overflow-hidden min-h-[200px]">
+                        {/* Background: Champion Image */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-30 dark:opacity-15 pointer-events-none">
+                          <Image
+                            src={championImage}
+                            alt={champion.champion_class}
+                            className="object-cover scale-125 translate-y-4"
+                            fill
+                          />
+                        </div>
+
+                        {/* Grade at top-left */}
+                        <div className="absolute top-2 left-2 z-10">
+                          <span className={`font-bold text-sm text-slate-500 dark:text-slate-400`}>
+                            {champion.champion_grade}
+                          </span>
+                        </div>
+
+                        <div className="relative z-10 flex flex-col items-center gap-2 pt-4">
+                          {/* Character Image Container */}
+                          <div className="relative flex items-center justify-center">
+                            {/* 前景：Character Image */}
+                            {isLoadingCharacterImage ? (
+                              <div className="flex items-center justify-center">
+                                <div className="w-8 h-8 border-4 border-slate-300 border-t-slate-600 rounded-full animate-spin"></div>
+                              </div>
+                            ) : characterImage ? (
+                              <img
+                                src={characterImage}
+                                alt={champion.champion_name}
+                                className="object-contain max-w-full max-h-full drop-shadow-md"
+                              />
+                            ) : (
+                              <div className="text-xs text-muted-foreground text-center font-medium">
+                                {champion.champion_name}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Character Info */}
+                          <div className="flex flex-col items-center gap-1">
+                            <div className="text-xs font-bold text-center">{characterName}</div>
+                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground bg-white/50 dark:bg-black/20 px-2 py-0.5 rounded backdrop-blur-sm">
+                              <span>Lv.{characterLevel || '?'}</span>
+                              <span>|</span>
+                              <span>{champion.champion_class}</span>
+                            </div>
+                          </div>
+
+                          {/* Badge Icons - 5個固定能力圖示 */}
+                          <div className="flex items-center justify-center gap-0.5">
+                            {BADGE_ORDER.map((badgeType, badgeIndex) => {
+                              const badgeImage = getBadgeImage(badgeType);
+                              // 檢查該能力是否完成（根據 champion_badge_info 陣列長度）
+                              const isCompleted = badgeIndex < champion.champion_badge_info.length;
+
+                              return (
+                                <div
+                                  key={badgeType}
+                                  className={`relative flex items-center justify-center ${!isCompleted ? 'opacity-30 grayscale' : ''}`}
+                                  title={champion.champion_badge_info[badgeIndex]?.stat || '未完成'}
+                                >
+                                  <Image
+                                    src={badgeImage}
+                                    alt={badgeType}
+                                    className="object-contain"
+                                    width={24}
+                                    height={24}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 總計能力 */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  冠軍徽章效果
+                  </h3>
+                  <div className="space-y-1">
+                    {unionChampionData.champion_badge_total_info.length > 0 ? (
+                      unionChampionData.champion_badge_total_info.map((badge, index) => (
+                        <div key={`occupied-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>•</span>
+                          <span>{badge.stat}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-muted-foreground text-center py-2 text-xs">無佔領效果</div>
+                    )}
+                  </div>
+                </div>
             </div>
           </CardContent>
         </Card>
