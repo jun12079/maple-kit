@@ -27,6 +27,7 @@ import {
   CharacterUnion,
   CharacterUnionRaider,
   CharacterUnionArtifact,
+  CharacterUnionChampion,
   MapleAPIErrorResponse
 } from '@/types/mapleAPI';
 
@@ -308,6 +309,15 @@ export class MapleAPI {
    */
   async getUnionArtifact(ocid: string, date: string | null = null): Promise<CharacterUnionArtifact> {
     return this.request<CharacterUnionArtifact>('/user/union-artifact', { ocid, date });
+  }
+
+  /**
+   * 檢視聯盟冠軍資訊
+   * @param ocid 角色辨識器
+   * @param date 要搜尋的日期 (TST，YYYY-MM-DD)
+   */
+  async getUnionChampion(ocid: string, date: string | null = null): Promise<CharacterUnionChampion> {
+    return this.request<CharacterUnionChampion>('/user/union-champion', { ocid, date });
   }
 }
 

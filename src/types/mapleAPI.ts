@@ -618,6 +618,24 @@ export interface CharacterUnionArtifact {
   union_artifact_remain_ap: number;
 }
 
+export interface UnionChampionBadgeInfo {
+  stat: string;
+}
+
+export interface UnionChampion {
+  champion_name: string;
+  champion_slot: number;
+  champion_grade: string;
+  champion_class: string;
+  champion_badge_info: UnionChampionBadgeInfo[];
+}
+
+export interface CharacterUnionChampion {
+  date: string | null;
+  union_champion: UnionChampion[];
+  champion_badge_total_info: UnionChampionBadgeInfo[];
+}
+
 export interface MapleAPIErrorBody {
   name: string;
   message: string;
