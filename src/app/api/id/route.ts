@@ -11,5 +11,5 @@ export async function GET(request: NextRequest) {
   const validationError = validateRequiredParams({ character_name: characterName })
   if (validationError) return validationError
 
-  return makeNexonAPIRequest('/id', { character_name: characterName })
+  return makeNexonAPIRequest('/id', { character_name: characterName }, 86400) // Cache OCID for 24 hours
 }
