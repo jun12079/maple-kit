@@ -825,7 +825,7 @@ export const bossData: Record<string, Boss> = {
     difficulties: {
       normal: {
         level: 255,
-        health: [2600000000000],
+        health: [26000000000000],
         defense: 300,
         symbol: 730,
         reset: 'weekly',
@@ -835,7 +835,7 @@ export const bossData: Record<string, Boss> = {
       },
       chaos: {
         level: 255,
-        health: [12600000000000],
+        health: [126000000000000],
         defense: 300,
         symbol: 730,
         reset: 'weekly',
