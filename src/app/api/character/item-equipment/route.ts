@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server'
 import { makeNexonAPIRequest, validateRequiredParams } from '@/services/nexonAPI'
 
+export const runtime = 'nodejs'
+
 // GET /api/character/item-equipment?ocid=xxx&date=yyyy-MM-dd
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
