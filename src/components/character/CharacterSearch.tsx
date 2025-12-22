@@ -20,12 +20,12 @@ import { UnionRaiderDisplay } from '@/components/character/UnionRaiderDisplay'
 import { useFavorites } from '@/hooks/useFavorites'
 
 // 導入型別
-import type { 
-  CharacterBasic, 
-  CharacterPopularity, 
-  CharacterStat, 
-  CharacterHyperStat, 
-  CharacterAbility, 
+import type {
+  CharacterBasic,
+  CharacterPopularity,
+  CharacterStat,
+  CharacterHyperStat,
+  CharacterAbility,
   CharacterItemEquipment,
   CharacterDojang,
   CharacterSymbolEquipment,
@@ -117,153 +117,112 @@ export default function CharacterSearch() {
 
   const loadAllData = async (characterOcid: string) => {
     try {
-      // 載入基本資料和符文資料
-      const [basic, popularity, stat, hyperStat, ability, equipment, dojang, symbols, hexaMatrix, hexaMatrixStat, vMatrix, linkSkill, union, unionRaider, unionArtifact, unionChampion, petEquipment] = await Promise.allSettled([
-        mapleAPI.getCharacterBasic(characterOcid),
-        mapleAPI.getCharacterPopularity(characterOcid),
-        mapleAPI.getCharacterStat(characterOcid),
-        mapleAPI.getCharacterHyperStat(characterOcid),
-        mapleAPI.getCharacterAbility(characterOcid),
-        mapleAPI.getCharacterItemEquipment(characterOcid),
-        mapleAPI.getCharacterDojang(characterOcid),
-        mapleAPI.getCharacterSymbolEquipment(characterOcid),
-        mapleAPI.getCharacterHexaMatrix(characterOcid), // character_skill_grade = 6
-        mapleAPI.getCharacterHexaMatrixStat(characterOcid),
-        mapleAPI.getCharacterVMatrix(characterOcid), // character_skill_grade = 5
-        mapleAPI.getCharacterLinkSkill(characterOcid),
-        mapleAPI.getUnion(characterOcid),
-        mapleAPI.getUnionRaider(characterOcid),
-        mapleAPI.getUnionArtifact(characterOcid),
-        mapleAPI.getUnionChampion(characterOcid),
-        mapleAPI.getCharacterPetEquipment(characterOcid)
-      ])
+      // 使用新的合併 API 一次獲取所有資料
+      const allData = await mapleAPI.getAllCharacterData(characterOcid);
 
       // 設定基本資料
-      if (basic.status === 'fulfilled' && popularity.status === 'fulfilled' &&
-        stat.status === 'fulfilled' && hyperStat.status === 'fulfilled' &&
-        ability.status === 'fulfilled' && equipment.status === 'fulfilled') {
+      if (allData.basic && allData.popularity && allData.stat &&
+        allData.hyperStat && allData.ability && allData.equipment) {
         setBasicData({
-          basic: basic.value,
-          popularity: popularity.value,
-          stat: stat.value,
-          hyperStat: hyperStat.value,
-          ability: ability.value,
-          equipment: equipment.value
+          basic: allData.basic,
+          popularity: allData.popularity,
+          stat: allData.stat,
+          hyperStat: allData.hyperStat,
+          ability: allData.ability,
+          equipment: allData.equipment
         })
       }
 
       // 設定道場資料
-      if (dojang.status === 'fulfilled') {
-        setDojangData(dojang.value)
+      if (allData.dojang) {
+        setDojangData(allData.dojang)
       }
 
       // 設定戰地資料
-      if (union.status === 'fulfilled') {
-        setUnionData(union.value)
+      if (allData.union) {
+        setUnionData(allData.union)
       }
 
       // 設定戰地攻擊隊資料
-      if (unionRaider.status === 'fulfilled') {
-        setUnionRaiderData(unionRaider.value)
+      if (allData.unionRaider) {
+        setUnionRaiderData(allData.unionRaider)
       }
 
       // 設定戰地神器資料
-      if (unionArtifact.status === 'fulfilled') {
-        setUnionArtifactData(unionArtifact.value)
+      if (allData.unionArtifact) {
+        setUnionArtifactData(allData.unionArtifact)
       }
 
       // 設定戰地冠軍資料
-      if (unionChampion.status === 'fulfilled') {
-        setUnionChampionData(unionChampion.value)
+      if (allData.unionChampion) {
+        setUnionChampionData(allData.unionChampion)
       }
 
       // 設定符文資料
-      if (symbols.status === 'fulfilled') {
-        setSymbolData(symbols.value)
+      if (allData.symbol) {
+        setSymbolData(allData.symbol)
       }
 
       // 設定寵物資料
-      if (petEquipment.status === 'fulfilled') {
-        setPetData(petEquipment.value)
+      if (allData.pet) {
+        setPetData(allData.pet)
       }
 
       // 設定技能資料
-      // 注意：API 型別定義有誤，getCharacterHexaMatrix 和 getCharacterVMatrix 實際返回 CharacterSkill
       const skillResults: SkillData = {
-        hexaMatrix: hexaMatrix.status === 'fulfilled' ? (hexaMatrix.value as unknown as CharacterSkill) : null,
-        hexaMatrixStat: hexaMatrixStat.status === 'fulfilled' ? hexaMatrixStat.value : null,
-        vMatrix: vMatrix.status === 'fulfilled' ? (vMatrix.value as unknown as CharacterSkill) : null,
-        linkSkill: linkSkill.status === 'fulfilled' ? linkSkill.value : null
+        hexaMatrix: allData.hexaMatrix ? (allData.hexaMatrix as unknown as CharacterSkill) : null,
+        hexaMatrixStat: allData.hexaMatrixStat ? allData.hexaMatrixStat : null,
+        vMatrix: allData.vMatrix ? (allData.vMatrix as unknown as CharacterSkill) : null,
+        linkSkill: allData.linkSkill ? allData.linkSkill : null
       }
       setSkillData(skillResults)
 
       // 獲取七天經驗值數據（在基本資料載入成功後）
-      if (basic.status === 'fulfilled') {
-        await loadExperienceData(characterOcid, basic.value.character_exp_rate)
+      const expData: ExperienceDataPoint[] = [];
+
+      // 1. 處理過去 6 天的數據
+      if (Array.isArray(allData.expHistory)) {
+        const today = new Date();
+
+        allData.expHistory.forEach((historyItem: any, index: number) => {
+          const daysAgo = 6 - index;
+          const d = new Date(today);
+          d.setDate(d.getDate() - daysAgo);
+          const dateStr = d.toISOString().split('T')[0];
+
+          if (historyItem && !historyItem.error) {
+            expData.push({
+              date: `${d.getMonth() + 1}/${d.getDate()}`,
+              exp: parseFloat(historyItem.character_exp_rate || '0'),
+              level: historyItem.character_level,
+              fullDate: dateStr
+            });
+          } else {
+            expData.push({
+              date: `${d.getMonth() + 1}/${d.getDate()}`,
+              exp: 0,
+              level: 0,
+              fullDate: dateStr
+            });
+          }
+        });
       }
+
+      // 2. 添加今天的數據
+      if (allData.basic) {
+        const today = new Date();
+        expData.push({
+          date: `${today.getMonth() + 1}/${today.getDate()}`,
+          exp: parseFloat(allData.basic.character_exp_rate || '0'),
+          level: allData.basic.character_level,
+          fullDate: today.toISOString().split('T')[0]
+        });
+      }
+
+      setExperienceData(expData);
 
     } catch {
       // 完全載入失敗
-    }
-  }
-
-  // 獲取七天經驗值數據
-  const loadExperienceData = async (characterOcid: string, todayExpRate: string) => {
-    try {
-      const data: ExperienceDataPoint[] = []
-      const today = new Date()
-      let currentLevel = 0
-
-      // 獲取今天的等級
-      try {
-        const todayBasic = await mapleAPI.getCharacterBasic(characterOcid, null)
-        currentLevel = todayBasic.character_level
-      } catch {
-        // 如果獲取失敗，使用預設值
-        currentLevel = 0
-      }
-
-      // 獲取過去6天的數據（加上今天共7天）
-      for (let i = 6; i >= 1; i--) {
-        const date = new Date(today)
-        date.setDate(date.getDate() - i)
-        const dateString = date.toISOString().split('T')[0]
-
-        try {
-          const basicInfo = await mapleAPI.getCharacterBasic(characterOcid, dateString)
-          
-          data.push({
-            date: `${date.getMonth() + 1}/${date.getDate()}`,
-            exp: parseFloat(basicInfo.character_exp_rate || '0'),
-            level: basicInfo.character_level,
-            fullDate: dateString
-          })
-        } catch {
-          // 如果某天數據獲取失敗，填入0
-          data.push({
-            date: `${date.getMonth() + 1}/${date.getDate()}`,
-            exp: 0,
-            level: 0,
-            fullDate: dateString
-          })
-        }
-
-        // 添加延遲避免請求過快
-        await new Promise(resolve => setTimeout(resolve, 100))
-      }
-
-      // 添加今天的數據（不帶 date 參數）
-      data.push({
-        date: `${today.getMonth() + 1}/${today.getDate()}`,
-        exp: parseFloat(todayExpRate || '0'),
-        level: currentLevel,
-        fullDate: today.toISOString().split('T')[0]
-      })
-
-      setExperienceData(data)
-    } catch {
-      // 如果獲取經驗值數據失敗，設為空陣列
-      setExperienceData([])
     }
   }
 
@@ -479,7 +438,7 @@ export default function CharacterSearch() {
           {/* 技能分頁 */}
           <TabsContent value="skill">
             {skillData ? (
-              <SkillDisplay 
+              <SkillDisplay
                 hexaMatrix={skillData.hexaMatrix}
                 hexaStatData={skillData.hexaMatrixStat}
                 vMatrixData={skillData.vMatrix}
@@ -495,8 +454,8 @@ export default function CharacterSearch() {
           {/* 戰地分頁 */}
           <TabsContent value="union">
             {unionRaiderData ? (
-              <UnionRaiderDisplay 
-                unionRaiderData={unionRaiderData} 
+              <UnionRaiderDisplay
+                unionRaiderData={unionRaiderData}
                 unionArtifactData={unionArtifactData}
                 unionData={unionData}
                 unionChampionData={unionChampionData}

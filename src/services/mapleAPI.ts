@@ -113,6 +113,15 @@ export class MapleAPI {
   }
 
   /**
+   * 一次獲取所有角色相關資料
+   * @param ocid 角色辨識器
+   * @param date 要搜尋的日期 (TST，YYYY-MM-DD)
+   */
+  async getAllCharacterData(ocid: string, date: string | null = null): Promise<any> {
+    return this.request<any>('/character/all', { ocid, date });
+  }
+
+  /**
    * 檢視基本資訊
    * @param ocid 角色辨識器
    * @param date 要搜尋的日期 (TST，YYYY-MM-DD)
