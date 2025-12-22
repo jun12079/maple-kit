@@ -19,9 +19,14 @@ function getAPIKey(): string | undefined {
  * 通用 Nexon API 請求函數
  * @param endpoint API 端點路徑 (例如: '/id', '/character/basic')
  * @param params 查詢參數
+ * @param cacheSeconds 快取時間（秒），預設 900 秒 (15分鐘)
  * @returns NextResponse
  */
-export async function makeNexonAPIRequest(endpoint: string, params: Record<string, any> = {}): Promise<NextResponse> {
+export async function makeNexonAPIRequest(
+  endpoint: string, 
+  params: Record<string, any> = {},
+  cacheSeconds: number = 900
+): Promise<NextResponse> {
   const apiKey = getAPIKey();
 
   if (!apiKey) {
@@ -50,6 +55,8 @@ export async function makeNexonAPIRequest(endpoint: string, params: Record<strin
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers,
+      // 確保後端 fetch 不會被 Next.js 預設快取影響，我們自己控制回應的 Cache-Control
+      cache: 'no-store' 
     });
 
     if (!response.ok) {
@@ -65,7 +72,19 @@ export async function makeNexonAPIRequest(endpoint: string, params: Record<strin
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    
+    // 設定 Cache-Control header
+    // public: 可被瀏覽器和 CDN 快取
+    // max-age: 瀏覽器快取時間
+    // s-maxage: CDN (Vercel Edge) 快取時間
+    // stale-while-revalidate: 過期後多久內可使用舊資料並背景更新
+    const nextResponse = NextResponse.json(data);
+    nextResponse.headers.set(
+      'Cache-Control', 
+      `public, max-age=${cacheSeconds}, s-maxage=${cacheSeconds}, stale-while-revalidate=${Math.floor(cacheSeconds / 2)}`
+    );
+    
+    return nextResponse;
   } catch (error: any) {
     return NextResponse.json(
       { error: `Network error: ${error.message}` },

@@ -15,11 +15,6 @@ export const metadata: Metadata = {
   keywords: ["MapleStory", "新楓之谷", "MapleKit", "角色查詢", "Calculator", "計算機", "Boss", "Tools", "Destiny Weapon", "Genesis Weapon", "HEXA"],
   authors: [{ name: "MapleKit Team" }],
   creator: "MapleKit",
-  icons: {
-    icon: '/favicon.png',
-    shortcut: '/favicon.png',
-    apple: '/favicon.png',
-  },
   openGraph: {
     title: "MapleKit | 新楓之谷工具平台",
     description: "MapleKit為新楓之谷玩家提供的一個工具平台，提供角色查詢、進度計算、遊戲資訊等功能。",
