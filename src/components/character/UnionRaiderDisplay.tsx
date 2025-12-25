@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,13 +7,19 @@ import { getArtifactImage } from '@/data/union/artifactData';
 import { getUnionGradeImage } from '@/data/union/raiderData';
 import { getJobTypeByName, getChampionImage, getChampionTypeByJobName } from '@/data/job/jobData';
 import { BADGE_ORDER, getBadgeImage } from '@/data/union/championBadgeData';
-import { MapleAPI } from '@/services/mapleAPI';
+
+interface UnionChampionDetail {
+  champion_name: string;
+  character_image: string;
+  character_level: number;
+}
 
 interface UnionRaiderDisplayProps {
   unionRaiderData: CharacterUnionRaider;
   unionArtifactData?: CharacterUnionArtifact | null;
   unionData?: CharacterUnion | null;
   unionChampionData?: CharacterUnionChampion | null;
+  unionChampionDetails?: UnionChampionDetail[] | null;
 }
 
 // 網格設定
@@ -57,67 +63,15 @@ const getBlockColor = (blockType: string, blockClass: string) => {
   const type = getJobType(blockType, blockClass);
   return BLOCK_COLORS[type] || BLOCK_COLORS.default;
 };
-export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRaiderData, unionArtifactData, unionData, unionChampionData }) => {
+
+export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ 
+  unionRaiderData, 
+  unionArtifactData, 
+  unionData, 
+  unionChampionData,
+  unionChampionDetails 
+}) => {
   const [selectedPreset, setSelectedPreset] = useState<number>(unionRaiderData.use_preset_no || 1);
-  // 新增：存儲每個冠軍角色的詳細資訊 (圖片、等級、名稱)
-  const [championInfos, setChampionInfos] = useState<Record<string, { image: string; level: number; name: string }>>({});
-  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({});
-
-  // 初始化 MapleAPI
-  const mapleAPI = useMemo(() => new MapleAPI(), []);
-
-  // 當 unionChampionData 改變時，載入每個冠軍角色的圖片
-  useEffect(() => {
-    if (!unionChampionData) return;
-
-    const fetchChampionImages = async () => {
-      // 找出需要獲取圖片的角色
-      const championsToFetch = unionChampionData.union_champion.filter(
-        champion => !championInfos[champion.champion_name] && !loadingImages[champion.champion_name]
-      );
-
-      if (championsToFetch.length === 0) return;
-
-      // 批量標記為載入中
-      setLoadingImages(prev => {
-        const next = { ...prev };
-        championsToFetch.forEach(c => next[c.champion_name] = true);
-        return next;
-      });
-
-      // 平行請求所有角色的資料
-      await Promise.all(championsToFetch.map(async (champion) => {
-        const championName = champion.champion_name;
-        try {
-          // 1. 通過角色名稱獲取 OCID
-          const { ocid } = await mapleAPI.getCharacterOCID(championName);
-          
-          // 2. 通過 OCID 獲取角色基本資訊
-          const basicInfo = await mapleAPI.getCharacterBasic(ocid, null);
-          
-          // 3. 存儲角色資訊
-          if (basicInfo) {
-            setChampionInfos(prev => ({ 
-              ...prev, 
-              [championName]: {
-                image: basicInfo.character_image,
-                level: basicInfo.character_level,
-                name: basicInfo.character_name
-              }
-            }));
-          }
-        } catch (error) {
-          console.error(`Failed to load character image for ${championName}:`, error);
-        } finally {
-          setLoadingImages(prev => ({ ...prev, [championName]: false }));
-        }
-      }));
-    };
-
-    fetchChampionImages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unionChampionData, mapleAPI]);
-
 
   // 取得當前選擇的預設資料
   const getCurrentPresetData = () => {
@@ -348,9 +302,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
                     <Image
                       src={getUnionGradeImage(unionData.union_grade)!}
                       alt={unionData.union_grade}
-                      width={24}
-                      height={24}
-                      className="object-contain"
+                      className="w-6 h-6 object-contain"
                     />
                   )}
                   <span>{unionData.union_grade}</span>
@@ -469,14 +421,12 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
                           {'◆'.repeat(crystal.level)}
                           <span className="text-slate-300 dark:text-slate-600">{'◇'.repeat(5 - crystal.level)}</span>
                         </div>
-                        <div className="w-12 h-12 relative flex items-center justify-center">
+                        <div className="flex items-center justify-center">
                           {artifactImage ? (
                             <Image
                               src={artifactImage}
                               alt={crystal.name}
-                              className="max-w-full max-h-full object-contain"
-                              width={48}
-                              height={48}
+                              className="w-12 h-12 object-contain"
                             />
                           ) : (
                             <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-xs text-muted-foreground">
@@ -530,11 +480,11 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
                 <div className="grid grid-cols-3 gap-3">
                   {unionChampionData.union_champion.map((champion, index) => {
                     const championImage = getChampionImage(getChampionTypeByJobName(champion.champion_class));
-                    const championInfo = championInfos[champion.champion_name];
-                    const characterImage = championInfo?.image;
-                    const characterLevel = championInfo?.level;
-                    const characterName = championInfo?.name || champion.champion_name;
-                    const isLoadingCharacterImage = loadingImages[champion.champion_name];
+                    // 直接從 unionChampionDetails 中查找對應的角色詳細資料
+                    const championDetail = unionChampionDetails?.find(detail => detail.champion_name === champion.champion_name);
+                    const characterImage = championDetail?.character_image;
+                    const characterLevel = championDetail?.character_level;
+                    const characterName = championDetail?.champion_name || champion.champion_name;
 
                     return (
                       <div key={index} className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 relative overflow-hidden min-h-[200px]">
@@ -559,11 +509,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
                           {/* Character Image Container */}
                           <div className="relative flex items-center justify-center">
                             {/* 前景：Character Image */}
-                            {isLoadingCharacterImage ? (
-                              <div className="flex items-center justify-center">
-                                <div className="w-8 h-8 border-4 border-slate-300 border-t-slate-600 rounded-full animate-spin"></div>
-                              </div>
-                            ) : characterImage ? (
+                            {characterImage ? (
                               <img
                                 src={characterImage}
                                 alt={champion.champion_name}
@@ -603,8 +549,6 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ unionRai
                                     src={badgeImage}
                                     alt={badgeType}
                                     className="object-contain"
-                                    width={24}
-                                    height={24}
                                   />
                                 </div>
                               );

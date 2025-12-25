@@ -45,7 +45,7 @@ interface BasicData {
   stat: CharacterStat
   hyperStat: CharacterHyperStat
   ability: CharacterAbility
-  equipment: CharacterItemEquipment
+  itemEquipment: CharacterItemEquipment
 }
 
 interface SkillData {
@@ -83,6 +83,7 @@ export default function CharacterSearch() {
   const [unionArtifactData, setUnionArtifactData] = useState<CharacterUnionArtifact | null>(null)
   const [unionRaiderData, setUnionRaiderData] = useState<CharacterUnionRaider | null>(null)
   const [unionChampionData, setUnionChampionData] = useState<CharacterUnionChampion | null>(null)
+  const [unionChampionDetails, setUnionChampionDetails] = useState<any[] | null>(null)
   const [experienceData, setExperienceData] = useState<ExperienceDataPoint[] | null>(null)
   const [petData, setPetData] = useState<CharacterPetEquipment | null>(null)
 
@@ -112,6 +113,7 @@ export default function CharacterSearch() {
     setUnionRaiderData(null)
     setUnionArtifactData(null)
     setUnionChampionData(null)
+    setUnionChampionDetails(null)
     setExperienceData(null)
   }
 
@@ -122,14 +124,14 @@ export default function CharacterSearch() {
 
       // 設定基本資料
       if (allData.basic && allData.popularity && allData.stat &&
-        allData.hyperStat && allData.ability && allData.equipment) {
+        allData.hyperStat && allData.ability && allData.itemEquipment) {
         setBasicData({
           basic: allData.basic,
           popularity: allData.popularity,
           stat: allData.stat,
           hyperStat: allData.hyperStat,
           ability: allData.ability,
-          equipment: allData.equipment
+          itemEquipment: allData.itemEquipment
         })
       }
 
@@ -158,14 +160,19 @@ export default function CharacterSearch() {
         setUnionChampionData(allData.unionChampion)
       }
 
+      // 設定戰地冠軍詳細資料
+      if (allData.unionChampionDetails) {
+        setUnionChampionDetails(allData.unionChampionDetails)
+      }
+
       // 設定符文資料
-      if (allData.symbol) {
-        setSymbolData(allData.symbol)
+      if (allData.symbolEquipment) {
+        setSymbolData(allData.symbolEquipment)
       }
 
       // 設定寵物資料
-      if (allData.pet) {
-        setPetData(allData.pet)
+      if (allData.petEquipment) {
+        setPetData(allData.petEquipment)
       }
 
       // 設定技能資料
@@ -424,7 +431,7 @@ export default function CharacterSearch() {
                     />
                   </div>
                   <div className="lg:col-span-7">
-                    <EquipmentDisplay equipmentData={basicData.equipment} symbolData={symbolData as any} petData={petData as any} />
+                    <EquipmentDisplay equipmentData={basicData.itemEquipment} symbolData={symbolData as any} petData={petData as any} />
                   </div>
                 </div>
               </>
@@ -459,6 +466,7 @@ export default function CharacterSearch() {
                 unionArtifactData={unionArtifactData}
                 unionData={unionData}
                 unionChampionData={unionChampionData}
+                unionChampionDetails={unionChampionDetails}
               />
             ) : (
               <div className="text-center py-8 text-muted-foreground">
