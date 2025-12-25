@@ -3,7 +3,7 @@ import Link from "next/link";
 import { logo } from "./config";
 
 export const Logo = () => (
-  <Link href={logo.url} className="flex flex-row items-center">
+  <Link href={logo.url} prefetch={false} className="flex flex-row items-center">
     <Image
       src={logo.src}
       alt={logo.alt}

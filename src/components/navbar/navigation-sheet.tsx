@@ -43,7 +43,7 @@ export const NavigationSheet = () => {
                       </AccordionTrigger>
                       <AccordionContent className="px-3 pb-4">
                         {item.items.map((subItem) => (
-                          <Link key={subItem.title} href={subItem.url} className="flex items-center gap-2 py-2 ml-4">
+                          <Link key={subItem.title} href={subItem.url} prefetch={false} className="flex items-center gap-2 py-2 ml-4">
                             {subItem.icon && (
                               <Image 
                                 src={subItem.icon} 
@@ -61,7 +61,7 @@ export const NavigationSheet = () => {
                 }
                 return (
                   <div key={item.title} className="border-b border-border">
-                    <Link href={item.url} className="flex items-center px-3 py-4 text-md font-semibold">
+                    <Link href={item.url} prefetch={false} className="flex items-center px-3 py-4 text-md font-semibold">
                       {item.title}
                     </Link>
                   </div>

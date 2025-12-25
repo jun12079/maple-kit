@@ -24,7 +24,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-          <Link href="/calc/destiny-weapon" className="no-underline">
+          <Link href="/calc/destiny-weapon" prefetch={false} className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
@@ -41,7 +41,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/calc/genesis-weapon" className="no-underline">
+          <Link href="/calc/genesis-weapon" prefetch={false} className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
@@ -58,7 +58,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/data/symbols" className="no-underline">
+          <Link href="/data/symbols" prefetch={false} className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
@@ -75,7 +75,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/data/bosses" className="no-underline">
+          <Link href="/data/bosses" prefetch={false} className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
@@ -92,7 +92,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/calc/hexa-skill" className="no-underline">
+          <Link href="/calc/hexa-skill" prefetch={false} className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
@@ -109,7 +109,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/calc/challengers-world/season2" className="no-underline">
+          <Link href="/calc/challengers-world/season2" prefetch={false} className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
@@ -126,7 +126,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/calc/exp-coupon" className="no-underline">
+          <Link href="/calc/exp-coupon" prefetch={false} className="no-underline">
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
