@@ -436,8 +436,9 @@ export default function CharacterSearch() {
                 </div>
               </>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                搜尋中...
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Loader2 className="w-8 h-8 animate-spin mb-3" />
+                <p className="text-lg font-medium">正在載入角色資料...</p>
               </div>
             )}
           </TabsContent>
@@ -452,8 +453,10 @@ export default function CharacterSearch() {
                 linkSkillData={skillData.linkSkill}
               />
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                搜尋中...
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Loader2 className="w-8 h-8 animate-spin mb-3" />
+                <p className="text-lg font-medium">正在載入技能資料...</p>
+                <p className="text-sm mt-1">請稍候片刻</p>
               </div>
             )}
           </TabsContent>
@@ -469,8 +472,16 @@ export default function CharacterSearch() {
                 unionChampionDetails={unionChampionDetails}
               />
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                {isLoading ? '搜尋中...' : '無戰地資料'}
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-8 h-8 animate-spin mb-3" />
+                    <p className="text-lg font-medium">正在載入戰地資料...</p>
+                    <p className="text-sm mt-1">請稍候片刻</p>
+                  </>
+                ) : (
+                  <p className="text-lg">無戰地資料</p>
+                )}
               </div>
             )}
           </TabsContent>
