@@ -1,7 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image, { StaticImageData } from "next/image";
 import { arcaneSymbols, authenticSymbols, symbolCoupons, symbolUpgradeData, SymbolUpgradeInfo, SymbolDefinition } from "@/data/symbols/symbolData";
 import { Metadata } from "next";
 
@@ -17,7 +16,7 @@ const formatNumber = (num: number) => {
 
 interface SymbolCardProps {
   title: string;
-  icon: StaticImageData | string;
+  icon: string;
   data: SymbolUpgradeInfo[];
   viewMode: "cost" | "count";
 }
@@ -27,10 +26,10 @@ const SymbolCard = ({ title, icon, data, viewMode }: SymbolCardProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center text-lg">
-          <Image
+          <img
             src={icon}
             alt={title}
-            style={{ width: '32px', height: 'auto' }}
+            width={32}
             className="mr-3"
           />
           {title}

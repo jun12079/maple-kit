@@ -1,44 +1,42 @@
-import { StaticImageData } from "next/image";
-
 // 匯入挑戰者世界圖示
-import level260Icon from "@/assets/images/challengers-world/icons/challenger-level-260.png";
-import level270Icon from "@/assets/images/challengers-world/icons/challenger-level-270.png";
-import level275Icon from "@/assets/images/challengers-world/icons/challenger-level-275.png";
-import level280Icon from "@/assets/images/challengers-world/icons/challenger-level-280.png";
-import level285Icon from "@/assets/images/challengers-world/icons/challenger-level-285.png";
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const level260Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-260.png`;
+const level270Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-270.png`;
+const level275Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-275.png`;
+const level280Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-280.png`;
+const level285Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-285.png`;
+const bronzeMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-bronze-medal.png`;
+const silverMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-silver-medal.png`;
+const goldMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-gold-medal.png`;
+const platinumMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-platinum-medal.png`;
+const emeraldMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-emerald-medal.png`;
+const diamondMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-diamond-medal.png`;
+const masterMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-master-medal.png`;
+const challengerMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s2-challenger-medal.png`;
 
-import bronzeMedal from "@/assets/images/challengers-world/icons/challenger-s2-bronze-medal.png";
-import silverMedal from "@/assets/images/challengers-world/icons/challenger-s2-silver-medal.png";
-import goldMedal from "@/assets/images/challengers-world/icons/challenger-s2-gold-medal.png";
-import platinumMedal from "@/assets/images/challengers-world/icons/challenger-s2-platinum-medal.png";
-import emeraldMedal from "@/assets/images/challengers-world/icons/challenger-s2-emerald-medal.png";
-import diamondMedal from "@/assets/images/challengers-world/icons/challenger-s2-diamond-medal.png";
-import masterMedal from "@/assets/images/challengers-world/icons/challenger-s2-master-medal.png";
-import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s2-challenger-medal.png";
-
-import braveChallengerTotemCoupon from "@/assets/images/challengers-world/icons/brave-challenger-totem-coupon.png";
-import braveChallengerTotemEnhancementScroll from "@/assets/images/challengers-world/icons/brave-challenger-totem-enhancement-scroll.png";
-import challengerWorldSeason2ChallengerFurniture from "@/assets/images/challengers-world/icons/challenger-world-season2-challenger-furniture.png";
-import challengersLevel4SpecialSkillRingSelectionCoupon from "@/assets/images/challengers-world/icons/challengers-level4-special-skill-ring-selection-coupon.png";
-import ultmateUnionGrowthPotion from "@/assets/images/challengers-world/icons/ultmate-union-growth-potion.png";
-import valkyrieOnTheBattlefieldSetCoupon from "@/assets/images/challengers-world/icons/valkyrie-on-the-battlefield-set-coupon.png";
-import karmaLegendaryPotentialScroll from "@/assets/images/items/icons/karma-legendary-potential-scroll.png";
-import karmaAdditionalUniquePotentialScroll from "@/assets/images/items/icons/karma-additional-unique-potential-scroll.png";
-import karmaChoiceCube from "@/assets/images/items/icons/karma-choice-cube.png";
-import karmaChoiceAdditionalCube from "@/assets/images/items/icons/karma-choice-additional-cube.png";
-import solErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
-import solErdaIcon from "@/assets/images/items/icons/SolErda_icon.png";
+const braveChallengerTotemCoupon = `${CDN_URL}/images/challengers-world/icons/brave-challenger-totem-coupon.png`;
+const braveChallengerTotemEnhancementScroll = `${CDN_URL}/images/challengers-world/icons/brave-challenger-totem-enhancement-scroll.png`;
+const challengerWorldSeason2ChallengerFurniture = `${CDN_URL}/images/challengers-world/icons/challenger-world-season2-challenger-furniture.png`;
+const challengersLevel4SpecialSkillRingSelectionCoupon = `${CDN_URL}/images/challengers-world/icons/challengers-level4-special-skill-ring-selection-coupon.png`;
+const ultmateUnionGrowthPotion = `${CDN_URL}/images/challengers-world/icons/ultmate-union-growth-potion.png`;
+const valkyrieOnTheBattlefieldSetCoupon = `${CDN_URL}/images/challengers-world/icons/valkyrie-on-the-battlefield-set-coupon.png`;
+const karmaLegendaryPotentialScroll = `${CDN_URL}/images/items/icons/karma-legendary-potential-scroll.png`;
+const karmaAdditionalUniquePotentialScroll = `${CDN_URL}/images/items/icons/karma-additional-unique-potential-scroll.png`;
+const karmaChoiceCube = `${CDN_URL}/images/items/icons/karma-choice-cube.png`;
+const karmaChoiceAdditionalCube = `${CDN_URL}/images/items/icons/karma-choice-additional-cube.png`;
+const solErdaFragmentIcon = `${CDN_URL}/images/items/icons/SolErdaFragment_icon.png`;
+const solErdaIcon = `${CDN_URL}/images/items/icons/SolErda_icon.png`;
 
 export interface ChallengerReward {
   name: string;
-  image: StaticImageData;
+  image: string;
   count: number;
 }
 
 export interface ChallengerRank {
   name: string;
   points: number;
-  icon: StaticImageData;
+  icon: string;
   rewards: ChallengerReward[];
 }
 
@@ -48,7 +46,7 @@ export const EVENT_START_DATE = new Date("2025-12-03T00:00:00");
 export const EVENT_END_DATE = new Date("2026-04-07T23:59:59");
 
 export const LEVELS = [260, 270, 275, 280, 285];
-export const LEVEL_ICONS: Record<number, StaticImageData> = {
+export const LEVEL_ICONS: Record<number, string> = {
   260: level260Icon,
   270: level270Icon,
   275: level275Icon,

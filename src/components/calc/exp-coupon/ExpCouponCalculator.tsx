@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,10 +28,12 @@ import {
   RotateCcw,
 } from "lucide-react";
 
-import teraBurningBooster from "@/assets/images/items/icons/tera-burning-booster.png";
-import hyperBurningBooster from "@/assets/images/items/icons/hyper-burning-booster.png";
-import EXPCoupon from "@/assets/images/items/icons/EXPCoupon_icon.png";
-import AdvancedEXPCoupon from "@/assets/images/items/icons/AdvancedEXPCoupon_icon.png";
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const teraBurningBooster = `${CDN_URL}/images/items/icons/tera-burning-booster.png`;
+const hyperBurningBooster = `${CDN_URL}/images/items/icons/hyper-burning-booster.png`;
+const EXPCoupon = `${CDN_URL}/images/items/icons/EXPCoupon_icon.png`;
+const AdvancedEXPCoupon = `${CDN_URL}/images/items/icons/AdvancedEXPCoupon_icon.png`;
+
 import { EXP_DATA } from "@/data/exp/expData";
 import { EXP_COUPON, ADVANCED_EXP_COUPON } from "@/data/exp/expItemsData";
 
@@ -300,7 +301,7 @@ export default function ExpCouponCalculator() {
               <SelectContent>
                 <SelectItem value="0">未套用燃燒效果</SelectItem>
                 <SelectItem value="1">
-                  <Image
+                  <img
                     src={teraBurningBooster}
                     alt="Tera Burning Booster"
                     width={16}
@@ -309,7 +310,7 @@ export default function ExpCouponCalculator() {
                   燃燒 1+2
                 </SelectItem>
                 <SelectItem value="2">
-                  <Image
+                  <img
                     src={hyperBurningBooster}
                     alt="Hyper Burning Booster"
                     width={16}
@@ -340,7 +341,7 @@ export default function ExpCouponCalculator() {
               <div className={`flex items-center space-x-2 border rounded-lg p-3 transition-colors ${couponType === 'normal' ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted/50'}`}>
                 <RadioGroupItem value="normal" id="r-normal" className="border-primary" />
                 <Label htmlFor="r-normal" className="cursor-pointer flex-1 font-normal flex items-center gap-2">
-                  <Image
+                  <img
                     src={EXPCoupon}
                     alt="EXP 交換券"
                     width={24}
@@ -352,7 +353,7 @@ export default function ExpCouponCalculator() {
               <div className={`flex items-center space-x-2 border rounded-lg p-3 transition-colors ${couponType === 'advanced' ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted/50'}`}>
                 <RadioGroupItem value="advanced" id="r-advanced" className="border-primary" />
                 <Label htmlFor="r-advanced" className="cursor-pointer flex-1 font-normal flex items-center gap-2">
-                  <Image
+                  <img
                     src={AdvancedEXPCoupon}
                     alt="上級 EXP 交換券"
                     width={24}
@@ -463,7 +464,7 @@ export default function ExpCouponCalculator() {
                 <div className="flex flex-col md:flex-row items-center justify-around gap-4">
                   <div className="flex flex-col items-center gap-1">
                     <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <Image
+                      <img
                         src={couponType === "normal" ? EXPCoupon : AdvancedEXPCoupon}
                         alt="Coupon"
                         width={24}

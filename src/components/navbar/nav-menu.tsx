@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import Link from "next/link";
-import Image from "next/image";
 import React from "react";
 import { menu } from "@/components/navbar/config";
 
@@ -39,11 +38,11 @@ export const NavMenu = (props: NavMenuProps) => (
                         >
                           <div className="flex items-center gap-3">
                             {item.icon && (
-                              <Image 
-                                src={item.icon} 
+                              <img
+                                src={item.icon}
                                 alt={item.title}
-                                width={20} 
-                                className="flex-shrink-0" 
+                                width={20}
+                                className="flex-shrink-0"
                               />
                             )}
                             <div className="space-y-2">
@@ -63,7 +62,12 @@ export const NavMenu = (props: NavMenuProps) => (
         return (
           <NavigationMenuItem key={group.title}>
             <Button variant="ghost" asChild>
-              <Link href={group.url} prefetch={false}>{group.title}</Link>
+              <Link
+                href={group.url}
+                prefetch={false}
+              >
+                {group.title}
+              </Link>
             </Button>
           </NavigationMenuItem>
         );

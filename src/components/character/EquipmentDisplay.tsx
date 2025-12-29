@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import Image from 'next/image'
 import { Star, Package } from 'lucide-react'
 import type { CharacterItemEquipment, CharacterSymbolEquipment, ItemEquipment, Title, Symbol, CharacterPetEquipment, PetEquipment } from '@/types/mapleAPI'
 
@@ -307,7 +306,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
             <div className="flex flex-col items-center justify-center h-full">
               <div className="flex flex-col items-center justify-center flex-1">
                 {(isPetEquipmentSlot ? petInfo.equipment.item_icon : petInfo.icon) ? (
-                  <Image
+                  <img
                     src={isPetEquipmentSlot ? petInfo.equipment.item_icon : petInfo.icon}
                     alt={isPetEquipmentSlot ? petInfo.equipment.item_name : petInfo.name}
                     width={32}
@@ -315,7 +314,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
                     className="w-8 h-8 object-contain"
                     style={{ imageRendering: 'crisp-edges' }}
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                    priority={false}
                   />
                 ) : (
                   <Package className="h-6 w-6 text-gray-600" />
@@ -327,7 +325,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
               <div className="flex flex-col items-center justify-center flex-1">
                 {/* 根據是否為稱號選擇不同的圖片和名稱 */}
                 {(isTitleItem ? (item as Title).title_icon : (item as ItemEquipment).item_icon) ? (
-                  <Image
+                  <img
                     src={isTitleItem ? (item as Title).title_icon : (item as ItemEquipment).item_icon}
                     alt={isTitleItem ? (item as Title).title_name : (item as ItemEquipment).item_name}
                     width={32}
@@ -335,7 +333,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
                     className="w-8 h-8 object-contain"
                     style={{ imageRendering: 'crisp-edges' }}
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                    priority={false}
                   />
                 ) : (
                   <Package className="h-6 w-6 text-gray-600" />
@@ -369,7 +366,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
           {/* 稱號標題 */}
           <div className="flex items-start gap-3">
             {titleItem.title_icon && (
-              <Image
+              <img
                 src={titleItem.title_icon}
                 alt={titleItem.title_name}
                 width={24}
@@ -419,7 +416,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
         {/* 寵物標題 */}
         <div className="flex items-start gap-3 pb-2 border-b">
           {petInfo.icon && (
-            <Image
+            <img
               src={petInfo.icon}
               alt={petInfo.name}
               width={32}
@@ -439,7 +436,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               {equipment.item_icon && (
-                <Image
+                <img
                   src={equipment.item_icon}
                   alt={equipment.item_name}
                   width={24}
@@ -641,7 +638,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
         {/* 裝備標題 */}
         <div className="flex items-center gap-3 pb-2 border-b">
           {equipment.item_icon && (
-            <Image
+            <img
               src={equipment.item_icon}
               alt={equipment.item_name}
               width={24}
@@ -848,7 +845,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
                   <TooltipTrigger asChild>
                     <div className="flex flex-col items-center p-2 border rounded-lg hover:bg-accent/50 cursor-pointer transition-colors">
                       {symbol.symbol_icon && (
-                        <Image
+                        <img
                           src={symbol.symbol_icon}
                           alt={symbol.symbol_name}
                           width={32}

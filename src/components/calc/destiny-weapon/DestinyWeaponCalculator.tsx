@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { CalendarIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png";
+
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const weeklyBossClearCountResetTicketIcon = `${CDN_URL}/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png`;
+
 import { 
   destinyBossData as bossData, 
   destinyItemIcon as itemIcon,
@@ -179,7 +181,7 @@ export default function DestinyWeaponCalculator() {
                     <TableHead className="text-center">難度</TableHead>
                     <TableHead className="text-center">人數</TableHead>
                     <TableHead className="text-center">
-                      <Image src={itemIcon.adversarysDetermination} alt="Adversary's Determination" className="w-6 h-6 mx-auto" />
+                      <img src={itemIcon.adversarysDetermination} alt="Adversary's Determination" className="w-6 h-6 mx-auto" />
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -197,13 +199,13 @@ export default function DestinyWeaponCalculator() {
                       </TableCell>
                       <TableCell className="py-2 px-2">
                         <div className="flex justify-center items-center gap-1">
-                          <Image
+                          <img
                             src={bossIcon[origin]}
                             alt={origin}
                             className="w-8 h-auto flex-shrink-0"
                           />
                           {(boss === "serenReset" || boss === "kalosReset") && (
-                            <Image
+                            <img
                               src={weeklyBossClearCountResetTicketIcon}
                               alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
                               className="w-8 h-auto flex-shrink-0"
@@ -353,7 +355,7 @@ export default function DestinyWeaponCalculator() {
                           {isCompleted ? (
                             <div className="text-white text-sm font-bold">✓</div>
                           ) : (
-                            <Image
+                            <img
                               src={bossIcon[Object.keys(bossData)[i]]}
                               alt={`Stage ${i + 1}`}
                               className="w-6 h-6 rounded-full object-contain"

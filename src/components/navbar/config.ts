@@ -1,11 +1,14 @@
-import { StaticImageData } from "next/image";
 import Logo from "../../../public/logo.png";
-import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
-import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
-import SolErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
-import ExpCoupon from "@/assets/images/items/icons/EXPCoupon_icon.png";
-import ArcaneAuthenticSymbolSelectCoupon from "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
-import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
+
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const DestinyRitualFanIcon = `${CDN_URL}/images/Destiny_Ritual_Fan_icon.png`;
+const GenesisRitualFanIcon = `${CDN_URL}/images/Genesis_Ritual_Fan_icon.png`;
+const SolErdaFragmentIcon = `${CDN_URL}/images/items/icons/SolErdaFragment_icon.png`;
+const ExpCoupon = `${CDN_URL}/images/items/icons/EXPCoupon_icon.png`;
+const ArcaneAuthenticSymbolSelectCoupon = `${CDN_URL}/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png`;
+const BaldrixIcon = `${CDN_URL}/images/bosses/icons/Baldrix_icon.png`;
+
+import type { StaticImageData } from "next/image";
 
 export interface LogoConfig {
   title: string;
@@ -16,7 +19,7 @@ export interface LogoConfig {
 
 export interface MenuItem {
   title: string;
-  icon?: StaticImageData;
+  icon?: string;
   url: string;
 }
 

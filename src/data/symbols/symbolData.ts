@@ -1,20 +1,21 @@
-import Arcane_Symbol_1 from '@/assets/images/symbol/Arcane_Symbol_1.png';
-import Arcane_Symbol_2 from '@/assets/images/symbol/Arcane_Symbol_2.png';
-import Arcane_Symbol_3 from '@/assets/images/symbol/Arcane_Symbol_3.png';
-import Arcane_Symbol_4 from '@/assets/images/symbol/Arcane_Symbol_4.png';
-import Arcane_Symbol_5 from '@/assets/images/symbol/Arcane_Symbol_5.png';
-import Arcane_Symbol_6 from '@/assets/images/symbol/Arcane_Symbol_6.png';
-import Authentic_Symbol_1 from '@/assets/images/symbol/Authentic_Symbol_1.png';
-import Authentic_Symbol_2 from '@/assets/images/symbol/Authentic_Symbol_2.png';
-import Authentic_Symbol_3 from '@/assets/images/symbol/Authentic_Symbol_3.png';
-import Authentic_Symbol_4 from '@/assets/images/symbol/Authentic_Symbol_4.png';
-import Authentic_Symbol_5 from '@/assets/images/symbol/Authentic_Symbol_5.png';
-import Authentic_Symbol_6 from '@/assets/images/symbol/Authentic_Symbol_6.png';
-import Authentic_Symbol_7 from '@/assets/images/symbol/Authentic_Symbol_7.png';
-import Arcane_Symbol_Select_Coupon from '@/assets/images/symbol/Arcane_Symbol_Select_Coupon.png';
-import Authentic_Symbol_Select_Coupon from '@/assets/images/symbol/Authentic_Symbol_Select_Coupon.png';
-import { StaticImageData } from 'next/image';
+// 使用 Cloudflare CDN URL
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 
+const Arcane_Symbol_1 = `${CDN_URL}/images/symbol/Arcane_Symbol_1.png`;
+const Arcane_Symbol_2 = `${CDN_URL}/images/symbol/Arcane_Symbol_2.png`;
+const Arcane_Symbol_3 = `${CDN_URL}/images/symbol/Arcane_Symbol_3.png`;
+const Arcane_Symbol_4 = `${CDN_URL}/images/symbol/Arcane_Symbol_4.png`;
+const Arcane_Symbol_5 = `${CDN_URL}/images/symbol/Arcane_Symbol_5.png`;
+const Arcane_Symbol_6 = `${CDN_URL}/images/symbol/Arcane_Symbol_6.png`;
+const Authentic_Symbol_1 = `${CDN_URL}/images/symbol/Authentic_Symbol_1.png`;
+const Authentic_Symbol_2 = `${CDN_URL}/images/symbol/Authentic_Symbol_2.png`;
+const Authentic_Symbol_3 = `${CDN_URL}/images/symbol/Authentic_Symbol_3.png`;
+const Authentic_Symbol_4 = `${CDN_URL}/images/symbol/Authentic_Symbol_4.png`;
+const Authentic_Symbol_5 = `${CDN_URL}/images/symbol/Authentic_Symbol_5.png`;
+const Authentic_Symbol_6 = `${CDN_URL}/images/symbol/Authentic_Symbol_6.png`;
+const Authentic_Symbol_7 = `${CDN_URL}/images/symbol/Authentic_Symbol_7.png`;
+const Arcane_Symbol_Select_Coupon = `${CDN_URL}/images/symbol/Arcane_Symbol_Select_Coupon.png`;
+const Authentic_Symbol_Select_Coupon = `${CDN_URL}/images/symbol/Authentic_Symbol_Select_Coupon.png`;
 export interface SymbolUpgradeInfo {
   level: string;
   upgradeCost: number;
@@ -25,7 +26,7 @@ export interface SymbolUpgradeInfo {
 
 export interface SymbolDefinition {
   name: string;
-  icon: StaticImageData;
+  icon: string;
   data: SymbolUpgradeInfo[];
 }
 
@@ -218,7 +219,7 @@ export const authenticSymbols: SymbolCollection = {
 };
 
 // 符文選擇券圖示
-export const symbolCoupons: { [key: string]: StaticImageData } = {
+export const symbolCoupons: { [key: string]: string } = {
   arcane: Arcane_Symbol_Select_Coupon,
   authentic: Authentic_Symbol_Select_Coupon
 };

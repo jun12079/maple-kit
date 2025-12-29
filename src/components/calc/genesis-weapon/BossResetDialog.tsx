@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
-import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png";
-import monthlyBossClearCountResetTicketIcon from "@/assets/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png";
+
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const weeklyBossClearCountResetTicketIcon = `${CDN_URL}/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png`;
+const monthlyBossClearCountResetTicketIcon = `${CDN_URL}/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png`;
+
 import { genesisBossIcon, genesisBossData, WEEKLY_BOSSES, MONTHLY_BOSSES } from "@/data/bosses/genesisWeaponData";
 
 // 定義Boss類型跟上限
@@ -119,7 +121,7 @@ export default function BossResetDialog<T extends BossConfig>({
           <DialogTitle>
             <div className="flex items-center gap-4 justify-center">
               <div className="flex items-center gap-2">
-                <Image 
+                <img 
                   src={weeklyBossClearCountResetTicketIcon} 
                   alt="Weekly Boss Clear Count Reset Ticket" 
                   className='w-6 h-6'
@@ -127,7 +129,7 @@ export default function BossResetDialog<T extends BossConfig>({
                 <span className="text-primary">{selectionCounts.weekly} / 3</span>
               </div>
               <div className="flex items-center gap-2">
-                <Image 
+                <img 
                   src={monthlyBossClearCountResetTicketIcon} 
                   alt="Monthly Boss Clear Count Reset Ticket" 
                   className='w-6 h-6'
@@ -163,7 +165,7 @@ export default function BossResetDialog<T extends BossConfig>({
                     onCheckedChange={() => !isDisabled && handleBossToggle(boss.id)}
                   />
 
-                  <Image
+                  <img
                     src={genesisBossIcon[boss.origin]}
                     alt={genesisBossData[boss.origin].name}
                     className="object-contain w-8 h-8"

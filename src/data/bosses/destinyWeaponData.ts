@@ -1,10 +1,10 @@
-import { StaticImageData } from "next/image";
-import serenIcon from "@/assets/images/bosses/icons/Seren_icon.png";
-import kalosIcon from "@/assets/images/bosses/icons/Kalos_icon.png";
-import kalingIcon from "@/assets/images/bosses/icons/Kaling_icon.png";
-import limboIcon from "@/assets/images/bosses/icons/Limbo_icon.png";
-import baldrixIcon from "@/assets/images/bosses/icons/Baldrix_icon.png";
-import adversarysDetermination from "@/assets/images/items/icons/adversary's-determination.png";
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const serenIcon = `${CDN_URL}/images/bosses/icons/Seren_icon.png`;
+const kalosIcon = `${CDN_URL}/images/bosses/icons/Kalos_icon.png`;
+const kalingIcon = `${CDN_URL}/images/bosses/icons/Kaling_icon.png`;
+const limboIcon = `${CDN_URL}/images/bosses/icons/Limbo_icon.png`;
+const baldrixIcon = `${CDN_URL}/images/bosses/icons/Baldrix_icon.png`;
+const adversarysDetermination = `${CDN_URL}/images/items/icons/adversary's-determination.png`;
 
 export interface Difficulty {
   name: string;
@@ -68,11 +68,11 @@ export const destinyBossData: DestinyBossData = {
   }
 };
 
-export const destinyItemIcon: Record<string, StaticImageData> = {
+export const destinyItemIcon: Record<string, string> = {
   adversarysDetermination: adversarysDetermination
 };
 
-export const destinyBossIcon: Record<string, StaticImageData> = {
+export const destinyBossIcon: Record<string, string> = {
   seren: serenIcon,
   serenReset: serenIcon,
   kalos: kalosIcon,

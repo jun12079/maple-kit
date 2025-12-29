@@ -1,18 +1,18 @@
-import artifact1 from '@/assets/images/union/artifact/artifact1.png';
-import artifact2 from '@/assets/images/union/artifact/artifact2.png';
-import artifact3 from '@/assets/images/union/artifact/artifact3.png';
-import artifact4 from '@/assets/images/union/artifact/artifact4.png';
-import artifact5 from '@/assets/images/union/artifact/artifact5.png';
-import artifact6 from '@/assets/images/union/artifact/artifact6.png';
-import artifact7 from '@/assets/images/union/artifact/artifact7.png';
-import artifact8 from '@/assets/images/union/artifact/artifact8.png';
-import artifact9 from '@/assets/images/union/artifact/artifact9.png';
-import { StaticImageData } from 'next/image';
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const artifact1 = `${CDN_URL}/images/union/artifact/artifact1.png`;
+const artifact2 = `${CDN_URL}/images/union/artifact/artifact2.png`;
+const artifact3 = `${CDN_URL}/images/union/artifact/artifact3.png`;
+const artifact4 = `${CDN_URL}/images/union/artifact/artifact4.png`;
+const artifact5 = `${CDN_URL}/images/union/artifact/artifact5.png`;
+const artifact6 = `${CDN_URL}/images/union/artifact/artifact6.png`;
+const artifact7 = `${CDN_URL}/images/union/artifact/artifact7.png`;
+const artifact8 = `${CDN_URL}/images/union/artifact/artifact8.png`;
+const artifact9 = `${CDN_URL}/images/union/artifact/artifact9.png`;
 
 export interface ArtifactDefinition {
   id: number;
   name: string;
-  image: StaticImageData;
+  image: string;
 }
 
 export const ArtifactData: ArtifactDefinition[] = [
@@ -27,7 +27,7 @@ export const ArtifactData: ArtifactDefinition[] = [
   { id: 9, name: '水晶：拉圖斯', image: artifact9 },
 ];
 
-export const getArtifactImage = (name: string): StaticImageData | null => {
+export const getArtifactImage = (name: string): string | null => {
   const artifact = ArtifactData.find(a => a.name === name);
   return artifact ? artifact.image : null;
 };

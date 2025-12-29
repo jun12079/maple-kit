@@ -16,7 +16,6 @@ import {
   HEXA_UPGRADE_COSTS,
   CoreType
 } from "@/data/hexa/hexaSkillData";
-import Image from "next/image";
 
 interface Core {
   level: number;
@@ -243,7 +242,7 @@ export default function HexaSkillCalculator() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center py-2 px-3 bg-muted/50 rounded-md">
                     <div className="flex items-center space-x-2">
-                      <Image src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.name} style={{ width: '24px', height: 'auto' }} />
+                      <img src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.name} style={{ width: '24px', height: 'auto' }} />
                       <span className="text-sm font-medium">{MATERIALS.solErda.name}</span>
                     </div>
                     <div className="text-right text-sm">
@@ -261,7 +260,7 @@ export default function HexaSkillCalculator() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center py-2 px-3 bg-muted/50 rounded-md">
                     <div className="flex items-center space-x-2">
-                      <Image src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.name} style={{ width: '24px', height: 'auto' }} />
+                      <img src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.name} style={{ width: '24px', height: 'auto' }} />
                       <span className="text-sm font-medium">{MATERIALS.solErdaFragment.name}</span>
                     </div>
                     <div className="text-right text-sm">
@@ -329,28 +328,28 @@ export default function HexaSkillCalculator() {
                 <tr className="border-b bg-muted/60 dark:bg-muted/40">
                   <th className="py-2 px-2"></th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                   <th className="py-2 px-1 text-xs font-medium">
-                    <Image src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
+                    <img src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.shortName} className="mx-auto" style={{ width: '24px', height: 'auto' }} />
                   </th>
                 </tr>
               </thead>
@@ -425,13 +424,13 @@ export default function HexaSkillCalculator() {
                     <th className="text-center py-3 px-3 font-semibold">升級</th>
                     <th className="text-center py-3 px-3 font-semibold">
                       <div className="flex items-center justify-center space-x-2">
-                        <Image src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.name} style={{ width: '24px', height: 'auto' }} />
+                        <img src={MATERIALS.solErda.icon} alt={MATERIALS.solErda.name} style={{ width: '24px', height: 'auto' }} />
                         <span className="hidden sm:inline">{MATERIALS.solErda.shortName}</span>
                       </div>
                     </th>
                     <th className="text-center py-3 px-3 font-semibold">
                       <div className="flex items-center justify-center space-x-2">
-                        <Image src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.name} style={{ width: '24px', height: 'auto' }} />
+                        <img src={MATERIALS.solErdaFragment.icon} alt={MATERIALS.solErdaFragment.name} style={{ width: '24px', height: 'auto' }} />
                         <span className="hidden sm:inline">{MATERIALS.solErdaFragment.shortName}</span>
                       </div>
                     </th>

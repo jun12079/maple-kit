@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CharacterUnionRaider, UnionBlock, CharacterUnionArtifact, CharacterUnion, CharacterUnionChampion } from '@/types/mapleAPI';
@@ -299,7 +298,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
                 <CardDescription className="mt-1 flex items-center gap-2">
                   <span>聯盟等級: {unionData.union_level}</span>
                   {getUnionGradeImage(unionData.union_grade) && (
-                    <Image
+                    <img
                       src={getUnionGradeImage(unionData.union_grade)!}
                       alt={unionData.union_grade}
                       className="w-6 h-6 object-contain"
@@ -423,7 +422,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
                         </div>
                         <div className="flex items-center justify-center">
                           {artifactImage ? (
-                            <Image
+                            <img
                               src={artifactImage}
                               alt={crystal.name}
                               className="w-12 h-12 object-contain"
@@ -489,12 +488,11 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
                     return (
                       <div key={index} className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 relative overflow-hidden min-h-[200px]">
                         {/* Background: Champion Image */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-30 dark:opacity-15 pointer-events-none">
-                          <Image
+                        <div className="absolute inset-0 flex items-center justify-center opacity-30 dark:opacity-15 pointer-events-none overflow-hidden">
+                          <img
                             src={championImage}
                             alt={champion.champion_class}
-                            className="object-cover scale-125 translate-y-4"
-                            fill
+                            className="object-cover scale-125 translate-y-4 w-full h-full"
                           />
                         </div>
 
@@ -545,7 +543,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
                                   className={`relative flex items-center justify-center ${!isCompleted ? 'opacity-30 grayscale' : ''}`}
                                   title={champion.champion_badge_info[badgeIndex]?.stat || '未完成'}
                                 >
-                                  <Image
+                                  <img
                                     src={badgeImage}
                                     alt={badgeType}
                                     className="object-contain"

@@ -1,9 +1,9 @@
-import { StaticImageData } from 'next/image';
-import fighterImg from '@/assets/images/union/champion/fighter.png';
-import wizardImg from '@/assets/images/union/champion/wizard.png';
-import archerImg from '@/assets/images/union/champion/archer.png';
-import thiefImg from '@/assets/images/union/champion/thief.png';
-import pirateImg from '@/assets/images/union/champion/pirate.png';
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const fighterImg = `${CDN_URL}/images/union/champion/fighter.png`;
+const wizardImg = `${CDN_URL}/images/union/champion/wizard.png`;
+const archerImg = `${CDN_URL}/images/union/champion/archer.png`;
+const thiefImg = `${CDN_URL}/images/union/champion/thief.png`;
+const pirateImg = `${CDN_URL}/images/union/champion/pirate.png`;
 
 /**
  * 職業關鍵字對應
@@ -38,7 +38,7 @@ export type ChampionType = 'fighter' | 'wizard' | 'archer' | 'thief' | 'pirate';
 /**
  * 聯盟職業圖片路徑對應
  */
-export const CHAMPION_IMAGES: Record<ChampionType, StaticImageData> = {
+export const CHAMPION_IMAGES: Record<ChampionType, string> = {
   fighter: fighterImg,
   wizard: wizardImg,
   archer: archerImg,
@@ -90,6 +90,6 @@ export const getChampionTypeByJobName = (jobClass: string): ChampionType => {
  * @param championType 公會職業類型
  * @returns 圖片資料
  */
-export const getChampionImage = (championType: ChampionType): StaticImageData => {
+export const getChampionImage = (championType: ChampionType): string => {
   return CHAMPION_IMAGES[championType];
 };

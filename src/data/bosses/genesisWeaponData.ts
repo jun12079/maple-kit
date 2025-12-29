@@ -1,17 +1,17 @@
-import vonLeonIcon from "@/assets/images/bosses/icons/VonLeon_icon.png";
-import arkariumIcon from "@/assets/images/bosses/icons/Arkarium_icon.png";
-import magnusIcon from "@/assets/images/bosses/icons/Magnus_icon.png";
-import lotusIcon from "@/assets/images/bosses/icons/Lotus_icon.png";
-import damienIcon from "@/assets/images/bosses/icons/Damien_icon.png";
-import willIcon from "@/assets/images/bosses/icons/Will_icon.png";
-import lucidIcon from "@/assets/images/bosses/icons/Lucid_icon.png";
-import verusHillaIcon from "@/assets/images/bosses/icons/VerusHilla_icon.png";
-import gloomIcon from "@/assets/images/bosses/icons/Gloom_icon.png";
-import darknellIcon from "@/assets/images/bosses/icons/Darknell_icon.png";
-import blackMageIcon from "@/assets/images/bosses/icons/BlackMage_icon.png";
-import tracesOfDarkness from "@/assets/images/items/icons/traces-of-darkness.png";
-import genesisPass from "@/assets/images/items/icons/genesis-pass.png";
-import { StaticImageData } from "next/image";
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const vonLeonIcon = `${CDN_URL}/images/bosses/icons/VonLeon_icon.png`;
+const arkariumIcon = `${CDN_URL}/images/bosses/icons/Arkarium_icon.png`;
+const magnusIcon = `${CDN_URL}/images/bosses/icons/Magnus_icon.png`;
+const lotusIcon = `${CDN_URL}/images/bosses/icons/Lotus_icon.png`;
+const damienIcon = `${CDN_URL}/images/bosses/icons/Damien_icon.png`;
+const willIcon = `${CDN_URL}/images/bosses/icons/Will_icon.png`;
+const lucidIcon = `${CDN_URL}/images/bosses/icons/Lucid_icon.png`;
+const verusHillaIcon = `${CDN_URL}/images/bosses/icons/VerusHilla_icon.png`;
+const gloomIcon = `${CDN_URL}/images/bosses/icons/Gloom_icon.png`;
+const darknellIcon = `${CDN_URL}/images/bosses/icons/Darknell_icon.png`;
+const blackMageIcon = `${CDN_URL}/images/bosses/icons/BlackMage_icon.png`;
+const tracesOfDarkness = `${CDN_URL}/images/items/icons/traces-of-darkness.png`;
+const genesisPass = `${CDN_URL}/images/items/icons/genesis-pass.png`;
 
 export interface Difficulty {
   name: string;
@@ -93,12 +93,12 @@ export const genesisBossData: Record<string, BossInfo> = {
   }
 };
 
-export const genesisItemIcon: Record<string, StaticImageData> = {
+export const genesisItemIcon: Record<string, string> = {
   tracesOfDarkness: tracesOfDarkness,
   genesisPass: genesisPass
 };
 
-export const genesisBossIcon: Record<string, StaticImageData> = {
+export const genesisBossIcon: Record<string, string> = {
   lotus: lotusIcon,
   damien: damienIcon,
   lucid: lucidIcon,
@@ -109,7 +109,7 @@ export const genesisBossIcon: Record<string, StaticImageData> = {
   blackMage: blackMageIcon
 };
 
-export const genesisStageIcon: Record<string, StaticImageData> = {
+export const genesisStageIcon: Record<string, string> = {
   vonLeon: vonLeonIcon,
   arkarium: arkariumIcon,
   magnus: magnusIcon,
