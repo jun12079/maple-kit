@@ -227,11 +227,12 @@ export default function GenesisWeaponCalculator() {
                   mode="single"
                   selected={startDate}
                   captionLayout="dropdown"
+                  startMonth={new Date(2005, 0)}
+                  endMonth={new Date(2040, 11)}
                   onSelect={(date) => {
                     setStartDate(date || new Date());
                     setCalendarOpen(false);
                   }}
-                  initialFocus
                 />
               </PopoverContent>
             </Popover>
