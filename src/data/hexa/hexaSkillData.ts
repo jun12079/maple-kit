@@ -6,9 +6,9 @@
  * 現在使用圖示顯示材料類型
  */
 
-import SolErdaIcon from '@/assets/images/items/icons/SolErda_icon.png';
-import SolErdaFragmentIcon from '@/assets/images/items/icons/SolErdaFragment_icon.png';
-import { StaticImageData } from 'next/image';
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const SolErdaIcon = `${CDN_URL}/images/items/icons/SolErda_icon.png`;
+const SolErdaFragmentIcon = `${CDN_URL}/images/items/icons/SolErdaFragment_icon.png`;
 
 // 核心類型
 export type CoreType = 'skill' | 'mastery' | 'reinforced' | 'common';
@@ -24,7 +24,7 @@ export const CORE_TYPES: Record<CoreType, string> = {
 // 材料介面
 export interface Material {
   name: string;
-  icon: StaticImageData;
+  icon: string;
   shortName: string;
 }
 

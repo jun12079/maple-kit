@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from 'react'
-import Image, { StaticImageData } from 'next/image'
 import {
   Table,
   TableBody,
@@ -128,7 +127,7 @@ interface ProcessedBossDifficulty extends BossDifficulty {
 interface ProcessedBoss {
   key: string;
   name: string;
-  image: StaticImageData;
+  image: string;
   difficulties: ProcessedBossDifficulty[];
 }
 
@@ -177,7 +176,7 @@ export default function BossTable() {
       // 掉落物篩選
       const matchesItem = itemFilter === 'all' ||
         boss.difficulties.some(diff =>
-          diff.drops && diff.drops.some(drop => drop && drop.src === itemFilter)
+          diff.drops && diff.drops.some(drop => drop && drop === itemFilter)
         )
 
       return matchesSearch && matchesReset && matchesItem
@@ -222,13 +221,14 @@ export default function BossTable() {
             <SelectContent>
               <SelectItem value="all">所有掉落物</SelectItem>
               {filterableItems.map((item, index) => (
-                <SelectItem key={index} value={item.image?.src ?? ''}>
+                <SelectItem key={index} value={item.image ?? ''}>
                   <div className="flex items-center gap-2">
                     {item.image && (
-                      <Image
+                      <img
                         src={item.image}
                         alt={item.name}
-                        style={{ width: '20px', height: 'auto' }}
+                        width={20}
+                        height={20}
                         className="rounded-sm"
                       />
                     )}
@@ -272,10 +272,11 @@ export default function BossTable() {
                   <TableCell className="font-medium text-left">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 relative flex-shrink-0">
-                        <Image
+                        <img
                           src={boss.image}
                           alt={boss.name}
-                          style={{ width: '48px', height: 'auto' }}
+                          width={48}
+                          height={48}
                           className="rounded-md"
                         />
                       </div>
@@ -359,7 +360,7 @@ export default function BossTable() {
                     <div className="flex flex-col gap-2">
                       {boss.difficulties.map((diff, index) => {
                         // 檢查是否有掉落物（非 null 且非空字串）
-                        const validDrops = diff.drops ? diff.drops.filter((drop): drop is StaticImageData => drop !== null) : []
+                        const validDrops = diff.drops ? diff.drops.filter((drop): drop is string => drop !== null) : []
 
                         return (
                           <div key={index} className="flex gap-1 py-1 min-h-[32px] items-end justify-start overflow-x-auto">
@@ -374,10 +375,11 @@ export default function BossTable() {
                                     className="w-6 h-6 relative flex-shrink-0 flex items-end justify-center"
                                     title={itemInfo.name}
                                   >
-                                    <Image
+                                    <img
                                       src={drop}
                                       alt={itemInfo.name}
-                                      style={{ width: '24px', height: 'auto' }}
+                                      width={24}
+                                      height={24}
                                       className="rounded-sm"
                                     />
                                   </div>

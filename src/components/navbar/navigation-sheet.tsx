@@ -3,7 +3,6 @@ import { Sheet, SheetHeader, SheetTitle, SheetDescription, SheetContent, SheetTr
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Menu, Coffee } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { menu } from "./config";
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
@@ -45,7 +44,7 @@ export const NavigationSheet = () => {
                         {item.items.map((subItem) => (
                           <Link key={subItem.title} href={subItem.url} prefetch={false} className="flex items-center gap-2 py-2 ml-4">
                             {subItem.icon && (
-                              <Image 
+                              <img 
                                 src={subItem.icon} 
                                 alt={subItem.title}
                                 width={20} 

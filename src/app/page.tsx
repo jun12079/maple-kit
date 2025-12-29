@@ -1,13 +1,14 @@
 import Link from "next/link";
-import Image from "next/image";
-import DestinyRitualFanIcon from "@/assets/images/Destiny_Ritual_Fan_icon.png";
-import GenesisRitualFanIcon from "@/assets/images/Genesis_Ritual_Fan_icon.png";
-import SolErdaFragmentIcon from "@/assets/images/items/icons/SolErdaFragment_icon.png";
-import ArcaneAuthenticSymbolSelectCoupon from "@/assets/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png";
-import BaldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
-import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s1-challenger-medal.png";
-import ExpCoupon from "@/assets/images/items/icons/EXPCoupon_icon.png";
 import logo from "../../public/logo.png";
+
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const DestinyRitualFanIcon = `${CDN_URL}/images/Destiny_Ritual_Fan_icon.png`;
+const GenesisRitualFanIcon = `${CDN_URL}/images/Genesis_Ritual_Fan_icon.png`;
+const SolErdaFragmentIcon = `${CDN_URL}/images/items/icons/SolErdaFragment_icon.png`;
+const ArcaneAuthenticSymbolSelectCoupon = `${CDN_URL}/images/symbol/Arcane_Authentic_Symbol_Select_Coupon.png`;
+const BaldrixIcon = `${CDN_URL}/images/bosses/icons/Baldrix_icon.png`;
+const challengerMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s1-challenger-medal.png`;
+const ExpCoupon = `${CDN_URL}/images/items/icons/EXPCoupon_icon.png`;
 
 export const metadata = {
   description: "MapleKit 為新楓之谷玩家提供命運武器進度計算、創世武器進度計算、HEXA技能計算等實用工具",
@@ -19,7 +20,7 @@ export default function Home() {
     <div className="mx-auto px-4 py-8">
       <div className="flex flex-col items-center text-center pt-10">
         <div className="flex flex-row items-center justify-center mb-12">
-          <Image src={logo} alt="MapleKit Logo" width={80} height={80} />
+          <img src={logo.src} alt="MapleKit Logo" width={80} height={80} />
           <h1 className="text-6xl font-semibold flex items-center h-[80px]">MapleKit</h1>
         </div>
 
@@ -28,7 +29,7 @@ export default function Home() {
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
-                  <Image
+                  <img
                     src={DestinyRitualFanIcon}
                     alt="Destiny Weapon icon"
                     width={32}
@@ -45,7 +46,7 @@ export default function Home() {
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
-                  <Image
+                  <img
                     src={GenesisRitualFanIcon}
                     alt="Genesis Weapon icon"
                     width={32}
@@ -62,7 +63,7 @@ export default function Home() {
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
-                  <Image
+                  <img
                     src={ArcaneAuthenticSymbolSelectCoupon}
                     alt="Symbol icon"
                     width={32}
@@ -79,7 +80,7 @@ export default function Home() {
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
-                  <Image
+                  <img
                     src={BaldrixIcon}
                     alt="Boss icon"
                     width={32}
@@ -96,7 +97,7 @@ export default function Home() {
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
-                  <Image
+                  <img
                     src={SolErdaFragmentIcon}
                     alt="Hexa Skill icon"
                     width={32}
@@ -113,7 +114,7 @@ export default function Home() {
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
-                  <Image
+                  <img
                     src={challengerMedal}
                     alt="Challenger World icon"
                     width={32}
@@ -130,7 +131,7 @@ export default function Home() {
             <div className="border shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-lg">
               <div className="p-8 text-left">
                 <div className="flex items-center mb-2">
-                  <Image
+                  <img
                     src={ExpCoupon}
                     alt="EXP Coupon icon"
                     width={32}

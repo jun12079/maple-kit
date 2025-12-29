@@ -1,11 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { logo } from "./config";
 
 export const Logo = () => (
   <Link href={logo.url} prefetch={false} className="flex flex-row items-center">
-    <Image
-      src={logo.src}
+    <img
+      src={logo.src.src}
       alt={logo.alt}
       width={40}
       height={40}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { CalendarIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,8 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BossResetDialog from "@/components/calc/genesis-weapon/BossResetDialog";
-import weeklyBossClearCountResetTicketIcon from "@/assets/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png";
-import monthlyBossClearCountResetTicketIcon from "@/assets/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png";
+
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const weeklyBossClearCountResetTicketIcon = `${CDN_URL}/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png`;
+const monthlyBossClearCountResetTicketIcon = `${CDN_URL}/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png`;
+
 import { 
   genesisBossData as bossData, 
   genesisItemIcon as itemIcon,
@@ -263,7 +265,7 @@ export default function GenesisWeaponCalculator() {
               <span className="mr-1">使用</span>
               <div className="relative w-8 h-7">
                 {/* 左圖：左下 → 左上 → 右上 */}
-                <Image
+                <img
                 src={weeklyBossClearCountResetTicketIcon}
                 alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
                 className="w-full h-full object-cover absolute top-0 left-0"
@@ -272,7 +274,7 @@ export default function GenesisWeaponCalculator() {
                 }}
                 />
                 {/* 右圖：右上 → 右下 → 左下 */}
-                <Image
+                <img
                 src={monthlyBossClearCountResetTicketIcon}
                 alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
                 className="w-full h-full object-cover absolute top-0 left-0"
@@ -290,7 +292,7 @@ export default function GenesisWeaponCalculator() {
             >
               <div className="flex items-center justify-center gap-2">
               <span>使用</span>
-              <Image
+              <img
                 src={itemIcon.genesisPass}
                 alt="Genesis Pass"
                 className="w-full h-full"
@@ -308,7 +310,7 @@ export default function GenesisWeaponCalculator() {
                   <TableHead className="text-center">難度</TableHead>
                   <TableHead className="text-center">人數</TableHead>
                   <TableHead className="text-center">
-                    <Image src={itemIcon.tracesOfDarkness} alt="Traces of Darkness" className="w-6 h-6 mx-auto" />
+                    <img src={itemIcon.tracesOfDarkness} alt="Traces of Darkness" className="w-6 h-6 mx-auto" />
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -326,7 +328,7 @@ export default function GenesisWeaponCalculator() {
                     </TableCell>
                     <TableCell className="py-2 px-2">
                       <div className="flex justify-center items-center gap-1">
-                        <Image
+                        <img
                           src={bossIcon[origin]}
                           alt={origin}
                           className="w-8 h-auto flex-shrink-0"
@@ -334,7 +336,7 @@ export default function GenesisWeaponCalculator() {
                         {reset && !MONTHLY_BOSSES.includes(boss) && (
                           <>
                             <span>+</span>
-                            <Image
+                            <img
                               src={weeklyBossClearCountResetTicketIcon}
                               alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
                               className="w-8 h-auto flex-shrink-0"
@@ -344,7 +346,7 @@ export default function GenesisWeaponCalculator() {
                         {reset && MONTHLY_BOSSES.includes(boss) && (
                           <>
                             <span>+</span>
-                            <Image
+                            <img
                               src={monthlyBossClearCountResetTicketIcon}
                               alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
                               className="w-8 h-auto flex-shrink-0"
@@ -443,7 +445,7 @@ export default function GenesisWeaponCalculator() {
                       {isCompleted ? (
                         <div className="text-white text-sm font-bold">✓</div>
                       ) : (
-                        <Image
+                        <img
                           src={stageBossIcon[Object.keys(stageBossIcon)[i]]}
                           alt={`Stage ${i + 1}`}
                           className="w-6 h-6 rounded-full object-contain"

@@ -1,18 +1,16 @@
-import { StaticImageData } from "next/image";
-
 // 匯入挑戰者世界圖示
-import level260Icon from "@/assets/images/challengers-world/icons/challenger-level-260.png";
-import level265Icon from "@/assets/images/challengers-world/icons/challenger-level-265.png";
-import level270Icon from "@/assets/images/challengers-world/icons/challenger-level-270.png";
-import level275Icon from "@/assets/images/challengers-world/icons/challenger-level-275.png";
-import level280Icon from "@/assets/images/challengers-world/icons/challenger-level-280.png";
-
-import bronzeMedal from "@/assets/images/challengers-world/icons/challenger-s1-bronze-medal.png";
-import silverMedal from "@/assets/images/challengers-world/icons/challenger-s1-silver-medal.png";
-import goldMedal from "@/assets/images/challengers-world/icons/challenger-s1-gold-medal.png";
-import emeraldMedal from "@/assets/images/challengers-world/icons/challenger-s1-emerald-medal.png";
-import diamondMedal from "@/assets/images/challengers-world/icons/challenger-s1-diamond-medal.png";
-import challengerMedal from "@/assets/images/challengers-world/icons/challenger-s1-challenger-medal.png";
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const level260Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-260.png`;
+const level265Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-265.png`;
+const level270Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-270.png`;
+const level275Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-275.png`;
+const level280Icon = `${CDN_URL}/images/challengers-world/icons/challenger-level-280.png`;
+const bronzeMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s1-bronze-medal.png`;
+const silverMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s1-silver-medal.png`;
+const goldMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s1-gold-medal.png`;
+const emeraldMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s1-emerald-medal.png`;
+const diamondMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s1-diamond-medal.png`;
+const challengerMedal = `${CDN_URL}/images/challengers-world/icons/challenger-s1-challenger-medal.png`;
 
 export const DAILY_MISSION_POINTS = 150;
 export const DAILY_MISSION_COINS = 300;
@@ -20,7 +18,7 @@ export const EVENT_START_DATE = new Date("2025-06-25T00:00:00");
 export const EVENT_END_DATE = new Date("2025-10-14T23:59:59");
 
 export const LEVELS = [260, 265, 270, 275, 280];
-export const LEVEL_ICONS: Record<number, StaticImageData> = {
+export const LEVEL_ICONS: Record<number, string> = {
   260: level260Icon,
   265: level265Icon,
   270: level270Icon,

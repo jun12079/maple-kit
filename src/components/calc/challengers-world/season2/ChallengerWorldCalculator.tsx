@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useMemo, useEffect } from "react";
 import { Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,10 +12,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 // 匯入挑戰者世界圖示
-import challengerPointIcon from "@/assets/images/challengers-world/icons/challenger-point.png";
-import challengerCoinIcon from "@/assets/images/challengers-world/icons/challenger-coin-xs.png";
-import challengerAdvancedCoinIcon from "@/assets/images/challengers-world/icons/challenger-advanced-coin-xs.png";
-import dailyMissionIcon from "@/assets/images/challengers-world/icons/challenger-daily-mission.png";
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const challengerPointIcon = `${CDN_URL}/images/challengers-world/icons/challenger-point.png`;
+const challengerCoinIcon = `${CDN_URL}/images/challengers-world/icons/challenger-coin-xs.png`;
+const challengerAdvancedCoinIcon = `${CDN_URL}/images/challengers-world/icons/challenger-advanced-coin-xs.png`;
+const dailyMissionIcon = `${CDN_URL}/images/challengers-world/icons/challenger-daily-mission.png`;
 
 import {
   DAILY_MISSION_POINTS,
@@ -322,7 +322,7 @@ export default function ChallengerWorldCalculator() {
                   onClick={() => handleQuickResult(score)}
                 >
                   {rank && (
-                    <Image
+                    <img
                       src={rank.icon}
                       alt={rank.name}
                       width={24}
@@ -345,7 +345,7 @@ export default function ChallengerWorldCalculator() {
           <h2 className="text-sm font-bold mb-2">每日任務</h2>
           <p className="text-xs text-muted-foreground">
             活動 18 週，一週最多完成 5 次，每次可獲得
-            <Image
+            <img
               src={challengerPointIcon}
               alt="Challenger Point"
               width={16}
@@ -353,7 +353,7 @@ export default function ChallengerWorldCalculator() {
               className="inline-block mx-1 w-4 h-4"
             />
             {DAILY_MISSION_POINTS}
-            <Image
+            <img
               src={challengerCoinIcon}
               alt="Challenger Coin"
               width={16}
@@ -374,7 +374,7 @@ export default function ChallengerWorldCalculator() {
                     num <= dailyMissions ? "grayscale-0" : "grayscale opacity-50"
                   )}
                 >
-                  <Image
+                  <img
                     src={dailyMissionIcon}
                     alt={`Daily Mission ${num}`}
                     width={32}
@@ -411,7 +411,7 @@ export default function ChallengerWorldCalculator() {
                   selectedLevel && lvl <= selectedLevel ? "grayscale-0" : "grayscale opacity-50"
                 )}
               >
-                <Image
+                <img
                   src={LEVEL_ICONS[lvl as keyof typeof LEVEL_ICONS]}
                   alt={`Level ${lvl}`}
                   width={64}
@@ -444,7 +444,7 @@ export default function ChallengerWorldCalculator() {
                   <PopoverTrigger asChild>
                     <button className="relative group transition-transform hover:scale-105">
                       <div className="relative">
-                        <Image
+                        <img
                           src={boss.image}
                           alt={boss.name}
                           className="w-10 sm:w-16 h-auto object-contain mx-auto"
@@ -457,7 +457,7 @@ export default function ChallengerWorldCalculator() {
                         {isPartiallyCompleted && (
                           <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-0.5 bg-black/60 p-0.5 rounded-b-sm">
                             {Array.from({ length: totalDiffs }).map((_, i) => (
-                              <Image
+                              <img
                                 key={i}
                                 src={dailyMissionIcon}
                                 alt="progress"
@@ -499,16 +499,16 @@ export default function ChallengerWorldCalculator() {
                             </div>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground ml-auto">
                               <div className="flex items-center gap-1 w-14" title="挑戰者點數">
-                                <Image src={challengerPointIcon} alt="CP" width={16} height={16} className="w-4 h-4" />
+                                <img src={challengerPointIcon} alt="CP" width={16} height={16} className="w-4 h-4" />
                                 <span className={cn(isCompleted && "text-primary font-bold")}>{rewards.points}</span>
                               </div>
                               <div className="flex items-center gap-1 w-14" title="挑戰者硬幣">
-                                <Image src={challengerCoinIcon} alt="CC" width={16} height={16} className="w-4 h-4" />
+                                <img src={challengerCoinIcon} alt="CC" width={16} height={16} className="w-4 h-4" />
                                 <span className={cn(isCompleted && "text-yellow-600 font-bold")}>{rewards.coins}</span>
                               </div>
                               {rewards.advancedCoins && (
                                 <div className="flex items-center gap-1 w-14" title="高級挑戰者硬幣">
-                                  <Image src={challengerAdvancedCoinIcon} alt="ACC" width={16} height={16} className="w-4 h-4" />
+                                  <img src={challengerAdvancedCoinIcon} alt="ACC" width={16} height={16} className="w-4 h-4" />
                                   <span className={cn(isCompleted && "text-purple-600 font-bold")}>{rewards.advancedCoins}</span>
                                 </div>
                               )}
@@ -532,7 +532,7 @@ export default function ChallengerWorldCalculator() {
             <h3 className="text-lg font-semibold text-muted-foreground">目前階級</h3>
             {currentRank ? (
               <div className="flex flex-col items-center gap-2">
-                <Image src={currentRank.icon} alt={currentRank.name} width={64} height={64} />
+                <img src={currentRank.icon} alt={currentRank.name} width={64} height={64} />
                 <span className="text-2xl font-bold">{currentRank.name}</span>
               </div>
             ) : (
@@ -545,7 +545,7 @@ export default function ChallengerWorldCalculator() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-2 border-b border-border/50 pb-4">
             <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-1 px-4 sm:px-0">
               <div className="flex items-center gap-2">
-                <Image src={challengerPointIcon} alt="Challenger Point" width={16} height={16} className="w-4 h-4" />
+                <img src={challengerPointIcon} alt="Challenger Point" width={16} height={16} className="w-4 h-4" />
                 <h3 className="font-semibold text-muted-foreground text-sm">挑戰者點數</h3>
               </div>
               <p className="text-xl font-bold text-primary">{totals.points.toLocaleString()}</p>
@@ -553,7 +553,7 @@ export default function ChallengerWorldCalculator() {
 
             <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-1 px-4 sm:px-0">
               <div className="flex items-center gap-2">
-                <Image src={challengerCoinIcon} alt="Challenger Coin" width={16} height={16} className="w-4 h-4" />
+                <img src={challengerCoinIcon} alt="Challenger Coin" width={16} height={16} className="w-4 h-4" />
                 <h3 className="font-semibold text-muted-foreground text-sm">挑戰者硬幣</h3>
               </div>
               <p className="text-xl font-bold text-yellow-500">{totals.coins.toLocaleString()}</p>
@@ -561,7 +561,7 @@ export default function ChallengerWorldCalculator() {
 
             <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-1 px-4 sm:px-0">
               <div className="flex items-center gap-2">
-                <Image src={challengerAdvancedCoinIcon} alt="Advanced Challenger Coin" width={16} height={16} className="w-4 h-4" />
+                <img src={challengerAdvancedCoinIcon} alt="Advanced Challenger Coin" width={16} height={16} className="w-4 h-4" />
                 <h3 className="font-semibold text-muted-foreground text-sm">高級挑戰者硬幣</h3>
               </div>
               <p className="text-xl font-bold text-purple-500">{totals.advancedCoins.toLocaleString()}</p>
@@ -637,7 +637,7 @@ export default function ChallengerWorldCalculator() {
                     )}
                   >
                     <div className="relative">
-                      <Image
+                      <img
                         src={rank.icon}
                         alt={rank.name}
                         width={40}
@@ -672,7 +672,7 @@ export default function ChallengerWorldCalculator() {
                             className="flex flex-col items-center gap-0.5" 
                             title={reward.name}
                           >
-                            <Image src={reward.image} alt={reward.name} width={24} height={24} className="w-6 h-6 object-contain" />
+                            <img src={reward.image} alt={reward.name} width={24} height={24} className="w-6 h-6 object-contain" />
                             <span className="text-[9px] leading-none">x{reward.count}</span>
                           </div>
                         ))}

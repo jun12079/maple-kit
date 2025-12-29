@@ -1,37 +1,38 @@
-import { StaticImageData } from 'next/image';
+// 使用 Cloudflare CDN URL
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 
-import zakumIcon from '@/assets/images/bosses/icons/Zakum_icon.png';
-import horntailIcon from '@/assets/images/bosses/icons/Horntail_icon.png';
-import hillaIcon from '@/assets/images/bosses/icons/Hilla_icon.png';
-import pierreIcon from '@/assets/images/bosses/icons/Pierre_icon.png';
-import vonBonIcon from '@/assets/images/bosses/icons/VonBon_icon.png';
-import crimsonQueenIcon from '@/assets/images/bosses/icons/CrimsonQueen_icon.png';
-import vellumIcon from '@/assets/images/bosses/icons/Vellum_icon.png';
-import vonLeonIcon from '@/assets/images/bosses/icons/VonLeon_icon.png';
-import arkariumIcon from '@/assets/images/bosses/icons/Arkarium_icon.png';
-import magnusIcon from '@/assets/images/bosses/icons/Magnus_icon.png';
-import pinkBeanIcon from '@/assets/images/bosses/icons/PinkBean_icon.png';
-import cygnusIcon from '@/assets/images/bosses/icons/Cygnus_icon.png';
-import lotusIcon from '@/assets/images/bosses/icons/Lotus_icon.png';
-import damienIcon from '@/assets/images/bosses/icons/Damien_icon.png';
-import golluxIcon from '@/assets/images/bosses/icons/Gollux_icon.png';
-import moriRanmaruIcon from '@/assets/images/bosses/icons/MoriRanmaru_icon.png';
-import princessNoIcon from '@/assets/images/bosses/icons/PrincessNo_icon.png';
-import lucidIcon from '@/assets/images/bosses/icons/Lucid_icon.png';
-import omniclnIcon from '@/assets/images/bosses/icons/OMNICLN_icon.png';
-import papulatusIcon from '@/assets/images/bosses/icons/Papulatus_icon.png';
-import willIcon from '@/assets/images/bosses/icons/Will_icon.png';
-import verusHillaIcon from '@/assets/images/bosses/icons/VerusHilla_icon.png';
-import blackMageIcon from '@/assets/images/bosses/icons/BlackMage_icon.png';
-import gloomIcon from '@/assets/images/bosses/icons/Gloom_icon.png';
-import darknellIcon from '@/assets/images/bosses/icons/Darknell_icon.png';
-import serenIcon from '@/assets/images/bosses/icons/Seren_icon.png';
-import guardianAngelSlimeIcon from '@/assets/images/bosses/icons/GuardianAngelSlime_icon.png';
-import kalosIcon from '@/assets/images/bosses/icons/Kalos_icon.png';
-import kalingIcon from '@/assets/images/bosses/icons/Kaling_icon.png';
-import limboIcon from '@/assets/images/bosses/icons/Limbo_icon.png';
-import baldrixIcon from '@/assets/images/bosses/icons/Baldrix_icon.png';
-import malitiaIcon from '@/assets/images/bosses/icons/Malitia_icon.png';
+const zakumIcon = `${CDN_URL}/images/bosses/icons/Zakum_icon.png`;
+const horntailIcon = `${CDN_URL}/images/bosses/icons/Horntail_icon.png`;
+const hillaIcon = `${CDN_URL}/images/bosses/icons/Hilla_icon.png`;
+const pierreIcon = `${CDN_URL}/images/bosses/icons/Pierre_icon.png`;
+const vonBonIcon = `${CDN_URL}/images/bosses/icons/VonBon_icon.png`;
+const crimsonQueenIcon = `${CDN_URL}/images/bosses/icons/CrimsonQueen_icon.png`;
+const vellumIcon = `${CDN_URL}/images/bosses/icons/Vellum_icon.png`;
+const vonLeonIcon = `${CDN_URL}/images/bosses/icons/VonLeon_icon.png`;
+const arkariumIcon = `${CDN_URL}/images/bosses/icons/Arkarium_icon.png`;
+const magnusIcon = `${CDN_URL}/images/bosses/icons/Magnus_icon.png`;
+const pinkBeanIcon = `${CDN_URL}/images/bosses/icons/PinkBean_icon.png`;
+const cygnusIcon = `${CDN_URL}/images/bosses/icons/Cygnus_icon.png`;
+const lotusIcon = `${CDN_URL}/images/bosses/icons/Lotus_icon.png`;
+const damienIcon = `${CDN_URL}/images/bosses/icons/Damien_icon.png`;
+const golluxIcon = `${CDN_URL}/images/bosses/icons/Gollux_icon.png`;
+const moriRanmaruIcon = `${CDN_URL}/images/bosses/icons/MoriRanmaru_icon.png`;
+const princessNoIcon = `${CDN_URL}/images/bosses/icons/PrincessNo_icon.png`;
+const lucidIcon = `${CDN_URL}/images/bosses/icons/Lucid_icon.png`;
+const omniclnIcon = `${CDN_URL}/images/bosses/icons/OMNICLN_icon.png`;
+const papulatusIcon = `${CDN_URL}/images/bosses/icons/Papulatus_icon.png`;
+const willIcon = `${CDN_URL}/images/bosses/icons/Will_icon.png`;
+const verusHillaIcon = `${CDN_URL}/images/bosses/icons/VerusHilla_icon.png`;
+const blackMageIcon = `${CDN_URL}/images/bosses/icons/BlackMage_icon.png`;
+const gloomIcon = `${CDN_URL}/images/bosses/icons/Gloom_icon.png`;
+const darknellIcon = `${CDN_URL}/images/bosses/icons/Darknell_icon.png`;
+const serenIcon = `${CDN_URL}/images/bosses/icons/Seren_icon.png`;
+const guardianAngelSlimeIcon = `${CDN_URL}/images/bosses/icons/GuardianAngelSlime_icon.png`;
+const kalosIcon = `${CDN_URL}/images/bosses/icons/Kalos_icon.png`;
+const kalingIcon = `${CDN_URL}/images/bosses/icons/Kaling_icon.png`;
+const limboIcon = `${CDN_URL}/images/bosses/icons/Limbo_icon.png`;
+const baldrixIcon = `${CDN_URL}/images/bosses/icons/Baldrix_icon.png`;
+const malitiaIcon = `${CDN_URL}/images/bosses/icons/Malitia_icon.png`;
 
 // 從itemDatabase導入圖片
 import {
@@ -104,14 +105,14 @@ export interface BossDifficulty {
   defense: number;
   symbol: number | number[] | null;
   reset: 'daily' | 'weekly' | 'monthly';
-  drops: (StaticImageData | null)[];
+  drops: (string | null)[];
   solErda: number | null;
   mesos: number | null;
 }
 
 export interface Boss {
   name: string;
-  image: StaticImageData;
+  image: string;
   players: number;
   difficulties: Record<string, BossDifficulty>;
 }

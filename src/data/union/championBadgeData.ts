@@ -1,9 +1,9 @@
-import { StaticImageData } from 'next/image';
-import allImg from '@/assets/images/union/champion/all.png';
-import attackImg from '@/assets/images/union/champion/attack.png';
-import bossImg from '@/assets/images/union/champion/boss.png';
-import cdmgImg from '@/assets/images/union/champion/cdmg.png';
-import iedImg from '@/assets/images/union/champion/ied.png';
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const allImg = `${CDN_URL}/images/union/champion/all.png`;
+const attackImg = `${CDN_URL}/images/union/champion/attack.png`;
+const bossImg = `${CDN_URL}/images/union/champion/boss.png`;
+const cdmgImg = `${CDN_URL}/images/union/champion/cdmg.png`;
+const iedImg = `${CDN_URL}/images/union/champion/ied.png`;
 
 /**
  * 冠軍能力徽章類型
@@ -13,7 +13,7 @@ export type BadgeType = 'all' | 'attack' | 'boss' | 'cdmg' | 'ied';
 /**
  * 冠軍能力徽章圖片對應
  */
-export const BADGE_IMAGES: Record<BadgeType, StaticImageData> = {
+export const BADGE_IMAGES: Record<BadgeType, string> = {
   all: allImg,
   attack: attackImg,
   boss: bossImg,
@@ -42,7 +42,7 @@ export const BADGE_ORDER: BadgeType[] = ['all', 'attack', 'boss', 'cdmg', 'ied']
  * @param badgeType 徽章類型
  * @returns 圖片資料
  */
-export const getBadgeImage = (badgeType: BadgeType): StaticImageData => {
+export const getBadgeImage = (badgeType: BadgeType): string => {
   return BADGE_IMAGES[badgeType];
 };
 

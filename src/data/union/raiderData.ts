@@ -1,36 +1,35 @@
-import noviceUnion1 from '@/assets/images/union/raider/novice-union1.png';
-import noviceUnion2 from '@/assets/images/union/raider/novice-union2.png';
-import noviceUnion3 from '@/assets/images/union/raider/novice-union3.png';
-import noviceUnion4 from '@/assets/images/union/raider/novice-union4.png';
-import noviceUnion5 from '@/assets/images/union/raider/novice-union5.png';
-import veteranUnion1 from '@/assets/images/union/raider/veteran-union1.png';
-import veteranUnion2 from '@/assets/images/union/raider/veteran-union2.png';
-import veteranUnion3 from '@/assets/images/union/raider/veteran-union3.png';
-import veteranUnion4 from '@/assets/images/union/raider/veteran-union4.png';
-import veteranUnion5 from '@/assets/images/union/raider/veteran-union5.png';
-import masterUnion1 from '@/assets/images/union/raider/master-union1.png';
-import masterUnion2 from '@/assets/images/union/raider/master-union2.png';
-import masterUnion3 from '@/assets/images/union/raider/master-union3.png';
-import masterUnion4 from '@/assets/images/union/raider/master-union4.png';
-import masterUnion5 from '@/assets/images/union/raider/master-union5.png';
-import grandmasterUnion1 from '@/assets/images/union/raider/grandmaster-union1.png';
-import grandmasterUnion2 from '@/assets/images/union/raider/grandmaster-union2.png';
-import grandmasterUnion3 from '@/assets/images/union/raider/grandmaster-union3.png';
-import grandmasterUnion4 from '@/assets/images/union/raider/grandmaster-union4.png';
-import grandmasterUnion5 from '@/assets/images/union/raider/grandmaster-union5.png';
-import supremeUnion1 from '@/assets/images/union/raider/supreme-union1.png';
-import supremeUnion2 from '@/assets/images/union/raider/supreme-union2.png';
-import supremeUnion3 from '@/assets/images/union/raider/supreme-union3.png';
-import supremeUnion4 from '@/assets/images/union/raider/supreme-union4.png';
-import supremeUnion5 from '@/assets/images/union/raider/supreme-union5.png';
-import { StaticImageData } from 'next/image';
-
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+const noviceUnion1 = `${CDN_URL}/images/union/raider/novice-union1.png`;
+const noviceUnion2 = `${CDN_URL}/images/union/raider/novice-union2.png`;
+const noviceUnion3 = `${CDN_URL}/images/union/raider/novice-union3.png`;
+const noviceUnion4 = `${CDN_URL}/images/union/raider/novice-union4.png`;
+const noviceUnion5 = `${CDN_URL}/images/union/raider/novice-union5.png`;
+const veteranUnion1 = `${CDN_URL}/images/union/raider/veteran-union1.png`;
+const veteranUnion2 = `${CDN_URL}/images/union/raider/veteran-union2.png`;
+const veteranUnion3 = `${CDN_URL}/images/union/raider/veteran-union3.png`;
+const veteranUnion4 = `${CDN_URL}/images/union/raider/veteran-union4.png`;
+const veteranUnion5 = `${CDN_URL}/images/union/raider/veteran-union5.png`;
+const masterUnion1 = `${CDN_URL}/images/union/raider/master-union1.png`;
+const masterUnion2 = `${CDN_URL}/images/union/raider/master-union2.png`;
+const masterUnion3 = `${CDN_URL}/images/union/raider/master-union3.png`;
+const masterUnion4 = `${CDN_URL}/images/union/raider/master-union4.png`;
+const masterUnion5 = `${CDN_URL}/images/union/raider/master-union5.png`;
+const grandmasterUnion1 = `${CDN_URL}/images/union/raider/grandmaster-union1.png`;
+const grandmasterUnion2 = `${CDN_URL}/images/union/raider/grandmaster-union2.png`;
+const grandmasterUnion3 = `${CDN_URL}/images/union/raider/grandmaster-union3.png`;
+const grandmasterUnion4 = `${CDN_URL}/images/union/raider/grandmaster-union4.png`;
+const grandmasterUnion5 = `${CDN_URL}/images/union/raider/grandmaster-union5.png`;
+const supremeUnion1 = `${CDN_URL}/images/union/raider/supreme-union1.png`;
+const supremeUnion2 = `${CDN_URL}/images/union/raider/supreme-union2.png`;
+const supremeUnion3 = `${CDN_URL}/images/union/raider/supreme-union3.png`;
+const supremeUnion4 = `${CDN_URL}/images/union/raider/supreme-union4.png`;
+const supremeUnion5 = `${CDN_URL}/images/union/raider/supreme-union5.png`;
 export interface UnionGradeDefinition {
   grade: string;
-  image: StaticImageData;
+  image: string;
 }
 
-export const UnionGradeData: Record<string, StaticImageData> = {
+export const UnionGradeData: Record<string, string> = {
   '新手戰地聯盟 1': noviceUnion1,
   '新手戰地聯盟 2': noviceUnion2,
   '新手戰地聯盟 3': noviceUnion3,
@@ -58,6 +57,6 @@ export const UnionGradeData: Record<string, StaticImageData> = {
   '總司令聯盟 5': supremeUnion5,
 };
 
-export const getUnionGradeImage = (grade: string): StaticImageData | null => {
+export const getUnionGradeImage = (grade: string): string | null => {
   return UnionGradeData[grade] || null;
 };
