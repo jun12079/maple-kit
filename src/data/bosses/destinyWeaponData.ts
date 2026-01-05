@@ -84,3 +84,5 @@ export const destinyBossIcon: Record<string, string> = {
 
 export const destinyStageEnergy: number[] = [2000, 2500, 3000];
 export const destinyStageCumulative: number[] = [2000, 4500, 7500];
+
+export const MAX_ENERGY: number = 7500;
