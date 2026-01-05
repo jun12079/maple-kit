@@ -17,12 +17,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 const weeklyBossClearCountResetTicketIcon = `${CDN_URL}/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png`;
 
-import { 
-  destinyBossData as bossData, 
+import {
+  destinyBossData as bossData,
   destinyItemIcon as itemIcon,
-  destinyBossIcon as bossIcon, 
-  destinyStageEnergy as stageEnergy, 
-  destinyStageCumulative as stageCumulative 
+  destinyBossIcon as bossIcon,
+  destinyStageEnergy as stageEnergy,
+  destinyStageCumulative as stageCumulative,
+  MAX_ENERGY
 } from "@/data/bosses/destinyWeaponData";
 
 interface BossConfigItem {
@@ -157,9 +158,9 @@ export default function DestinyWeaponCalculator() {
               id="startEnergy"
               value={startEnergy || ''}
               min="0"
-              max="7500"
+              max={MAX_ENERGY}
               onChange={(e) => setStartEnergy(Number(e.target.value) || 0)}
-              placeholder="輸入目前決心數值 (0-7500)"
+              placeholder={`輸入目前決心 (0-${MAX_ENERGY})`}
             />
           </div>
 
@@ -412,7 +413,7 @@ export default function DestinyWeaponCalculator() {
                 <Card>
                   <CardContent className="text-center">
                     <div className="text-2xl font-bold mb-1">
-                      {startEnergy >= 7500 ? 0 : Math.ceil((stageCumulative[2] - startEnergy) / (totalWeekEnergy || 1))}
+                      {startEnergy >= MAX_ENERGY ? 0 : Math.ceil((stageCumulative[2] - startEnergy) / (totalWeekEnergy || 1))}
                     </div>
                     <div className="text-sm text-muted-foreground font-normal">剩餘週數</div>
                   </CardContent>
@@ -421,13 +422,13 @@ export default function DestinyWeaponCalculator() {
             </CardContent>
 
             {/* 特殊狀態覆蓋層 */}
-            {startEnergy >= 7500 && (
+            {startEnergy >= MAX_ENERGY && (
               <div className="absolute inset-0 bg-green-100/30 dark:bg-green-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
                 <h3 className="text-2xl text-green-500 dark:text-green-400 font-bold">已解放！</h3>
               </div>
             )}
 
-            {totalWeekEnergy === 0 && startEnergy < 7500 && (
+            {totalWeekEnergy === 0 && startEnergy < MAX_ENERGY && (
               <div className="absolute inset-0 bg-yellow-100/30 dark:bg-yellow-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
                 <h3 className="text-2xl text-yellow-500 dark:text-yellow-400 font-bold">去課金！</h3>
               </div>

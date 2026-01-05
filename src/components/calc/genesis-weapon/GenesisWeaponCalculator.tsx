@@ -18,11 +18,12 @@ const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 const weeklyBossClearCountResetTicketIcon = `${CDN_URL}/images/Weekly_Boss_Clear_Count_Reset_Ticket_icon.png`;
 const monthlyBossClearCountResetTicketIcon = `${CDN_URL}/images/Monthly_Boss_Clear_Count_Reset_Ticket_icon.png`;
 
-import { 
-  genesisBossData as bossData, 
+import {
+  genesisBossData as bossData,
   genesisItemIcon as itemIcon,
   genesisBossIcon as bossIcon,
-  genesisStageIcon as stageBossIcon, 
+  genesisStageIcon as stageBossIcon,
+  genesisStageEnergy as stageEnergy,
   genesisStageCumulative as stageCumulative,
   BossInfo,
   MAX_ENERGY,
@@ -89,7 +90,7 @@ export default function GenesisWeaponCalculator() {
     if (!enabled) return 0;
     const baseEnergy = bossData[origin].difficulties[difficulty].energy;
     let totalEnergy = reset ? baseEnergy * 2 : baseEnergy;
-    
+
     if (genesisPass) {
       totalEnergy *= 3;
     }
@@ -181,23 +182,40 @@ export default function GenesisWeaponCalculator() {
 
   const { weeklyTotal, monthlyTotal } = calculateWeeklyAndMonthlyEnergy();
   const stageProgressData = calculateStageProgress(weeklyTotal, monthlyTotal, startEnergy, startDate);
-  const percentage = Math.min((startEnergy / stageCumulative[7]) * 100, 100).toFixed(1);
+  const percentage = Math.min((startEnergy / MAX_ENERGY) * 100, 100).toFixed(1);
+
+  // 計算每個階段的進度
+  const getStageProgress = (currentEnergy: number, stageIndex: number) => {
+    const previousCumulative = stageIndex === 0 ? 0 : stageCumulative[stageIndex - 1];
+    const stageTarget = stageEnergy[stageIndex];
+
+    if (currentEnergy >= stageCumulative[stageIndex]) {
+      // 已完成
+      return { current: stageTarget, total: stageTarget };
+    } else if (currentEnergy > previousCumulative) {
+      // 進行中
+      return { current: currentEnergy - previousCumulative, total: stageTarget };
+    } else {
+      // 尚未開始
+      return { current: 0, total: stageTarget };
+    }
+  };
 
   const getStageText = (currentEnergy: number) => {
-    if (currentEnergy >= stageCumulative[7]) return `解放完成 ${currentEnergy.toLocaleString()}/${stageCumulative[7].toLocaleString()}`;
-    
+    if (currentEnergy >= MAX_ENERGY) return `解放完成 ${currentEnergy.toLocaleString()}/${MAX_ENERGY.toLocaleString()}`;
+
     const stages = [
-      "第一階段", "第二階段", "第三階段", "第四階段", 
+      "第一階段", "第二階段", "第三階段", "第四階段",
       "第五階段", "第六階段", "第七階段", "第八階段"
     ];
 
     for (let i = 6; i >= 0; i--) {
       if (currentEnergy >= stageCumulative[i]) {
-        return `${stages[i + 1]} ${currentEnergy.toLocaleString()}/${stageCumulative[i + 1].toLocaleString()}`;
+        return `${stages[i + 1]} ${currentEnergy.toLocaleString()}/${MAX_ENERGY.toLocaleString()}`;
       }
     }
-    
-    return `${stages[0]} ${currentEnergy.toLocaleString()}/${stageCumulative[0].toLocaleString()}`;
+
+    return `${stages[0]} ${currentEnergy.toLocaleString()}/${MAX_ENERGY.toLocaleString()}`;
   };
 
   return (
@@ -252,37 +270,37 @@ export default function GenesisWeaponCalculator() {
               min="0"
               max={MAX_ENERGY}
               onChange={(e) => setStartEnergy(Number(e.target.value) || 0)}
-              placeholder={`輸入目前痕跡數值 (0-${MAX_ENERGY})`}
+              placeholder={`輸入目前痕跡 (0-${MAX_ENERGY})`}
             />
           </div>
-            <div className="flex gap-2">
+          <div className="flex gap-2">
             <Button
               variant="outline"
               className="rounded-full px-3 py-2 mb-2 shadow-sm"
               onClick={handleOpenBossResetDialog}
             >
               <div className="flex items-center justify-center">
-              <span className="mr-1">使用</span>
-              <div className="relative w-8 h-7">
-                {/* 左圖：左下 → 左上 → 右上 */}
-                <img
-                src={weeklyBossClearCountResetTicketIcon}
-                alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
-                className="w-full h-full object-cover absolute top-0 left-0"
-                style={{
-                  clipPath: "polygon(0 100%, 0 0, 100% 0)", // 左下 → 左上 → 右上
-                }}
-                />
-                {/* 右圖：右上 → 右下 → 左下 */}
-                <img
-                src={monthlyBossClearCountResetTicketIcon}
-                alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
-                className="w-full h-full object-cover absolute top-0 left-0"
-                style={{
-                  clipPath: "polygon(100% 0, 100% 100%, 0 100%)", // 右上 → 右下 → 左下
-                }}
-                />
-              </div>
+                <span className="mr-1">使用</span>
+                <div className="relative w-8 h-7">
+                  {/* 左圖：左下 → 左上 → 右上 */}
+                  <img
+                    src={weeklyBossClearCountResetTicketIcon}
+                    alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
+                    className="w-full h-full object-cover absolute top-0 left-0"
+                    style={{
+                      clipPath: "polygon(0 100%, 0 0, 100% 0)", // 左下 → 左上 → 右上
+                    }}
+                  />
+                  {/* 右圖：右上 → 右下 → 左下 */}
+                  <img
+                    src={monthlyBossClearCountResetTicketIcon}
+                    alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
+                    className="w-full h-full object-cover absolute top-0 left-0"
+                    style={{
+                      clipPath: "polygon(100% 0, 100% 100%, 0 100%)", // 右上 → 右下 → 左下
+                    }}
+                  />
+                </div>
               </div>
             </Button>
             <Button
@@ -291,130 +309,139 @@ export default function GenesisWeaponCalculator() {
               onClick={() => setGenesisPassEnabled(!genesisPassEnabled)}
             >
               <div className="flex items-center justify-center gap-2">
-              <span>使用</span>
-              <img
-                src={itemIcon.genesisPass}
-                alt="Genesis Pass"
-                className="w-full h-full"
-              />
+                <span>使用</span>
+                <img
+                  src={itemIcon.genesisPass}
+                  alt="Genesis Pass"
+                  className="w-full h-full"
+                />
               </div>
             </Button>
-            </div>
+          </div>
           {/* BOSS選單 */}
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-muted dark:bg-muted">
-                <TableRow>
-                  <TableHead className="text-center">選擇</TableHead>
-                  <TableHead className="text-center">BOSS</TableHead>
-                  <TableHead className="text-center">難度</TableHead>
-                  <TableHead className="text-center">人數</TableHead>
-                  <TableHead className="text-center">
-                    <img src={itemIcon.tracesOfDarkness} alt="Traces of Darkness" className="w-6 h-6 mx-auto" />
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {Object.entries(bossConfig).map(([boss, { players, difficulty, origin, enabled, reset }], index) => (
-                  <TableRow key={index}>
-                    <TableCell className="py-2 px-2">
-                      <div className="flex justify-center">
-                        <Checkbox
-                          id={boss}
-                          checked={enabled}
-                          onCheckedChange={(checked) => updateBossConfig(boss, 'enabled', checked)}
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 px-2">
-                      <div className="flex justify-center items-center gap-1">
-                        <img
-                          src={bossIcon[origin]}
-                          alt={origin}
-                          className="w-8 h-auto flex-shrink-0"
-                        />
-                        {reset && !MONTHLY_BOSSES.includes(boss) && (
-                          <>
-                            <span>+</span>
-                            <img
-                              src={weeklyBossClearCountResetTicketIcon}
-                              alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
-                              className="w-8 h-auto flex-shrink-0"
-                            />
-                          </>
-                        )}
-                        {reset && MONTHLY_BOSSES.includes(boss) && (
-                          <>
-                            <span>+</span>
-                            <img
-                              src={monthlyBossClearCountResetTicketIcon}
-                              alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
-                              className="w-8 h-auto flex-shrink-0"
-                            />
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 px-2">
-                      <div className="flex justify-center">
-                        <Select
-                          value={difficulty}
-                          onValueChange={(value) => updateBossConfig(boss, 'difficulty', value)}
-                        >
-                          <SelectTrigger className="h-8 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.keys(bossData[origin].difficulties).map((key) => (
-                              <SelectItem key={key} value={key}>{bossData[origin].difficulties[key].name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 px-2">
-                      <div className="flex justify-center">
-                        <Select
-                          value={players.toString()}
-                          onValueChange={(value) => updateBossConfig(boss, 'players', Number(value))}
-                        >
-                          <SelectTrigger className="h-8 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.from({ length: bossData[origin].players }, (_, i) => (
-                              <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 px-2">
-                      <div className="flex justify-center">
-                        <Badge
-                          variant={enabled ? "default" : "secondary"}
-                          className="text-xs font-mono min-w-[3rem] justify-center"
-                        >
-                          {calculateEnergy(bossData, origin, difficulty, players, reset, genesisPassEnabled, enabled)}
-                        </Badge>
-                      </div>
+          <div>
+            {/* 滾動提示 */}
+            <div className="mb-2 text-xs text-muted-foreground text-center md:hidden">
+              <span className="inline-flex items-center gap-1">
+                ← 左右滑動查看所有欄位 →
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-muted dark:bg-muted">
+                  <TableRow>
+                    <TableHead className="text-center">選擇</TableHead>
+                    <TableHead className="text-center">BOSS</TableHead>
+                    <TableHead className="text-center">難度</TableHead>
+                    <TableHead className="text-center">人數</TableHead>
+                    <TableHead className="text-center">
+                      <img src={itemIcon.tracesOfDarkness} alt="Traces of Darkness" className="w-6 h-6 mx-auto" />
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Object.entries(bossConfig).map(([boss, { players, difficulty, origin, enabled, reset }], index) => (
+                    <TableRow key={index}>
+                      <TableCell className="py-2 px-2">
+                        <div className="flex justify-center">
+                          <Checkbox
+                            id={boss}
+                            checked={enabled}
+                            onCheckedChange={(checked) => updateBossConfig(boss, 'enabled', checked)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 px-2">
+                        <div className="flex justify-center items-center gap-1">
+                          <img
+                            src={bossIcon[origin]}
+                            alt={origin}
+                            className="w-8 h-auto flex-shrink-0"
+                          />
+                          {reset && !MONTHLY_BOSSES.includes(boss) && (
+                            <>
+                              <span>+</span>
+                              <img
+                                src={weeklyBossClearCountResetTicketIcon}
+                                alt="Weekly_Boss_Clear_Count_Reset_Ticket_icon"
+                                className="w-8 h-auto flex-shrink-0"
+                              />
+                            </>
+                          )}
+                          {reset && MONTHLY_BOSSES.includes(boss) && (
+                            <>
+                              <span>+</span>
+                              <img
+                                src={monthlyBossClearCountResetTicketIcon}
+                                alt="Monthly_Boss_Clear_Count_Reset_Ticket_icon"
+                                className="w-8 h-auto flex-shrink-0"
+                              />
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 px-2">
+                        <div className="flex justify-center">
+                          <Select
+                            value={difficulty}
+                            onValueChange={(value) => updateBossConfig(boss, 'difficulty', value)}
+                          >
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.keys(bossData[origin].difficulties).map((key) => (
+                                <SelectItem key={key} value={key}>{bossData[origin].difficulties[key].name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 px-2">
+                        <div className="flex justify-center">
+                          <Select
+                            value={players.toString()}
+                            onValueChange={(value) => updateBossConfig(boss, 'players', Number(value))}
+                          >
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: bossData[origin].players }, (_, i) => (
+                                <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 px-2">
+                        <div className="flex justify-center">
+                          <Badge
+                            variant={enabled ? "default" : "secondary"}
+                            className="text-xs font-mono min-w-[3rem] justify-center"
+                          >
+                            {calculateEnergy(bossData, origin, difficulty, players, reset, genesisPassEnabled, enabled)}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center font-bold py-4 text-lg">
+                      週痕跡：{weeklyTotal.toLocaleString()}
+                      {monthlyTotal > 0 && (
+                        <span className="ml-2">
+                          + 月痕跡：{monthlyTotal.toLocaleString()}
+                        </span>
+                      )}
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center font-bold py-4 text-lg">
-                    週痕跡：{weeklyTotal.toLocaleString()}
-                    {monthlyTotal > 0 && (
-                      <span className="ml-2">
-                        + 月痕跡：{monthlyTotal.toLocaleString()}
-                      </span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
+                </TableFooter>
+              </Table>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -431,6 +458,7 @@ export default function GenesisWeaponCalculator() {
               const isCompleted = startEnergy >= stageCumulative[i];
               const isActive = !isCompleted && (i === 0 || startEnergy >= stageCumulative[i - 1]);
               const { weeks, finishDate } = stageProgressData[i];
+              const { current, total } = getStageProgress(startEnergy, i);
 
               return (
                 <li
@@ -459,7 +487,7 @@ export default function GenesisWeaponCalculator() {
                     <div className="stage-info">
                       <div className="font-bold">第{i + 1}階段</div>
                       <div className="text-sm text-muted-foreground">
-                        累積痕跡：{stage.toLocaleString()}
+                        {current.toLocaleString()}/{total.toLocaleString()}
                       </div>
                     </div>
                     <div className="text-right text-sm text-muted-foreground">
@@ -474,64 +502,54 @@ export default function GenesisWeaponCalculator() {
             })}
           </ul>
 
-          {/* 進度條容器 */}
-          <Card className="relative">
-            <CardContent className="pt-6 pr-5 md:pt-6 md:pr-3">
-              {/* 進度狀態文字 */}
-              <div className="text-center font-medium">
-                目前進度：{getStageText(startEnergy)} ({percentage}%)
-              </div>
+          {/* 進度統計區塊 */}
+          <div className="relative">
+            {/* 進度狀態文字 */}
+            <div className="text-center font-medium mb-6">
+              目前進度：{getStageText(startEnergy)} ({percentage}%)
+            </div>
 
-              {/* 統計卡片 */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
-                <Card>
-                  <CardContent className="text-center">
-                    <div className="text-2xl font-bold mb-1">
-                      {startEnergy.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-muted-foreground font-normal">目前痕跡</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="text-center">
-                    <div className="text-2xl font-bold mb-1">
-                      {weeklyTotal.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-muted-foreground font-normal">週王痕跡</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="text-center">
-                    <div className="text-2xl font-bold mb-1">
-                      {monthlyTotal.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-muted-foreground font-normal">月王痕跡</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="text-center">
-                    <div className="text-2xl font-bold mb-1">
-                      {startEnergy >= MAX_ENERGY ? 0 : stageProgressData[7]?.weeks || 0}
-                    </div>
-                    <div className="text-sm text-muted-foreground font-normal">剩餘週數</div>
-                  </CardContent>
-                </Card>
+            {/* 統計卡片 */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-muted/50 rounded-lg p-4 text-center border border-border/50">
+                <div className="text-2xl font-bold mb-1">
+                  {startEnergy.toLocaleString()}
+                </div>
+                <div className="text-sm text-muted-foreground">目前痕跡</div>
               </div>
-            </CardContent>
+              <div className="bg-muted/50 rounded-lg p-4 text-center border border-border/50">
+                <div className="text-2xl font-bold mb-1">
+                  {weeklyTotal.toLocaleString()}
+                </div>
+                <div className="text-sm text-muted-foreground">週王痕跡</div>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-4 text-center border border-border/50">
+                <div className="text-2xl font-bold mb-1">
+                  {monthlyTotal.toLocaleString()}
+                </div>
+                <div className="text-sm text-muted-foreground">月王痕跡</div>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-4 text-center border border-border/50">
+                <div className="text-2xl font-bold mb-1">
+                  {startEnergy >= MAX_ENERGY ? 0 : stageProgressData[7]?.weeks || 0}
+                </div>
+                <div className="text-sm text-muted-foreground">剩餘週數</div>
+              </div>
+            </div>
 
             {/* 特殊狀態覆蓋層 */}
             {startEnergy >= MAX_ENERGY && (
-              <div className="absolute inset-0 bg-green-100/30 dark:bg-green-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
-                <h3 className="text-2xl text-green-500 dark:text-green-400 font-bold">已解放！</h3>
+              <div className="absolute inset-0 bg-green-100/40 dark:bg-green-900/40 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
+                <h3 className="text-2xl text-green-600 dark:text-green-400 font-bold">已解放！</h3>
               </div>
             )}
 
             {weeklyTotal === 0 && monthlyTotal === 0 && startEnergy < MAX_ENERGY && (
-              <div className="absolute inset-0 bg-yellow-100/30 dark:bg-yellow-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
-                <h3 className="text-2xl text-yellow-500 dark:text-yellow-400 font-bold">去課金！</h3>
+              <div className="absolute inset-0 bg-yellow-100/40 dark:bg-yellow-900/40 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
+                <h3 className="text-2xl text-yellow-600 dark:text-yellow-400 font-bold">去課金！</h3>
               </div>
             )}
-          </Card>
+          </div>
         </CardContent>
       </Card>
 

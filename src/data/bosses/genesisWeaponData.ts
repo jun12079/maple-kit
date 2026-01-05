@@ -120,6 +120,7 @@ export const genesisStageIcon: Record<string, string> = {
   verusHilla: verusHillaIcon,
 };
 
+export const genesisStageEnergy: number[] = [500, 500, 500, 1000, 1000, 1000, 1000, 1000];
 export const genesisStageCumulative: number[] = [500, 1000, 1500, 2500, 3500, 4500, 5500, 6500];
 
 export const MAX_ENERGY = 6500;
