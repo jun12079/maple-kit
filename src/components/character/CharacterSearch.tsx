@@ -36,7 +36,8 @@ import type {
   CharacterUnionRaider,
   CharacterUnionArtifact,
   CharacterUnionChampion,
-  CharacterPetEquipment
+  CharacterPetEquipment,
+  CharacterCashItemEquipment
 } from '@/types/mapleAPI'
 
 interface BasicData {
@@ -46,6 +47,7 @@ interface BasicData {
   hyperStat: CharacterHyperStat
   ability: CharacterAbility
   itemEquipment: CharacterItemEquipment
+  cashItemEquipment?: CharacterCashItemEquipment
 }
 
 interface SkillData {
@@ -131,7 +133,8 @@ export default function CharacterSearch() {
           stat: allData.stat,
           hyperStat: allData.hyperStat,
           ability: allData.ability,
-          itemEquipment: allData.itemEquipment
+          itemEquipment: allData.itemEquipment,
+          cashItemEquipment: allData.cashItemEquipment
         })
       }
 
@@ -431,7 +434,12 @@ export default function CharacterSearch() {
                     />
                   </div>
                   <div className="lg:col-span-7">
-                    <EquipmentDisplay equipmentData={basicData.itemEquipment} symbolData={symbolData as any} petData={petData as any} />
+                    <EquipmentDisplay 
+                      equipmentData={basicData.itemEquipment} 
+                      symbolData={symbolData as any} 
+                      petData={petData as any}
+                      cashItemData={basicData.cashItemEquipment}
+                    />
                   </div>
                 </div>
               </>

@@ -4,12 +4,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Star, Package } from 'lucide-react'
-import type { CharacterItemEquipment, CharacterSymbolEquipment, ItemEquipment, Title, Symbol, CharacterPetEquipment, PetEquipment } from '@/types/mapleAPI'
+import type { CharacterItemEquipment, CharacterSymbolEquipment, ItemEquipment, Title, Symbol, CharacterPetEquipment, PetEquipment, CashItemEquipment, CharacterCashItemEquipment } from '@/types/mapleAPI'
+import { EquipmentDetailDialog } from './EquipmentDetailDialog'
 
 interface EquipmentDisplayProps {
   equipmentData: CharacterItemEquipment
   symbolData?: CharacterSymbolEquipment
   petData?: CharacterPetEquipment
+  cashItemData?: CharacterCashItemEquipment
 }
 
 interface SymbolInfo {
@@ -23,26 +25,6 @@ interface SymbolStats {
   total: { stats: number; dropRate: number; mesoRate: number; expRate: number }
 }
 
-interface PotentialColors {
-  bg: string
-  text: string
-  option: string
-}
-
-interface StatBreakdown {
-  total: number
-  base: number
-  starforce: number
-  scroll: number
-  flame: number
-  displayName: string
-}
-
-interface EquipmentInfo {
-  name: string
-  value: string
-}
-
 type EquipmentItem = ItemEquipment | Title
 
 interface PetInfo {
@@ -52,11 +34,13 @@ interface PetInfo {
   slotName: string
 }
 
-type SelectedItem = EquipmentItem | PetInfo
+type DialogItem = EquipmentItem | PetInfo
 
-export function EquipmentDisplay({ equipmentData, symbolData, petData }: EquipmentDisplayProps) {
-  const [selectedEquipment, setSelectedEquipment] = useState<SelectedItem | null>(null)
+export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemData }: EquipmentDisplayProps) {
+  const [dialogItem, setDialogItem] = useState<DialogItem | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [activePreset, setActivePreset] = useState<string>(equipmentData.preset_no?.toString() || '1')
+  const [activeCashPreset, setActiveCashPreset] = useState<string>(cashItemData?.preset_no?.toString() || equipmentData.preset_no?.toString() || '1')
 
   // 裝備位置映射 (6x6 grid for desktop)
   const equipmentSlots: string[][] = [
@@ -147,36 +131,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
     return stats
   }
 
-  const getPotentialColors = (grade: string): PotentialColors => {
-    const colorMap: Record<string, PotentialColors> = {
-      '傳說': {
-        bg: 'bg-green-50',
-        text: 'text-green-700',
-        option: 'text-green-600'
-      },
-      '罕見': {
-        bg: 'bg-yellow-50',
-        text: 'text-yellow-700',
-        option: 'text-yellow-600'
-      },
-      '稀有': {
-        bg: 'bg-purple-50',
-        text: 'text-purple-700',
-        option: 'text-purple-600'
-      },
-      '特殊': {
-        bg: 'bg-blue-50',
-        text: 'text-blue-700',
-        option: 'text-blue-600'
-      }
-    }
-    return colorMap[grade] || {
-      bg: 'bg-gray-50',
-      text: 'text-gray-700',
-      option: 'text-gray-600'
-    }
-  }
-
   // 根據裝備部位名稱找出對應的裝備或稱號
   const findEquipmentByPart = (itemList: ItemEquipment[] | undefined, partName: string, titleData?: Title): EquipmentItem | null => {
     if (!partName) return null
@@ -246,29 +200,26 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
   }
 
   // 類型守衛函數
-  const isTitle = (item: SelectedItem): item is Title => {
-    return 'title_name' in item
+  const isTitle = (item: DialogItem | CashItemEquipment | null): item is Title => {
+    return !!item && 'title_name' in item
   }
 
-  const isItemEquipment = (item: SelectedItem): item is ItemEquipment => {
-    return 'item_name' in item && !('equipment' in item)
+  const isItemEquipment = (item: DialogItem | CashItemEquipment | null): item is ItemEquipment => {
+    return !!item && 'item_name' in item && !('equipment' in item)
   }
 
-  const isPetInfo = (item: SelectedItem): item is PetInfo => {
-    return 'equipment' in item && 'name' in item
+  const isPetInfo = (item: DialogItem | CashItemEquipment | null): item is PetInfo => {
+    return !!item && 'equipment' in item && 'name' in item
   }
 
-  // 判斷是否選中
-  const isSelected = (candidate: SelectedItem | null) => {
-    if (!selectedEquipment || !candidate) return false
-    
-    // 如果是寵物，比較 slotName
-    if (isPetInfo(selectedEquipment) && isPetInfo(candidate)) {
-      return selectedEquipment.slotName === candidate.slotName
-    }
-    
-    // 其他情況比較引用
-    return selectedEquipment === candidate
+  const isCashItemEquipment = (item: DialogItem | CashItemEquipment | null): item is CashItemEquipment => {
+    return !!item && 'cash_item_name' in item
+  }
+
+  // 根據現金裝備部位名稱找出對應的裝備
+  const findCashItemByPart = (cashItemList: CashItemEquipment[] | undefined, partName: string): CashItemEquipment | null => {
+    if (!partName || !cashItemList) return null
+    return cashItemList.find(item => item.cash_item_equipment_slot === partName) || null
   }
 
   // 渲染裝備網格中的單個裝備槽
@@ -282,7 +233,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
     const isPetEquipmentSlot = partName.includes('裝備') && isPetSlot
 
     const currentItem = petInfo || item
-    const selected = isSelected(currentItem)
 
     return (
       <div key={partName || `empty-${slotIndex}`} className="flex flex-col items-center">
@@ -290,17 +240,18 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
           variant="outline"
           className={`
             h-16 w-16 p-1 relative
-            ${isEmpty ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-            ${selected 
-              ? 'bg-primary/10 dark:bg-primary/20 border-primary hover:bg-primary/10 dark:hover:bg-primary/20' 
-              : (!isEmpty ? 'hover:bg-accent/50 dark:hover:bg-accent/50' : '')
-            }
+            ${isEmpty ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-accent/50 dark:hover:bg-accent/50'}
           `}
-          onClick={() => !isEmpty && setSelectedEquipment(currentItem)}
+          onClick={() => {
+            if (!isEmpty) {
+              setDialogItem(currentItem)
+              setIsDialogOpen(true)
+            }
+          }}
         >
           {isEmpty ? (
             <div className="flex flex-col items-center justify-center">
-              <Package className="h-4 w-4 text-gray-400" />
+              <Package className="h-6 w-6 text-gray-600" />
             </div>
           ) : petInfo ? (
             <div className="flex flex-col items-center justify-center h-full">
@@ -338,11 +289,22 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
                   <Package className="h-6 w-6 text-gray-600" />
                 )}
               </div>
-              {/* 只有裝備才顯示星力，固定在底部 */}
-              {!isTitleItem && item && isItemEquipment(item) && item.starforce && parseInt(item.starforce) > 0 && (
-                <div className="flex items-center text-yellow-600 mt-0.5">
-                  <Star className="h-3 w-3 fill-current" />
-                  <span className="text-xs font-bold">{item.starforce}</span>
+              {/* 只有裝備才顯示星力和特殊戒指等級，固定在底部 */}
+              {!isTitleItem && item && isItemEquipment(item) && (
+                <div className="flex flex-col items-center gap-0.5 mt-0.5">
+                  {/* 顯示星力 */}
+                  {item.starforce && parseInt(item.starforce) > 0 && (
+                    <div className="flex items-center text-yellow-600">
+                      <Star className="h-3 w-3 fill-current" />
+                      <span className="text-xs font-bold">{item.starforce}</span>
+                    </div>
+                  )}
+                  {/* 顯示特殊戒指等級 */}
+                  {item.special_ring_level > 0 && (
+                    <div className="flex items-center text-purple-600">
+                      <span className="text-xs font-bold">Lv.{item.special_ring_level}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -499,300 +461,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
   }
 
   // 渲染裝備詳細資訊
-  const renderEquipmentDetail = (item: SelectedItem) => {
-    if (!item) return null
 
-    // 如果是寵物，使用寵物專用渲染函數
-    if (isPetInfo(item)) {
-      return renderPetEquipmentDetail(item)
-    }
-
-    // 如果是稱號，使用稱號專用渲染函數
-    if (isTitle(item)) {
-      return renderTitleDetail(item)
-    }
-
-    // 類型斷言，現在知道是 ItemEquipment
-    const equipment = item as ItemEquipment
-
-    // 定義屬性映射
-    const statMappings: Record<string, string> = {
-      str: 'STR',
-      dex: 'DEX',
-      int: 'INT',
-      luk: 'LUK',
-      max_hp: 'HP',
-      max_mp: 'MP',
-      attack_power: '攻擊力',
-      magic_power: '魔法攻擊力',
-      armor: '防禦力',
-      speed: '移動速度',
-      jump: '跳躍力',
-      boss_damage: 'BOSS傷害',
-      ignore_monster_armor: '無視防禦率',
-      all_stat: '全屬性',
-      damage: '傷害',
-      max_hp_rate: 'HP%',
-      max_mp_rate: 'MP%'
-    }
-
-    // 獲取屬性的合計詳情
-    const getStatBreakdown = (): Record<string, StatBreakdown> => {
-      const statBreakdowns: Record<string, StatBreakdown> = {}
-
-      // 獲取所有可能的屬性
-      const allStats = new Set<string>()
-
-      if (equipment.item_total_option) {
-        Object.keys(equipment.item_total_option).forEach(key => allStats.add(key))
-      }
-      if (equipment.item_base_option) {
-        Object.keys(equipment.item_base_option).forEach(key => allStats.add(key))
-      }
-      if (equipment.item_starforce_option) {
-        Object.keys(equipment.item_starforce_option).forEach(key => allStats.add(key))
-      }
-      if (equipment.item_etc_option) {
-        Object.keys(equipment.item_etc_option).forEach(key => allStats.add(key))
-      }
-      if (equipment.item_add_option) {
-        Object.keys(equipment.item_add_option).forEach(key => allStats.add(key))
-      }
-
-      allStats.forEach(statKey => {
-        if (statKey === 'base_equipment_level' || statKey === 'equipment_level_decrease' || statKey === 'exceptional_upgrade') return
-
-        const totalValue = parseInt((equipment.item_total_option as any)?.[statKey] || '0')
-        const baseValue = parseInt((equipment.item_base_option as any)?.[statKey] || '0')
-        const starforceValue = parseInt((equipment.item_starforce_option as any)?.[statKey] || '0')
-        const scrollValue = parseInt((equipment.item_etc_option as any)?.[statKey] || '0')
-        const flameValue = parseInt((equipment.item_add_option as any)?.[statKey] || '0')
-
-        // 只顯示總值不為0的屬性
-        if (totalValue > 0) {
-          statBreakdowns[statKey] = {
-            total: totalValue,
-            base: baseValue,
-            starforce: starforceValue,
-            scroll: scrollValue,
-            flame: flameValue,
-            displayName: statMappings[statKey] || statKey
-          }
-        }
-      })
-
-      return statBreakdowns
-    }
-
-    const statBreakdowns = getStatBreakdown()
-
-    // 收集其他裝備資訊
-    const equipmentInfo: EquipmentInfo[] = []
-
-    // 基本資訊
-    equipmentInfo.push({ name: '裝備名稱', value: equipment.item_name })
-    equipmentInfo.push({ name: '裝備部位', value: equipment.item_equipment_part })
-
-    if (equipment.starforce && parseInt(equipment.starforce) > 0) {
-      equipmentInfo.push({ name: '星力', value: `${equipment.starforce}星` })
-    }
-
-    // 卷軸和升級資訊
-    if (equipment.scroll_upgrade && equipment.scroll_upgrade !== '0') {
-      equipmentInfo.push({ name: '卷軸升級', value: `${equipment.scroll_upgrade}次` })
-    }
-
-    if (equipment.scroll_resilience_count && equipment.scroll_resilience_count !== '0') {
-      equipmentInfo.push({ name: '守護盾', value: `${equipment.scroll_resilience_count}次` })
-    }
-
-    if (equipment.scroll_upgradable_count && equipment.scroll_upgradable_count !== '0') {
-      equipmentInfo.push({ name: '可升級次數', value: `${equipment.scroll_upgradable_count}次` })
-    }
-
-    if (equipment.starforce_scroll_flag && equipment.starforce_scroll_flag !== '未套用') {
-      equipmentInfo.push({ name: '星力捲軸', value: equipment.starforce_scroll_flag })
-    }
-
-    // 成長等級
-    if (equipment.growth_level && equipment.growth_level > 0) {
-      equipmentInfo.push({ name: '成長等級', value: `Lv.${equipment.growth_level}` })
-    }
-
-    if (equipment.growth_exp && equipment.growth_exp > 0) {
-      equipmentInfo.push({ name: '成長經驗', value: formatNumber(equipment.growth_exp) })
-    }
-
-    // 特殊戒指等級
-    if (equipment.special_ring_level && equipment.special_ring_level > 0) {
-      equipmentInfo.push({ name: '塔戒等級', value: `Lv.${equipment.special_ring_level}` })
-    }
-
-    // 到期日期
-    if (equipment.date_expire && equipment.date_expire !== 'null') {
-      equipmentInfo.push({ name: '到期日期', value: equipment.date_expire })
-    }
-
-    return (
-      <div className="space-y-4">
-        {/* 裝備標題 */}
-        <div className="flex items-center gap-3 pb-2 border-b">
-          {equipment.item_icon && (
-            <img
-              src={equipment.item_icon}
-              alt={equipment.item_name}
-              width={24}
-              height={24}
-              className="w-6 h-6 flex-shrink-0"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-sm">{equipment.item_name}</h4>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge variant="outline" className="text-xs">{equipment.item_equipment_part}</Badge>
-              {equipment.starforce && parseInt(equipment.starforce) > 0 && (
-                <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 text-xs">
-                  <Star className="inline-block w-3 h-3 text-yellow-500 fill-yellow-500 mr-1" />
-                  {equipment.starforce}星
-                </Badge>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* 屬性詳細分解 */}
-        {Object.keys(statBreakdowns).length > 0 && (
-          <div className="space-y-2">
-            <span className="text-sm font-semibold">屬性</span>
-            <div className="space-y-1">
-              {Object.entries(statBreakdowns).map(([statKey, breakdown]) => (
-                <div key={statKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                  <div className="text-xs text-muted-foreground truncate" title={breakdown.displayName}>
-                    {breakdown.displayName}
-                  </div>
-                  <div className="font-mono text-xs font-semibold text-foreground ml-2 flex items-center gap-1">
-                    <span>+{formatNumber(breakdown.total)}</span>
-                    <span className="text-muted-foreground">(</span>
-                    {breakdown.base > 0 && <span className="dark:text-white">{breakdown.base}</span>}
-                    {breakdown.base > 0 && (breakdown.starforce > 0 || breakdown.scroll > 0 || breakdown.flame > 0) && <span className="text-muted-foreground">+</span>}
-                    {breakdown.starforce > 0 && <span className="text-yellow-600">{breakdown.starforce}</span>}
-                    {breakdown.starforce > 0 && (breakdown.scroll > 0 || breakdown.flame > 0) && <span className="text-muted-foreground">+</span>}
-                    {breakdown.scroll > 0 && <span className="text-blue-600">{breakdown.scroll}</span>}
-                    {breakdown.scroll > 0 && breakdown.flame > 0 && <span className="text-muted-foreground">+</span>}
-                    {breakdown.flame > 0 && <span className="text-green-600">{breakdown.flame}</span>}
-                    <span className="text-muted-foreground">)</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 基本資訊 */}
-        {equipmentInfo.length > 0 && (
-          <div className="space-y-2 pt-2 border-t">
-            <span className="text-sm font-semibold">裝備資訊</span>
-            <div className="space-y-1">
-              {equipmentInfo.map((info, index) => (
-                <div key={index} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                  <div className="text-xs text-muted-foreground truncate" title={info.name}>
-                    {info.name}
-                  </div>
-                  <div className="font-mono text-xs font-semibold text-foreground ml-2">
-                    {info.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 潛能 */}
-        {((equipment as any).potential_option_1 || (equipment as any).potential_option_2 || (equipment as any).potential_option_3) && (
-          <div className="space-y-2 pt-2 border-t">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">潛能</span>
-              {(equipment as any).potential_option_grade && (
-                <Badge variant="secondary" className={`text-xs ${getPotentialColors((equipment as any).potential_option_grade).bg} ${getPotentialColors((equipment as any).potential_option_grade).text}`}>
-                  {(equipment as any).potential_option_grade}
-                </Badge>
-              )}
-            </div>
-            <div className="space-y-1">
-              {[(equipment as any).potential_option_1, (equipment as any).potential_option_2, (equipment as any).potential_option_3]
-                .filter(Boolean)
-                .map((option: string, idx: number) => (
-                  <div key={idx} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                    <div className="text-xs text-muted-foreground">
-                      潛能 {idx + 1}
-                    </div>
-                    <div className="font-mono text-xs font-semibold text-foreground ml-2">
-                      {option}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {/* 附加潛能 */}
-        {((equipment as any).additional_potential_option_1 || (equipment as any).additional_potential_option_2 || (equipment as any).additional_potential_option_3) && (
-          <div className="space-y-2 pt-2 border-t">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">附加潛能</span>
-              {(equipment as any).additional_potential_option_grade && (
-                <Badge variant="secondary" className={`text-xs ${getPotentialColors((equipment as any).additional_potential_option_grade).bg} ${getPotentialColors((equipment as any).additional_potential_option_grade).text}`}>
-                  {(equipment as any).additional_potential_option_grade}
-                </Badge>
-              )}
-            </div>
-            <div className="space-y-1">
-              {[(equipment as any).additional_potential_option_1, (equipment as any).additional_potential_option_2, (equipment as any).additional_potential_option_3]
-                .filter(Boolean)
-                .map((option: string, idx: number) => (
-                  <div key={idx} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                    <div className="text-xs text-muted-foreground">
-                      附加 {idx + 1}
-                    </div>
-                    <div className="font-mono text-xs font-semibold text-foreground ml-2">
-                      {option}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {/* 靈魂 */}
-        {equipment.soul_name && (
-          <div className="space-y-2 pt-2 border-t">
-            <span className="text-sm font-semibold">靈魂</span>
-            <div className="space-y-1">
-              <div className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                <div className="text-xs text-muted-foreground">
-                  靈魂名稱
-                </div>
-                <div className="font-mono text-xs font-semibold text-foreground ml-2">
-                  {equipment.soul_name}
-                </div>
-              </div>
-              {equipment.soul_option && (
-                <div className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                  <div className="text-xs text-muted-foreground">
-                    靈魂效果
-                  </div>
-                  <div className="font-mono text-xs font-semibold text-foreground ml-2">
-                    {equipment.soul_option}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
 
   // 渲染符文區塊
   const renderSymbolSection = () => {
@@ -808,7 +477,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
 
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-semibold">符文資訊</h3>
         </div>
 
@@ -916,29 +585,140 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
           </div>
         </div>
 
-        {/* 選中裝備的詳細資訊 */}
-        {selectedEquipment && (
-          <div className="p-4 border rounded-lg bg-card">
-            <h4 className="font-semibold text-sm mb-3">裝備詳細資訊</h4>
-            {renderEquipmentDetail(selectedEquipment)}
-          </div>
-        )}
 
-        {/* 提示文字 */}
-        {!selectedEquipment && itemList && itemList.length > 0 && (
-          <div className="text-center text-gray-500 py-4">
-            點擊上方裝備圖標查看詳細資訊
-          </div>
-        )}
 
         {/* 無裝備提示 */}
         {(!itemList || itemList.length === 0) && (
           <div className="text-sm text-muted-foreground text-center py-4">尚未設定任何裝備</div>
         )}
+      </div>
+    )
+  }
 
-        {/* 符文區塊 */}
-        <div className="border-t pt-6">
-          {renderSymbolSection()}
+
+
+  // 渲染現金裝備槽位
+  const renderCashItemSlot = (partName: string, cashItemList: CashItemEquipment[] | undefined, slotIndex?: number) => {
+    const item = findCashItemByPart(cashItemList, partName)
+    const isEmpty = !partName || !item
+
+    return (
+      <div key={partName || `empty-${slotIndex}`} className="flex flex-col items-center">
+        <Button
+          variant="outline"
+          className={`
+            h-16 w-16 p-1 relative
+            ${isEmpty ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-accent/50 dark:hover:bg-accent/50'}
+          `}
+          onClick={() => {
+            if (!isEmpty) {
+              setDialogItem(item as any)
+              setIsDialogOpen(true)
+            }
+          }}
+        >
+          {isEmpty ? (
+            <div className="flex flex-col items-center justify-center">
+              <Package className="h-6 w-6 text-gray-600" />
+            </div>
+          ) : item && item.cash_item_icon ? (
+            <img
+              src={item.cash_item_icon}
+              alt={item.cash_item_name}
+              width={32}
+              height={32}
+              className="w-8 h-8 object-contain"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center">
+              <Package className="h-6 w-6 text-gray-600" />
+            </div>
+          )}
+        </Button>
+        {partName && (
+          <span className="text-xs text-gray-500 mt-1 text-center">{partName}</span>
+        )}
+      </div>
+    )
+  }
+
+  // 渲染現金裝備區塊（單個網格）
+  const renderCashItemGrid = (cashItemList: CashItemEquipment[] | undefined) => {
+    // 現金裝備位置映射
+    const cashItemSlots: string[][] = [
+      ['戒指1', '臉飾', '帽子', '披風'],
+      ['戒指2', '眼飾', '上衣', '手套'],
+      ['戒指3', '耳環', '褲/裙', '鞋子'],
+      ['戒指4', '', '武器', '輔助武器']
+    ]
+
+    return (
+      <div className="flex justify-center">
+        <div className="grid grid-cols-4 gap-2 w-fit">
+          {cashItemSlots.map((row, rowIndex) => (
+            <div key={rowIndex} className="contents">
+              {row.map((partName, colIndex) =>
+                renderCashItemSlot(partName, cashItemList, rowIndex * 4 + colIndex)
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  // 渲染現金裝備預設（左右分欄）
+  const renderCashItemPreset = () => {
+    if (!cashItemData) return null
+
+    return (
+      <div className="space-y-4">
+        {/* 左右分欄佈局 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* 左邊：Base 現金裝備（固定） */}
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <h4 className="text-xs font-semibold text-muted-foreground">功能裝備</h4>
+            </div>
+            {renderCashItemGrid(cashItemData.cash_item_equipment_base)}
+          </div>
+
+          {/* 右邊：Preset 現金裝備（可切換） */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-semibold text-muted-foreground">造型預設</h4>
+              <div className="flex gap-1">
+                <Button
+                  variant={activeCashPreset === '1' ? 'default' : 'outline'}
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={() => { setActiveCashPreset('1'); }}
+                >
+                  預設 1
+                </Button>
+                <Button
+                  variant={activeCashPreset === '2' ? 'default' : 'outline'}
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={() => { setActiveCashPreset('2'); }}
+                >
+                  預設 2
+                </Button>
+                <Button
+                  variant={activeCashPreset === '3' ? 'default' : 'outline'}
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={() => { setActiveCashPreset('3'); }}
+                >
+                  預設 3
+                </Button>
+              </div>
+            </div>
+            {activeCashPreset === '1' && renderCashItemGrid(cashItemData.cash_item_equipment_preset_1)}
+            {activeCashPreset === '2' && renderCashItemGrid(cashItemData.cash_item_equipment_preset_2)}
+            {activeCashPreset === '3' && renderCashItemGrid(cashItemData.cash_item_equipment_preset_3)}
+          </div>
         </div>
       </div>
     )
@@ -946,10 +726,12 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
 
   if (!equipmentData) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>裝備資訊</CardTitle>
-          <CardDescription>無資料</CardDescription>
+      <Card className="gap-3">
+        <CardHeader className="pb-0">
+          <div>
+            <h3 className="text-sm font-semibold">裝備資訊</h3>
+            <p className="text-xs text-muted-foreground">無資料</p>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
@@ -961,16 +743,16 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="gap-3">
+      <CardHeader className="pb-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">裝備資訊</CardTitle>
+          <h3 className="text-sm font-semibold">裝備資訊</h3>
           <div className="flex gap-1">
             <Button
               variant={activePreset === '1' ? 'default' : 'outline'}
               size="sm"
               className="h-7 px-2 text-xs"
-              onClick={() => { setActivePreset('1'); setSelectedEquipment(null); }}
+              onClick={() => setActivePreset('1')}
             >
               預設 1
             </Button>
@@ -978,7 +760,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
               variant={activePreset === '2' ? 'default' : 'outline'}
               size="sm"
               className="h-7 px-2 text-xs"
-              onClick={() => { setActivePreset('2'); setSelectedEquipment(null); }}
+              onClick={() => setActivePreset('2')}
             >
               預設 2
             </Button>
@@ -986,27 +768,42 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData }: Equipme
               variant={activePreset === '3' ? 'default' : 'outline'}
               size="sm"
               className="h-7 px-2 text-xs"
-              onClick={() => { setActivePreset('3'); setSelectedEquipment(null); }}
+              onClick={() => setActivePreset('3')}
             >
               預設 3
             </Button>
           </div>
         </div>
-        <CardDescription className="text-sm">
-          {symbolData && symbolData.symbol && symbolData.symbol.length > 0 && (
-            <>
-              符文數量: {symbolData.symbol.length}
-            </>
-          )}
-        </CardDescription>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="mt-3 space-y-0">
+      <CardContent>
+        <div className="space-y-0">
           {activePreset === '1' && renderEquipmentPreset(equipmentData.item_equipment_preset_1)}
           {activePreset === '2' && renderEquipmentPreset(equipmentData.item_equipment_preset_2)}
           {activePreset === '3' && renderEquipmentPreset(equipmentData.item_equipment_preset_3)}
         </div>
+        
+        {/* 現金裝備資訊區塊 - 在裝備資訊下方，符文區塊上方 */}
+        {cashItemData && (
+          <div className="border-t pt-4 mt-6">
+            <div className="mb-2">
+              <h3 className="text-sm font-semibold">現金裝備資訊</h3>
+            </div>
+            {renderCashItemPreset()}
+          </div>
+        )}
+        
+        {/* 符文區塊 - 獨立於裝備預設之外 */}
+        <div className="border-t pt-4 mt-6">
+          {renderSymbolSection()}
+        </div>
       </CardContent>
+
+      {/* 裝備詳情 Dialog */}
+      <EquipmentDetailDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        item={dialogItem}
+      />
     </Card>
   )
 }
