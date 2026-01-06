@@ -256,14 +256,14 @@ export interface CashItemEquipment {
   cash_item_equipment_slot: string;
   cash_item_name: string;
   cash_item_icon: string;
-  cash_item_description: string;
+  cash_item_description: string | null;
   cash_item_option: CashItemOption[];
-  date_expire: string;
-  date_option_expire: string;
-  cash_item_label: string;
-  cash_item_coloring_prism: CashItemColoringPrism;
-  item_gender: string;
-  skill: string[];
+  date_expire: string | null;
+  date_option_expire: string | null;
+  cash_item_label: string | null;
+  cash_item_coloring_prism: CashItemColoringPrism | null;
+  item_gender: string | null;
+  skills: string[];
 }
 
 export interface CharacterCashItemEquipment {

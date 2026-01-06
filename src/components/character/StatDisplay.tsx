@@ -242,7 +242,7 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
     )
   }
 
-  // 角色內在潛能相關函數
+  // 內在潛能相關函數
   const getGradeColor = (grade: string): string => {
     switch (grade) {
       case '傳說':
@@ -273,10 +273,12 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
   )
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">角色資料</CardTitle>
-        <CardDescription>剩餘 AP: {formatNumber(statData.remain_ap)}</CardDescription>
+    <Card className="gap-3">
+      <CardHeader className="pb-0">
+        <div>
+          <h3 className="text-sm font-semibold">角色資料</h3>
+          <p className="text-xs text-muted-foreground">剩餘 AP: {formatNumber(statData.remain_ap)}</p>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* 戰鬥力獨立顯示 */}
@@ -346,13 +348,13 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
           </div>
         )}
 
-        {/* 角色內在潛能 */}
+        {/* 內在潛能 */}
         {abilityData && (
           <div className="space-y-3">
             <div className="border-t pt-4">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <h3 className="text-sm font-semibold">角色內在潛能</h3>
+                  <h3 className="text-sm font-semibold">內在潛能</h3>
                   <p className="text-xs text-muted-foreground">剩餘名聲值: {formatNumber(abilityData.remain_fame)}</p>
                 </div>
                 <div className="flex gap-1">
