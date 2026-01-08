@@ -165,10 +165,10 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
   // 渲染稱號詳細資訊
   const renderTitleDetail = (title: Title) => {
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 text-white">
         {/* 稱號名稱 */}
         <div className="text-left">
-          <h4 className="font-semibold text-sm text-white">{title.title_name}</h4>
+          <h4 className="font-semibold text-sm">{title.title_name}</h4>
         </div>
 
         {/* 稱號 icon */}
@@ -187,7 +187,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
             <Badge variant="outline" className="text-xs border-gray-700 text-white">稱號</Badge>
             {title.date_option_expire && title.date_option_expire !== 'null' && (
               <div className="mt-1">
-                <span className="font-mono text-xs text-white">{formatDateTime(title.date_option_expire)}</span>
+                <span className="font-mono text-xs md:text-sm">{formatDateTime(title.date_option_expire)}</span>
               </div>
             )}
           </div>
@@ -195,15 +195,15 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
 
         {/* 稱號描述 */}
         {title.title_description && (
-          <p className="text-xs text-white whitespace-pre-wrap">{title.title_description}</p>
+          <p className="text-xs md:text-sm whitespace-pre-wrap">{title.title_description}</p>
         )}
 
         {/* 日期資訊 */}
         {title.date_expire && title.date_expire !== 'null' && (
           <div className="pt-0.5 border-t border-gray-800">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-white">到期日期</span>
-              <span className="font-mono text-xs font-semibold text-white">{title.date_expire}</span>
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <span className="text-xs md:text-sm">到期日期</span>
+              <span className="font-mono text-xs md:text-sm">{title.date_expire}</span>
             </div>
           </div>
         )}
@@ -218,10 +218,10 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
     // 如果是寵物本體
     if (petInfo.slotName.includes('寵物') && !petInfo.slotName.includes('裝備')) {
       return (
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 text-white">
           {/* 寵物名稱 */}
           <div className="text-center">
-            <h4 className="font-semibold text-sm text-white">{petInfo.name}</h4>
+            <h4 className="font-semibold text-sm">{petInfo.name}</h4>
           </div>
 
           {/* 寵物 icon */}
@@ -254,10 +254,10 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
     }
 
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 text-white">
         {/* 裝備名稱 */}
         <div className="text-center">
-          <h4 className="font-semibold text-sm text-white">
+          <h4 className="font-semibold text-sm">
             {equipment.item_name}
             {equipment.scroll_upgrade > 0 && (
               <span className="text-blue-400"> (+{equipment.scroll_upgrade})</span>
@@ -278,9 +278,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap gap-1">
-              <Badge variant="outline" className="text-xs border-gray-700 text-white">寵物裝備</Badge>
-            </div>
+            <Badge variant="outline" className="text-xs border-gray-700 text-white">寵物裝備</Badge>
           </div>
         </div>
 
@@ -291,9 +289,9 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
               {equipment.item_option.map((option: { option_type: string; option_value: string }, index: number) => {
                 if (!option.option_value || option.option_value === '0') return null
                 return (
-                  <div key={index} className="flex items-center gap-1.5 pt-1.5">
-                    <span className="text-xs text-white">{option.option_type}：</span>
-                    <span className="font-mono text-xs font-semibold text-white">+{option.option_value}</span>
+                  <div key={index} className="flex items-center gap-1.5 pt-0.5">
+                    <span className="text-xs md:text-sm">{option.option_type}：</span>
+                    <span className="font-mono text-xs md:text-sm">+{option.option_value}</span>
                   </div>
                 )
               })}
@@ -307,10 +305,10 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
   // 渲染現金裝備詳細資訊
   const renderCashItemDetail = (cashItem: CashItemEquipment) => {
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 text-white">
         {/* 現金裝備名稱 */}
         <div className="text-center">
-          <h4 className="font-semibold text-sm text-white">{cashItem.cash_item_name}</h4>
+          <h4 className="font-semibold text-sm">{cashItem.cash_item_name}</h4>
         </div>
 
         {/* 現金裝備 icon */}
@@ -344,9 +342,9 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
               {cashItem.cash_item_option.map((option, index) => {
                 if (!option.option_value || option.option_value === '0') return null
                 return (
-                  <div key={index} className="flex items-center gap-1.5 pt-1.5">
-                    <span className="text-xs text-white">{option.option_type}：</span>
-                    <span className="font-mono text-xs font-semibold text-white">+{option.option_value}</span>
+                  <div key={index} className="flex items-center gap-1.5 pt-0.5">
+                    <span className="text-xs md:text-sm">{option.option_type}：</span>
+                    <span className="font-mono text-xs md:text-sm">+{option.option_value}</span>
                   </div>
                 )
               })}
@@ -357,9 +355,9 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
         {/* 到期日期 */}
         {cashItem.date_expire && cashItem.date_expire !== 'null' && (
           <div className="pt-0.5 border-t border-gray-800">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-white">到期日期：</span>
-              <span className="font-mono text-xs font-semibold text-white">{cashItem.date_expire}</span>
+            <div className="flex items-center gap-1.5 pt-1">
+              <span className="text-xs md:text-sm">到期日期：</span>
+              <span className="font-mono text-xs md:text-sm">{cashItem.date_expire}</span>
             </div>
           </div>
         )}
@@ -441,7 +439,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
     const statBreakdowns = getStatBreakdown()
 
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 text-white">
         {/* 第一排：星力顯示 - 只有星力大於0時才顯示 */}
         {equipment.starforce && parseInt(equipment.starforce) > 0 && (
           <div className="py-1">
@@ -451,7 +449,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
 
         {/* 第二排：裝備名稱 */}
         <div className="text-center">
-          <h4 className="font-semibold text-sm text-white">
+          <h4 className="font-semibold text-sm">
             {equipment.item_name}
             {equipment.scroll_upgrade && equipment.scroll_upgrade !== '0' && (
               <span className="text-blue-400"> (+{equipment.scroll_upgrade})</span>
@@ -494,23 +492,27 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
             {Object.entries(statBreakdowns).map(([statKey, breakdown]) => {
               // 需要%符號的屬性
               const needsPercent = ['boss_damage', 'ignore_monster_armor', 'all_stat', 'damage', 'max_hp_rate', 'max_mp_rate'].includes(statKey)
+              // 判斷是否有提升（有括號）
+              const hasUpgrade = breakdown.starforce > 0 || breakdown.scroll > 0 || breakdown.flame > 0
+              // 根據是否有提升決定顏色
+              const textColor = hasUpgrade ? 'text-cyan-300' : 'text-white'
 
               return (
-                <div key={statKey} className="flex items-center gap-1.5 pt-1.5">
-                  <span className="text-xs text-white" title={breakdown.displayName}>{breakdown.displayName}：</span>
-                  <div className="font-mono text-xs font-semibold flex items-center gap-1">
-                    <span className="text-white">+{formatNumber(breakdown.total)}{needsPercent ? '%' : ''}</span>
-                    {(breakdown.starforce > 0 || breakdown.scroll > 0 || breakdown.flame > 0) && (
+                <div key={statKey} className="flex items-center gap-1.5">
+                  <span className={`text-xs md:text-sm ${textColor}`} title={breakdown.displayName}>{breakdown.displayName}：</span>
+                  <div className="font-mono text-xs md:text-sm flex items-center gap-1">
+                    <span className={textColor}>+{formatNumber(breakdown.total)}{needsPercent ? '%' : ''}</span>
+                    {hasUpgrade && (
                       <>
-                        <span className="text-[10px] text-gray-400">(</span>
-                        <span className="text-[10px] text-white">{breakdown.base}{needsPercent ? '%' : ''}</span>
-                        {(breakdown.starforce > 0 || breakdown.scroll > 0 || breakdown.flame > 0) && <span className="text-[10px] text-gray-400">+</span>}
-                        {breakdown.starforce > 0 && <span className="text-[10px] text-yellow-400">{breakdown.starforce}{needsPercent ? '%' : ''}</span>}
-                        {breakdown.starforce > 0 && (breakdown.scroll > 0 || breakdown.flame > 0) && <span className="text-[10px] text-gray-400">+</span>}
-                        {breakdown.scroll > 0 && <span className="text-[10px] text-blue-400">{breakdown.scroll}{needsPercent ? '%' : ''}</span>}
-                        {breakdown.scroll > 0 && breakdown.flame > 0 && <span className="text-[10px] text-gray-400">+</span>}
-                        {breakdown.flame > 0 && <span className="text-[10px] text-green-400">{breakdown.flame}{needsPercent ? '%' : ''}</span>}
-                        <span className="text-[10px] text-gray-400">)</span>
+                        <span className="text-gray-400">(</span>
+                        <span>{breakdown.base}{needsPercent ? '%' : ''}</span>
+                        <span className="text-gray-400">+</span>
+                        {breakdown.starforce > 0 && <span className="text-yellow-400">{breakdown.starforce}{needsPercent ? '%' : ''}</span>}
+                        {breakdown.starforce > 0 && (breakdown.scroll > 0 || breakdown.flame > 0) && <span className="text-gray-400">+</span>}
+                        {breakdown.scroll > 0 && <span className="text-blue-400">{breakdown.scroll}{needsPercent ? '%' : ''}</span>}
+                        {breakdown.scroll > 0 && breakdown.flame > 0 && <span className="text-gray-400">+</span>}
+                        {breakdown.flame > 0 && <span className="text-green-400">{breakdown.flame}{needsPercent ? '%' : ''}</span>}
+                        <span className="text-gray-400">)</span>
                       </>
                     )}
                   </div>
@@ -523,13 +525,13 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
         {/* 潛能 */}
         {((equipment as any).potential_option_1 || (equipment as any).potential_option_2 || (equipment as any).potential_option_3) && (
           <div className="space-y-0 pt-0.5 border-t border-gray-800">
-            <div className="flex items-center gap-1.5 pt-1.5">
+            <div className="flex items-center gap-1.5 pt-0.5">
               {(equipment as any).potential_option_grade && (
                 <div className="flex items-center gap-1">
                   <span className={`inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white ${getPotentialBadge((equipment as any).potential_option_grade).color} rounded`}>
                     {getPotentialBadge((equipment as any).potential_option_grade).label}
                   </span>
-                  <h5 className={`text-xs font-semibold ${getGradeColor((equipment as any).potential_option_grade)}`}>潛在能力：{(equipment as any).potential_option_grade}</h5>
+                  <h5 className={`text-xs md:text-sm font-semibold ${getGradeColor((equipment as any).potential_option_grade)}`}>潛在能力：{(equipment as any).potential_option_grade}</h5>
                 </div>
               )}
             </div>
@@ -537,7 +539,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
               .filter(Boolean)
               .map((option: string, idx: number) => (
                 <div key={idx}>
-                  <span className="text-xs font-medium text-white">
+                  <span className="text-xs md:text-sm font-medium">
                     {option}
                   </span>
                 </div>
@@ -548,13 +550,13 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
         {/* 附加潛能 */}
         {((equipment as any).additional_potential_option_1 || (equipment as any).additional_potential_option_2 || (equipment as any).additional_potential_option_3) && (
           <div className="space-y-0 pt-0.5 border-t border-gray-800">
-            <div className="flex items-center gap-1.5 pt-1.5">
+            <div className="flex items-center gap-1.5 pt-0.5">
               {(equipment as any).additional_potential_option_grade && (
                 <div className="flex items-center gap-1">
                   <span className={`inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white ${getPotentialBadge((equipment as any).additional_potential_option_grade).color} rounded`}>
                     {getPotentialBadge((equipment as any).additional_potential_option_grade).label}
                   </span>
-                  <h5 className={`text-xs font-semibold ${getGradeColor((equipment as any).additional_potential_option_grade)}`}>附加潛在能力：{(equipment as any).additional_potential_option_grade}</h5>
+                  <h5 className={`text-xs md:text-sm font-semibold ${getGradeColor((equipment as any).additional_potential_option_grade)}`}>附加潛在能力：{(equipment as any).additional_potential_option_grade}</h5>
                 </div>
               )}
             </div>
@@ -562,7 +564,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
               .filter(Boolean)
               .map((option: string, idx: number) => (
                 <div key={idx}>
-                  <span className="text-xs font-medium text-white">
+                  <span className="text-xs md:text-sm font-medium">
                     {option}
                   </span>
                 </div>
@@ -573,11 +575,11 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
         {/* 靈魂 */}
         {equipment.soul_name && (
           <div className="space-y-0.5 pt-0.5 border-t border-gray-800">
-            <div className="flex items-center gap-1.5 pt-1.5">
-              <h5 className="text-xs font-semibold text-yellow-500">{equipment.soul_name}</h5>
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <h5 className="text-xs md:text-sm font-semibold text-yellow-500">{equipment.soul_name}</h5>
             </div>
             {equipment.soul_option && (
-              <span className="text-xs text-white">{equipment.soul_option}</span>
+              <span className="text-xs md:text-sm">{equipment.soul_option}</span>
             )}
           </div>
         )}

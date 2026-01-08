@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -36,53 +36,73 @@ interface PetInfo {
 
 type DialogItem = EquipmentItem | PetInfo
 
+// 符文常數
+const ARCANE_SYMBOLS = [
+  '祕法符文：消逝的旅途',
+  '祕法符文：啾啾艾爾蘭',
+  '祕法符文：拉契爾恩',
+  '祕法符文：阿爾卡娜',
+  '祕法符文：魔菈斯',
+  '祕法符文：艾斯佩拉'
+] as const
+
+const AUTHENTIC_SYMBOLS = [
+  '真實符文：賽爾尼溫',
+  '真實符文：阿爾克斯',
+  '真實符文：奧迪溫',
+  '真實符文：桃源境',
+  '真實符文：阿爾特利亞',
+  '真實符文：卡爾西溫',
+  '豪華真實符文：塔拉哈特'
+] as const
+
+// 裝備位置映射常數 (8x4 grid for desktop)
+const EQUIPMENT_SLOTS_DESKTOP: string[][] = [
+  ['戒指1', '臉飾', '耳環', '帽子', '披風', '稱號', '勳章', '機器心臟'],
+  ['戒指2', '眼飾', '墜飾', '上衣', '手套', '武器', '輔助武器', '徽章'],
+  ['戒指3', '腰帶', '墜飾2', '褲/裙', '鞋子', '寵物1', '寵物2', '寵物3'],
+  ['戒指4', '胸章', '口袋道具', '肩膀裝飾', '', '寵物裝備1', '寵物裝備2', '寵物裝備3']
+]
+
+// 手機版裝備位置映射 (4x9 grid for mobile)
+const EQUIPMENT_SLOTS_MOBILE: string[][] = [
+  ['戒指1', '戒指2', '戒指3', '戒指4'],
+  ['臉飾', '眼飾', '腰帶', '耳環'],
+  ['墜飾', '墜飾2', '胸章', '勳章'],
+  ['帽子', '上衣', '褲/裙', '肩膀裝飾'],
+  ['披風', '手套', '鞋子', '機器心臟'],
+  ['武器', '輔助武器', '徽章', '口袋道具'],
+  ['稱號', '', '', ''],
+  ['寵物1', '寵物裝備1', '寵物2', '寵物裝備2'],
+  ['寵物3', '寵物裝備3', '', '']
+]
+
+// 現金裝備位置映射
+const CASH_ITEM_SLOTS: string[][] = [
+  ['戒指1', '臉飾', '帽子', '披風'],
+  ['戒指2', '眼飾', '上衣', '手套'],
+  ['戒指3', '耳環', '褲/裙', '鞋子'],
+  ['戒指4', '', '武器', '輔助武器']
+]
+
 export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemData }: EquipmentDisplayProps) {
   const [dialogItem, setDialogItem] = useState<DialogItem | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [activePreset, setActivePreset] = useState<string>(equipmentData.preset_no?.toString() || '1')
   const [activeCashPreset, setActiveCashPreset] = useState<string>(cashItemData?.preset_no?.toString() || equipmentData.preset_no?.toString() || '1')
 
-  // 裝備位置映射 (6x6 grid for desktop)
-  const equipmentSlots: string[][] = [
-    ['戒指1', '臉飾', '耳環', '帽子', '披風', '稱號', '勳章', '機器心臟'],
-    ['戒指2', '眼飾', '墜飾', '上衣', '手套', '武器', '輔助武器', '徽章'],
-    ['戒指3', '腰帶', '墜飾2', '褲/裙', '鞋子', '寵物1', '寵物2', '寵物3'],
-    ['戒指4', '胸章', '口袋道具', '肩膀裝飾', '', '寵物裝備1', '寵物裝備2', '寵物裝備3']
-  ]
-
-  // 手機版裝備位置映射 (4x9 grid for mobile)
-  const equipmentSlotsMobile: string[][] = [
-    ['戒指1', '戒指2', '戒指3', '戒指4'],
-    ['臉飾', '眼飾', '腰帶', '耳環'],
-    ['墜飾', '墜飾2', '胸章', '勳章'],
-    ['帽子', '上衣', '褲/裙', '肩膀裝飾'],
-    ['披風', '手套', '鞋子', '機器心臟'],
-    ['武器', '輔助武器', '徽章', '口袋道具'],
-    ['稱號', '', '', ''],
-    ['寵物1', '寵物裝備1', '寵物2', '寵物裝備2'],
-    ['寵物3', '寵物裝備3', '', '']
-  ]
-
-  const formatNumber = (num: number | string): string => {
-    if (!num) return '0'
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-  }
-
   // 判斷符文類型和最大等級
   const getSymbolInfo = (symbolName: string): SymbolInfo => {
-    const arcaneSymbols = ['祕法符文：消逝的旅途', '祕法符文：啾啾艾爾蘭', '祕法符文：拉契爾恩', '祕法符文：阿爾卡娜', '祕法符文：魔菈斯', '祕法符文：艾斯佩拉']
-    const authenticSymbols = ['真實符文：賽爾尼溫', '真實符文：阿爾克斯', '真實符文：奧迪溫', '真實符文：桃源境', '真實符文：阿爾特利亞', '真實符文：卡爾西溫', '豪華真實符文：塔拉哈特']
-
-    if (arcaneSymbols.includes(symbolName)) {
+    if (ARCANE_SYMBOLS.includes(symbolName as any)) {
       return { type: 'ARC', maxLevel: 20 }
-    } else if (authenticSymbols.includes(symbolName)) {
+    } else if (AUTHENTIC_SYMBOLS.includes(symbolName as any)) {
       return { type: 'AUT', maxLevel: 11 }
     }
     return { type: 'UNKNOWN', maxLevel: 20 }
   }
 
-  // 計算 ARC 和 AUT 的統計資料
-  const calculateSymbolStats = (): SymbolStats => {
+  // 計算 ARC 和 AUT 的統計資料（使用 useMemo 優化效能）
+  const symbolStats = useMemo((): SymbolStats => {
     if (!symbolData || !symbolData.symbol || symbolData.symbol.length === 0) {
       return {
         arc: { force: 0, stats: 0 },
@@ -129,7 +149,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
     })
 
     return stats
-  }
+  }, [symbolData])
 
   // 根據裝備部位名稱找出對應的裝備或稱號
   const findEquipmentByPart = (itemList: ItemEquipment[] | undefined, partName: string, titleData?: Title): EquipmentItem | null => {
@@ -210,10 +230,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
 
   const isPetInfo = (item: DialogItem | CashItemEquipment | null): item is PetInfo => {
     return !!item && 'equipment' in item && 'name' in item
-  }
-
-  const isCashItemEquipment = (item: DialogItem | CashItemEquipment | null): item is CashItemEquipment => {
-    return !!item && 'cash_item_name' in item
   }
 
   // 根據現金裝備部位名稱找出對應的裝備
@@ -318,151 +334,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
     )
   }
 
-  // 渲染稱號詳細資訊
-  const renderTitleDetail = (titleItem: Title) => {
-    if (!titleItem || !titleItem.title_name) return null
-
-    return (
-      <Card className="p-4">
-        <div className="space-y-4">
-          {/* 稱號標題 */}
-          <div className="flex items-start gap-3">
-            {titleItem.title_icon && (
-              <img
-                src={titleItem.title_icon}
-                alt={titleItem.title_name}
-                width={24}
-                height={24}
-                className="w-6 h-6 flex-shrink-0"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-              />
-            )}
-            <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-lg">{titleItem.title_name}</h4>
-              <Badge variant="outline">稱號</Badge>
-            </div>
-          </div>
-
-          {/* 稱號描述 */}
-          {titleItem.title_description && (
-            <div>
-              <h5 className="font-semibold mb-2">效果說明</h5>
-              <div className="bg-blue-50 p-3 rounded">
-                <p className="text-sm text-blue-800 whitespace-pre-line">
-                  {titleItem.title_description}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* 到期日期 */}
-          {titleItem.date_expire && (
-            <div>
-              <h5 className="font-semibold mb-2">到期日期</h5>
-              <p className="text-sm text-gray-600">{titleItem.date_expire}</p>
-            </div>
-          )}
-        </div>
-      </Card>
-    )
-  }
-
-  // 渲染寵物裝備詳細資訊
-  const renderPetEquipmentDetail = (petInfo: PetInfo) => {
-    if (!petInfo || !petInfo.equipment) return null
-
-    const equipment = petInfo.equipment
-
-    return (
-      <div className="space-y-4">
-        {/* 寵物標題 */}
-        <div className="flex items-start gap-3 pb-2 border-b">
-          {petInfo.icon && (
-            <img
-              src={petInfo.icon}
-              alt={petInfo.name}
-              width={32}
-              height={32}
-              className="w-8 h-8 flex-shrink-0"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-sm">{petInfo.name}</h4>
-            <Badge variant="outline">寵物</Badge>
-          </div>
-        </div>
-
-        {/* 寵物裝備資訊 */}
-        {equipment.item_name && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              {equipment.item_icon && (
-                <img
-                  src={equipment.item_icon}
-                  alt={equipment.item_name}
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                />
-              )}
-              <h5 className="font-semibold text-sm">{equipment.item_name}</h5>
-            </div>
-
-            {/* 裝備描述 */}
-            {equipment.item_description && (
-              <div className="bg-muted/30 p-3 rounded">
-                <p className="text-xs text-muted-foreground whitespace-pre-line">
-                  {equipment.item_description}
-                </p>
-              </div>
-            )}
-
-            {/* 裝備選項 */}
-            {equipment.item_option && equipment.item_option.length > 0 && (
-              <div className="space-y-2">
-                <h5 className="font-semibold text-sm">裝備屬性</h5>
-                <div className="space-y-1">
-                  {equipment.item_option.map((option, index) => (
-                    <div key={index} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                      <div className="text-xs text-muted-foreground">{option.option_type}</div>
-                      <div className="font-mono text-xs font-semibold text-foreground">+{option.option_value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 卷軸升級資訊 */}
-            {(equipment.scroll_upgrade > 0 || equipment.scroll_upgradable > 0) && (
-              <div className="space-y-2 pt-2 border-t">
-                <h5 className="font-semibold text-sm">升級資訊</h5>
-                <div className="space-y-1">
-                  {equipment.scroll_upgrade > 0 && (
-                    <div className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                      <div className="text-xs text-muted-foreground">已升級次數</div>
-                      <div className="font-mono text-xs font-semibold text-foreground">{equipment.scroll_upgrade}次</div>
-                    </div>
-                  )}
-                  {equipment.scroll_upgradable > 0 && (
-                    <div className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-                      <div className="text-xs text-muted-foreground">可升級次數</div>
-                      <div className="font-mono text-xs font-semibold text-foreground">{equipment.scroll_upgradable}次</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  // 渲染裝備詳細資訊
-
-
   // 渲染符文區塊
   const renderSymbolSection = () => {
     if (!symbolData || !symbolData.symbol || symbolData.symbol.length === 0) {
@@ -473,7 +344,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
       )
     }
 
-    const symbolStats = calculateSymbolStats()
+// symbolStats 已通過 useMemo 計算
 
     return (
       <div className="space-y-4">
@@ -562,10 +433,10 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
         {/* 桌面版裝備網格 */}
         <div className="hidden lg:flex lg:justify-center">
           <div className="grid grid-cols-8 gap-2 w-fit">
-            {equipmentSlots.map((row, rowIndex) => (
+            {EQUIPMENT_SLOTS_DESKTOP.map((row, rowIndex) => (
               <div key={rowIndex} className="contents">
                 {row.map((partName, colIndex) =>
-                  renderEquipmentSlot(partName, itemList, equipmentData?.title, rowIndex * 6 + colIndex)
+                  renderEquipmentSlot(partName, itemList, equipmentData?.title, rowIndex * 8 + colIndex)
                 )}
               </div>
             ))}
@@ -575,7 +446,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
         {/* 手機版裝備網格 */}
         <div className="flex justify-center lg:hidden">
           <div className="grid grid-cols-4 gap-2 w-fit">
-            {equipmentSlotsMobile.map((row, rowIndex) => (
+            {EQUIPMENT_SLOTS_MOBILE.map((row, rowIndex) => (
               <div key={rowIndex} className="contents">
                 {row.map((partName, colIndex) =>
                   renderEquipmentSlot(partName, itemList, equipmentData?.title, rowIndex * 4 + colIndex)
@@ -645,18 +516,10 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
 
   // 渲染現金裝備區塊（單個網格）
   const renderCashItemGrid = (cashItemList: CashItemEquipment[] | undefined) => {
-    // 現金裝備位置映射
-    const cashItemSlots: string[][] = [
-      ['戒指1', '臉飾', '帽子', '披風'],
-      ['戒指2', '眼飾', '上衣', '手套'],
-      ['戒指3', '耳環', '褲/裙', '鞋子'],
-      ['戒指4', '', '武器', '輔助武器']
-    ]
-
     return (
       <div className="flex justify-center">
         <div className="grid grid-cols-4 gap-2 w-fit">
-          {cashItemSlots.map((row, rowIndex) => (
+          {CASH_ITEM_SLOTS.map((row, rowIndex) => (
             <div key={rowIndex} className="contents">
               {row.map((partName, colIndex) =>
                 renderCashItemSlot(partName, cashItemList, rowIndex * 4 + colIndex)
