@@ -4,6 +4,18 @@ import { Star } from 'lucide-react'
 import type { ItemEquipment, Title, PetEquipment, CashItemEquipment } from '@/types/mapleAPI'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
+// 擴展 ItemEquipment 類型以包含潛能屬性
+interface ItemEquipmentWithPotential extends ItemEquipment {
+  potential_option_grade?: string;
+  potential_option_1?: string;
+  potential_option_2?: string;
+  potential_option_3?: string;
+  additional_potential_option_grade?: string;
+  additional_potential_option_1?: string;
+  additional_potential_option_2?: string;
+  additional_potential_option_3?: string;
+}
+
 interface PetInfo {
   name: string
   icon: string
@@ -11,7 +23,7 @@ interface PetInfo {
   slotName: string
 }
 
-type SelectedItem = ItemEquipment | Title | PetInfo | CashItemEquipment
+type SelectedItem = ItemEquipmentWithPotential | Title | PetInfo | CashItemEquipment
 
 interface EquipmentDetailDialogProps {
   open: boolean
@@ -414,11 +426,16 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
       allStats.forEach(statKey => {
         if (statKey === 'base_equipment_level' || statKey === 'equipment_level_decrease' || statKey === 'exceptional_upgrade') return
 
-        const totalValue = parseInt((equipment.item_total_option as any)?.[statKey] || '0')
-        const baseValue = parseInt((equipment.item_base_option as any)?.[statKey] || '0')
-        const starforceValue = parseInt((equipment.item_starforce_option as any)?.[statKey] || '0')
-        const scrollValue = parseInt((equipment.item_etc_option as any)?.[statKey] || '0')
-        const flameValue = parseInt((equipment.item_add_option as any)?.[statKey] || '0')
+        const getStatValue = (obj: unknown, key: string): number => {
+          const record = obj as Record<string, string> | undefined
+          return parseInt(record?.[key] || '0')
+        }
+
+        const totalValue = getStatValue(equipment.item_total_option, statKey)
+        const baseValue = getStatValue(equipment.item_base_option, statKey)
+        const starforceValue = getStatValue(equipment.item_starforce_option, statKey)
+        const scrollValue = getStatValue(equipment.item_etc_option, statKey)
+        const flameValue = getStatValue(equipment.item_add_option, statKey)
 
         // 只顯示總值不為0的屬性
         if (totalValue > 0) {
@@ -460,7 +477,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
         {/* 第三排：裝備 icon 和基本資訊 */}
         <div className="flex items-start gap-2 pb-1.5 border-b border-gray-800">
           {equipment.item_icon && (
-            <div className={`w-16 h-16 flex-shrink-0 border-2 ${getIconBorderColor((equipment as any).potential_option_grade || '')} rounded bg-gray-900/50 flex items-center justify-center`}>
+            <div className={`w-16 h-16 flex-shrink-0 border-2 ${getIconBorderColor((equipment as ItemEquipmentWithPotential).potential_option_grade || '')} rounded bg-gray-900/50 flex items-center justify-center`}>
               <img
                 src={equipment.item_icon}
                 alt={equipment.item_name}
@@ -523,21 +540,21 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
         )}
 
         {/* 潛能 */}
-        {((equipment as any).potential_option_1 || (equipment as any).potential_option_2 || (equipment as any).potential_option_3) && (
+        {((equipment as ItemEquipmentWithPotential).potential_option_1 || (equipment as ItemEquipmentWithPotential).potential_option_2 || (equipment as ItemEquipmentWithPotential).potential_option_3) && (
           <div className="space-y-0 pt-0.5 border-t border-gray-800">
             <div className="flex items-center gap-1.5 pt-0.5">
-              {(equipment as any).potential_option_grade && (
+              {(equipment as ItemEquipmentWithPotential).potential_option_grade && (
                 <div className="flex items-center gap-1">
-                  <span className={`inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white ${getPotentialBadge((equipment as any).potential_option_grade).color} rounded`}>
-                    {getPotentialBadge((equipment as any).potential_option_grade).label}
+                  <span className={`inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white ${getPotentialBadge((equipment as ItemEquipmentWithPotential).potential_option_grade!).color} rounded`}>
+                    {getPotentialBadge((equipment as ItemEquipmentWithPotential).potential_option_grade!).label}
                   </span>
-                  <h5 className={`text-xs md:text-sm font-semibold ${getGradeColor((equipment as any).potential_option_grade)}`}>潛在能力：{(equipment as any).potential_option_grade}</h5>
+                  <h5 className={`text-xs md:text-sm font-semibold ${getGradeColor((equipment as ItemEquipmentWithPotential).potential_option_grade!)}`}>潛在能力：{(equipment as ItemEquipmentWithPotential).potential_option_grade}</h5>
                 </div>
               )}
             </div>
-            {[(equipment as any).potential_option_1, (equipment as any).potential_option_2, (equipment as any).potential_option_3]
-              .filter(Boolean)
-              .map((option: string, idx: number) => (
+            {[(equipment as ItemEquipmentWithPotential).potential_option_1, (equipment as ItemEquipmentWithPotential).potential_option_2, (equipment as ItemEquipmentWithPotential).potential_option_3]
+              .filter((option): option is string => Boolean(option))
+              .map((option, idx) => (
                 <div key={idx}>
                   <span className="text-xs md:text-sm font-medium">
                     {option}
@@ -548,21 +565,21 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
         )}
 
         {/* 附加潛能 */}
-        {((equipment as any).additional_potential_option_1 || (equipment as any).additional_potential_option_2 || (equipment as any).additional_potential_option_3) && (
+        {((equipment as ItemEquipmentWithPotential).additional_potential_option_1 || (equipment as ItemEquipmentWithPotential).additional_potential_option_2 || (equipment as ItemEquipmentWithPotential).additional_potential_option_3) && (
           <div className="space-y-0 pt-0.5 border-t border-gray-800">
             <div className="flex items-center gap-1.5 pt-0.5">
-              {(equipment as any).additional_potential_option_grade && (
+              {(equipment as ItemEquipmentWithPotential).additional_potential_option_grade && (
                 <div className="flex items-center gap-1">
-                  <span className={`inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white ${getPotentialBadge((equipment as any).additional_potential_option_grade).color} rounded`}>
-                    {getPotentialBadge((equipment as any).additional_potential_option_grade).label}
+                  <span className={`inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white ${getPotentialBadge((equipment as ItemEquipmentWithPotential).additional_potential_option_grade!).color} rounded`}>
+                    {getPotentialBadge((equipment as ItemEquipmentWithPotential).additional_potential_option_grade!).label}
                   </span>
-                  <h5 className={`text-xs md:text-sm font-semibold ${getGradeColor((equipment as any).additional_potential_option_grade)}`}>附加潛在能力：{(equipment as any).additional_potential_option_grade}</h5>
+                  <h5 className={`text-xs md:text-sm font-semibold ${getGradeColor((equipment as ItemEquipmentWithPotential).additional_potential_option_grade!)}`}>附加潛在能力：{(equipment as ItemEquipmentWithPotential).additional_potential_option_grade}</h5>
                 </div>
               )}
             </div>
-            {[(equipment as any).additional_potential_option_1, (equipment as any).additional_potential_option_2, (equipment as any).additional_potential_option_3]
-              .filter(Boolean)
-              .map((option: string, idx: number) => (
+            {[(equipment as ItemEquipmentWithPotential).additional_potential_option_1, (equipment as ItemEquipmentWithPotential).additional_potential_option_2, (equipment as ItemEquipmentWithPotential).additional_potential_option_3]
+              .filter((option): option is string => Boolean(option))
+              .map((option, idx) => (
                 <div key={idx}>
                   <span className="text-xs md:text-sm font-medium">
                     {option}

@@ -50,9 +50,10 @@ export async function GET(request: NextRequest) {
     )
 
     return nextResponse
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : '未知錯誤';
     return NextResponse.json(
-      { error: `網路錯誤: ${error.message}` },
+      { error: `網路錯誤: ${errorMessage}` },
       { status: 500 }
     )
   }

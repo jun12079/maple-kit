@@ -64,7 +64,7 @@ export default function GenesisWeaponCalculator() {
     blackMage: { players: 1, difficulty: "hard", origin: "blackMage", enabled: true, reset: false }
   });
 
-  const updateBossConfig = (boss: string, field: keyof BossConfigStateItem, value: any) => {
+  const updateBossConfig = (boss: string, field: keyof BossConfigStateItem, value: string | number | boolean) => {
     if (field === 'difficulty') {
       // Just for testing/validation if needed, but logic is same as below
     }

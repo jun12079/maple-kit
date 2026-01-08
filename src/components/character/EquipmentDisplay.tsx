@@ -34,19 +34,19 @@ interface PetInfo {
   slotName: string
 }
 
-type DialogItem = EquipmentItem | PetInfo
+type DialogItem = EquipmentItem | PetInfo | CashItemEquipment
 
 // 符文常數
-const ARCANE_SYMBOLS = [
+const ARCANE_SYMBOLS: readonly string[] = [
   '祕法符文：消逝的旅途',
   '祕法符文：啾啾艾爾蘭',
   '祕法符文：拉契爾恩',
   '祕法符文：阿爾卡娜',
   '祕法符文：魔菈斯',
   '祕法符文：艾斯佩拉'
-] as const
+]
 
-const AUTHENTIC_SYMBOLS = [
+const AUTHENTIC_SYMBOLS: readonly string[] = [
   '真實符文：賽爾尼溫',
   '真實符文：阿爾克斯',
   '真實符文：奧迪溫',
@@ -54,7 +54,7 @@ const AUTHENTIC_SYMBOLS = [
   '真實符文：阿爾特利亞',
   '真實符文：卡爾西溫',
   '豪華真實符文：塔拉哈特'
-] as const
+]
 
 // 裝備位置映射常數 (8x4 grid for desktop)
 const EQUIPMENT_SLOTS_DESKTOP: string[][] = [
@@ -93,9 +93,9 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
 
   // 判斷符文類型和最大等級
   const getSymbolInfo = (symbolName: string): SymbolInfo => {
-    if (ARCANE_SYMBOLS.includes(symbolName as any)) {
+    if (ARCANE_SYMBOLS.includes(symbolName)) {
       return { type: 'ARC', maxLevel: 20 }
-    } else if (AUTHENTIC_SYMBOLS.includes(symbolName as any)) {
+    } else if (AUTHENTIC_SYMBOLS.includes(symbolName)) {
       return { type: 'AUT', maxLevel: 11 }
     }
     return { type: 'UNKNOWN', maxLevel: 20 }
@@ -228,10 +228,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
     return !!item && 'item_name' in item && !('equipment' in item)
   }
 
-  const isPetInfo = (item: DialogItem | CashItemEquipment | null): item is PetInfo => {
-    return !!item && 'equipment' in item && 'name' in item
-  }
-
   // 根據現金裝備部位名稱找出對應的裝備
   const findCashItemByPart = (cashItemList: CashItemEquipment[] | undefined, partName: string): CashItemEquipment | null => {
     if (!partName || !cashItemList) return null
@@ -343,8 +339,6 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
         </div>
       )
     }
-
-// symbolStats 已通過 useMemo 計算
 
     return (
       <div className="space-y-4">
@@ -483,7 +477,7 @@ export function EquipmentDisplay({ equipmentData, symbolData, petData, cashItemD
           `}
           onClick={() => {
             if (!isEmpty) {
-              setDialogItem(item as any)
+              setDialogItem(item)
               setIsDialogOpen(true)
             }
           }}

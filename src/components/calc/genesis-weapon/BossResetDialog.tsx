@@ -17,9 +17,11 @@ const MAX_WEEKLY_SELECTION = 3;
 const MAX_MONTHLY_SELECTION = 1;
 
 interface BossConfigItem {
+  players: number;
+  difficulty: string;
   origin: string;
+  enabled: boolean;
   reset: boolean;
-  [key: string]: any; // Allow other properties
 }
 
 interface BossConfig {
@@ -77,22 +79,15 @@ export default function BossResetDialog<T extends BossConfig>({
 
   const handleBossReset = () => {
     // 更新boss配置
-    const updatedConfig = { ...bossConfig };
-    Object.keys(updatedConfig).forEach(key => {
-      const boss = key as keyof BossConfig;
-      // 這裡我們需要確保 updatedConfig[boss] 是可以被寫入的
-      // 由於 T extends BossConfig，我們知道它有這些屬性，但 TS 可能會因為泛型而報錯
-      // 我們可以使用一個更安全的類型斷言
-      const currentConfig = updatedConfig[boss];
-      
-      // 創建一個新的物件來更新，避免直接修改
-      (updatedConfig as any)[boss] = {
-        ...currentConfig,
-        reset: selectedBosses.includes(boss as string)
+    const updatedConfig: BossConfig = {};
+    Object.keys(bossConfig).forEach(key => {
+      updatedConfig[key] = {
+        ...bossConfig[key],
+        reset: selectedBosses.includes(key)
       };
     });
 
-    setBossConfig(updatedConfig);
+    setBossConfig(updatedConfig as T);
     setSelectedBosses([]); // 重置選擇
     onOpenChange(false); // 關閉dialog
   };

@@ -63,12 +63,12 @@ const getBlockColor = (blockType: string, blockClass: string) => {
   return BLOCK_COLORS[type] || BLOCK_COLORS.default;
 };
 
-export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({ 
-  unionRaiderData, 
-  unionArtifactData, 
-  unionData, 
+export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
+  unionRaiderData,
+  unionArtifactData,
+  unionData,
   unionChampionData,
-  unionChampionDetails 
+  unionChampionDetails
 }) => {
   const [selectedPreset, setSelectedPreset] = useState<number>(unionRaiderData.use_preset_no || 1);
 
@@ -563,20 +563,20 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
               <div className="space-y-2">
                 <h3 className="font-semibold text-sm flex items-center gap-2">
                   冠軍徽章效果
-                  </h3>
-                  <div className="space-y-1">
-                    {unionChampionData.champion_badge_total_info.length > 0 ? (
-                      unionChampionData.champion_badge_total_info.map((badge, index) => (
-                        <div key={`occupied-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>•</span>
-                          <span>{badge.stat}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-muted-foreground text-center py-2 text-xs">無佔領效果</div>
-                    )}
-                  </div>
+                </h3>
+                <div className="space-y-1">
+                  {unionChampionData.champion_badge_total_info.length > 0 ? (
+                    unionChampionData.champion_badge_total_info.map((badge, index) => (
+                      <div key={`occupied-${index}`} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>•</span>
+                        <span>{badge.stat}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted-foreground text-center py-2 text-xs">無佔領效果</div>
+                  )}
                 </div>
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -3,7 +3,7 @@
  * 後端 API Server 負責呼叫 Nexon Open API
  */
 
-import { MapleAPIErrorResponse } from '@/types/mapleAPI';
+import { MapleAPIErrorResponse, APIRequestParams, AllCharacterData, CharacterId } from '@/types/mapleAPI';
 
 export class MapleAPIError extends Error {
   status: number;
@@ -28,7 +28,7 @@ export class MapleAPI {
   /**
    * 通用內部 API 請求方法
    */
-  async request<T = any>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
+  async request<T>(endpoint: string, params: APIRequestParams = {}): Promise<T> {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
     const url = new URL(`${this.baseUrl}${endpoint}`, origin);
 
@@ -68,11 +68,19 @@ export class MapleAPI {
       }
 
       return data;
-    } catch (error: any) {
+    } catch (error) {
+      // 如果已經是 MapleAPIError，直接向上拋出
       if (error instanceof MapleAPIError) {
         throw error;
       }
-      throw new MapleAPIError(`Network error: ${error.message}`, 0);
+      
+      // 處理標準 Error 物件
+      if (error instanceof Error) {
+        throw new MapleAPIError(`Network error: ${error.message}`, 0);
+      }
+      
+      // 處理其他類型的錯誤（字串、數字等）
+      throw new MapleAPIError(`Network error: ${String(error)}`, 0);
     }
   }
 
@@ -80,8 +88,8 @@ export class MapleAPI {
    * 檢視角色辨識器 (OCID)
    * @param characterName 角色名稱
    */
-  async getCharacterOCID(characterName: string): Promise<{ ocid: string }> {
-    return this.request<{ ocid: string }>('/id', {
+  async getCharacterOCID(characterName: string): Promise<CharacterId> {
+    return this.request<CharacterId>('/id', {
       character_name: characterName
     });
   }
@@ -91,8 +99,8 @@ export class MapleAPI {
    * @param ocid 角色辨識器
    * @param date 要搜尋的日期 (TST，YYYY-MM-DD)
    */
-  async getAllCharacterData(ocid: string, date: string | null = null): Promise<any> {
-    return this.request<any>('/character/all', { ocid, date });
+  async getAllCharacterData(ocid: string, date: string | null = null): Promise<AllCharacterData> {
+    return this.request<AllCharacterData>('/character/all', { ocid, date });
   }
 }
 
