@@ -60,10 +60,14 @@ export default function DestinyWeaponCalculator() {
     return true;
   };
 
-  const updateBossConfig = (boss: string, field: keyof BossConfigItem, value: any) => {
+  const updateBossConfig = (boss: string, field: keyof BossConfigItem, value: string | number | boolean) => {
     if (field === 'difficulty') {
-      const testConfig = { ...bossConfig };
-      testConfig[boss] = { ...testConfig[boss], [field]: value };
+      const testConfig: BossConfig = {};
+      Object.keys(bossConfig).forEach(key => {
+        testConfig[key] = key === boss 
+          ? { ...bossConfig[key], [field]: value as string }
+          : { ...bossConfig[key] };
+      });
 
       if ((testConfig[boss].origin === 'seren' || testConfig[boss].origin === 'kalos') && !checkRules(testConfig[boss].origin, testConfig)) {
         alert(`${bossData[testConfig[boss].origin].name} 無法選擇兩場極限`);
@@ -71,9 +75,12 @@ export default function DestinyWeaponCalculator() {
       }
     }
 
-    const newConfig = { ...bossConfig };
-    // @ts-ignore
-    newConfig[boss] = { ...newConfig[boss], [field]: value };
+    const newConfig: BossConfig = {};
+    Object.keys(bossConfig).forEach(key => {
+      newConfig[key] = key === boss
+        ? { ...bossConfig[key], [field]: value }
+        : { ...bossConfig[key] };
+    });
     setBossConfig(newConfig);
   };
 

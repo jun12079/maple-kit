@@ -636,6 +636,19 @@ export interface CharacterUnionChampion {
   champion_badge_total_info: UnionChampionBadgeInfo[];
 }
 
+export interface UnionChampionDetail {
+  champion_name: string;
+  character_image: string;
+  character_level: number;
+}
+
+export interface ExperienceDataPoint {
+  date: string;       // 顯示日期 (MM/DD)
+  exp: number;        // 經驗值百分比
+  level: number;      // 角色等級
+  fullDate: string;   // 完整日期 (YYYY-MM-DD)
+}
+
 export interface MapleAPIErrorBody {
   name: string;
   message: string;
@@ -643,4 +656,42 @@ export interface MapleAPIErrorBody {
 
 export interface MapleAPIErrorResponse {
   error: MapleAPIErrorBody;
+}
+
+// API 請求參數類型 - URL 查詢參數都會轉為 string
+export interface APIRequestParams {
+  [key: string]: string | null | undefined;
+}
+
+// 所有角色資料的綜合類型
+// 後端固定回傳所有欄位，但值可能是 null
+export interface AllCharacterData {
+  ocid: string;
+  date: string;
+  basic: CharacterBasic | null;
+  popularity: CharacterPopularity | null;
+  stat: CharacterStat | null;
+  hyperStat: CharacterHyperStat | null;
+  ability: CharacterAbility | null;
+  propensity: CharacterPropensity | null;
+  itemEquipment: CharacterItemEquipment | null;
+  cashItemEquipment: CharacterCashItemEquipment | null;
+  symbolEquipment: CharacterSymbolEquipment | null;
+  setEffect: CharacterSetEffect | null;
+  beautyEquipment: CharacterBeautyEquipment | null;
+  androidEquipment: CharacterAndroidEquipment | null;
+  petEquipment: CharacterPetEquipment | null;
+  skill: CharacterSkill | null;
+  linkSkill: CharacterLinkSkill | null;
+  vMatrix: CharacterVMatrix | null;
+  hexaMatrix: CharacterHexaMatrix | null;
+  hexaMatrixStat: CharacterHexaMatrixStat | null;
+  dojang: CharacterDojang | null;
+  union: CharacterUnion | null;
+  unionRaider: CharacterUnionRaider | null;
+  unionArtifact: CharacterUnionArtifact | null;
+  unionChampion: CharacterUnionChampion | null;
+  unionChampionDetails: UnionChampionDetail[];
+  expHistory: CharacterBasic[];
+  expData: ExperienceDataPoint[];
 }

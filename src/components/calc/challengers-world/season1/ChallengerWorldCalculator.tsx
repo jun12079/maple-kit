@@ -58,8 +58,8 @@ export default function ChallengerWorldCalculator() {
         if (parsed.selectedLevel !== undefined) setSelectedLevel(parsed.selectedLevel);
         if (parsed.bossStatus !== undefined) setBossStatus(parsed.bossStatus);
         if (parsed.manualDailyPoints !== undefined) setManualDailyPoints(parsed.manualDailyPoints);
-      } catch (e) {
-        console.error("Failed to parse saved data", e);
+      } catch {
+        localStorage.removeItem("maple-kit-challengers-world-season1");
       }
     }
     setIsLoaded(true);
@@ -177,25 +177,6 @@ export default function ChallengerWorldCalculator() {
 
       return { ...prev, [bossKey]: newCompleted };
     });
-  };
-
-  const getBossIconState = (bossKey: string) => {
-    const completed = bossStatus[bossKey] || [];
-    if (completed.length === 0) return "none";
-
-    const boss = bossData[bossKey];
-    if (!boss) return "none";
-
-    const difficulties = Object.keys(boss.difficulties);
-    // 依順序排序難度
-    const sortedDiffs = difficulties.sort((a, b) => {
-      return DIFFICULTY_ORDER.indexOf(a) - DIFFICULTY_ORDER.indexOf(b);
-    });
-
-    const hardest = sortedDiffs[sortedDiffs.length - 1];
-
-    if (completed.includes(hardest)) return "max";
-    return "partial";
   };
 
   // 計算剩餘天數和有效日期 (用於預估完成時間)
@@ -464,10 +445,7 @@ export default function ChallengerWorldCalculator() {
 
                   if (daysRemaining <= 0) {
                     isPossible = false;
-                  } else {
-                    // 計算剩餘週數
-                    const weeksRemaining = daysRemaining / 7;
-                    
+                  } else {                    
                     // 計算所需任務數與週數
                     // 每個任務獲得 100 點，每週最多 5 個
                     const missionsNeeded = Math.ceil(pointsNeeded / DAILY_MISSION_POINTS);

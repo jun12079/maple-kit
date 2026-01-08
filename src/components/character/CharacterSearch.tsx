@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
 import { mapleAPI } from '@/services/mapleAPI'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -85,13 +85,13 @@ export default function CharacterSearch() {
   const [unionArtifactData, setUnionArtifactData] = useState<CharacterUnionArtifact | null>(null)
   const [unionRaiderData, setUnionRaiderData] = useState<CharacterUnionRaider | null>(null)
   const [unionChampionData, setUnionChampionData] = useState<CharacterUnionChampion | null>(null)
-  const [unionChampionDetails, setUnionChampionDetails] = useState<any[] | null>(null)
+  const [unionChampionDetails, setUnionChampionDetails] = useState<Array<{champion_name: string; character_image: string; character_level: number}> | null>(null)
   const [experienceData, setExperienceData] = useState<ExperienceDataPoint[] | null>(null)
   const [petData, setPetData] = useState<CharacterPetEquipment | null>(null)
 
   // 簡化的頻率限制狀態
   const [isSearchDisabled, setIsSearchDisabled] = useState<boolean>(false)
-  const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const cooldownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 設定：簡短的冷卻時間
   const COOLDOWN_MS = 2000 // 2秒
@@ -134,7 +134,7 @@ export default function CharacterSearch() {
           hyperStat: allData.hyperStat,
           ability: allData.ability,
           itemEquipment: allData.itemEquipment,
-          cashItemEquipment: allData.cashItemEquipment
+          cashItemEquipment: allData.cashItemEquipment ?? undefined
         })
       }
 
@@ -194,7 +194,7 @@ export default function CharacterSearch() {
       if (Array.isArray(allData.expHistory)) {
         const today = new Date();
 
-        allData.expHistory.forEach((historyItem: any, index: number) => {
+        allData.expHistory.forEach((historyItem: {error?: string; character_exp_rate?: string; character_level?: number}, index: number) => {
           const daysAgo = 6 - index;
           const d = new Date(today);
           d.setDate(d.getDate() - daysAgo);
@@ -204,7 +204,7 @@ export default function CharacterSearch() {
             expData.push({
               date: `${d.getMonth() + 1}/${d.getDate()}`,
               exp: parseFloat(historyItem.character_exp_rate || '0'),
-              level: historyItem.character_level,
+              level: historyItem.character_level || 0,
               fullDate: dateStr
             });
           } else {
@@ -309,7 +309,7 @@ export default function CharacterSearch() {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !isSearchDisabled && !isLoading && characterName.trim()) {
       handleSearch()
     }
@@ -436,8 +436,8 @@ export default function CharacterSearch() {
                   <div className="lg:col-span-7">
                     <EquipmentDisplay 
                       equipmentData={basicData.itemEquipment} 
-                      symbolData={symbolData as any} 
-                      petData={petData as any}
+                      symbolData={symbolData ?? undefined} 
+                      petData={petData ?? undefined}
                       cashItemData={basicData.cashItemEquipment}
                     />
                   </div>
