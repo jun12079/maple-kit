@@ -884,7 +884,7 @@ export const bossData: Record<string, Boss> = {
         defense: 380,
         symbol: [150, 200],
         reset: 'weekly',
-        drops: [mitrasNodestoneIcon, daybreakPendantIcon, blackJadeBossRingBoxIcon],
+        drops: [daybreakPendantIcon, blackJadeBossRingBoxIcon],
         solErda: 150,
         mesos: 149800000
       },
