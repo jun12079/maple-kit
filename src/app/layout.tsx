@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Analytics } from '@vercel/analytics/next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
@@ -71,6 +72,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
         </ThemeProvider>
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }
