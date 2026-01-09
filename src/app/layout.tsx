@@ -8,12 +8,12 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://maple-kit.vercel.app'),
+  metadataBase: new URL('https://maple-kit.com'),
   title: {
     default: "MapleKit | 新楓之谷工具平台",
     template: "%s | MapleKit"
   },
-  description: "MapleKit為新楓之谷玩家提供的一個工具平台，提供角色查詢、計算機、Boss資訊等功能。",
+  description: "MapleKit 為新楓之谷玩家提供的一個工具平台，提供角色查詢、計算機、Boss 資訊等功能。",
   keywords: ["MapleStory", "新楓之谷", "MapleKit", "角色查詢", "Calculator", "計算機", "Boss", "Tools", "Destiny Weapon", "Genesis Weapon", "HEXA"],
   authors: [{ name: "MapleKit Team" }],
   creator: "MapleKit",

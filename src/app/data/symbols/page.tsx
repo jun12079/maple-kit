@@ -7,7 +7,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "符文系統",
   description: "新楓之谷符文系統查詢表格，包含秘法符文、真實符文的升級成本與升級數量資訊",
-  keywords: "新楓之谷, 符文系統, 秘法符文, 真實符文, 符文升級",
+  keywords: "新楓之谷, 符文系統, 秘法符文, 真實符文, 豪華真實符文, 符文升級",
 };
 
 const formatNumber = (num: number) => {
