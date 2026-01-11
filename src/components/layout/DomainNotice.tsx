@@ -7,9 +7,7 @@ export const DomainNotice = () => {
 
   useEffect(() => {
     // 只有在 maple-kit.com 域名上不顯示，其餘都顯示
-    const isNewDomain =
-      window.location.hostname === "www.maple-kit.com" ||
-      window.location.hostname === "maple-kit.com";
+    const isNewDomain = window.location.hostname === "maple-kit.com";
 
     if (!isNewDomain) {
       setShowNotice(true);
@@ -24,10 +22,10 @@ export const DomainNotice = () => {
         <span className="font-medium">
           ⚠️ 重要通知：我們已遷移至新域名{" "}
           <a
-            href="https://www.maple-kit.com"
+            href="https://maple-kit.com"
             className="underline font-bold hover:text-orange-100"
           >
-            www.maple-kit.com
+            maple-kit.com
           </a>
           ，此域名將於 1 月 31 日 關閉，請更新您的書籤！
         </span>
