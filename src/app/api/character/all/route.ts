@@ -46,11 +46,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 設定快取：角色資料快取 15 分鐘
+    // 設定快取：瀏覽器快取 15 分鐘，CDN 不快取（讓 Redis 處理跨用戶快取）
     const nextResponse = NextResponse.json(data)
     nextResponse.headers.set(
       'Cache-Control',
-      'public, max-age=900, s-maxage=900, stale-while-revalidate=450'
+      'private, max-age=900'
     )
 
     return nextResponse

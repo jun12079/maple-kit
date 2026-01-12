@@ -42,11 +42,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 設定快取：OCID 可以快取較長時間 (24 小時)
+    // 設定快取：瀏覽器快取 24 小時，CDN 不快取（讓 Redis 處理跨用戶快取）
     const nextResponse = NextResponse.json(data)
     nextResponse.headers.set(
       'Cache-Control',
-      'public, max-age=86400, s-maxage=86400, stale-while-revalidate=43200'
+      'private, max-age=86400'
     )
 
     return nextResponse
