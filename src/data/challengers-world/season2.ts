@@ -155,7 +155,7 @@ export const RANKS: ChallengerRank[] = [
 export const BOSS_ORDER = [
   "cygnus", "hilla", "pinkBean", "zakum", "pierre", "vonBon", "crimsonQueen", "magnus",
   "vellum", "princessNo", "papulatus", "lotus", "damien", "guardianAngelSlime", "lucid", "will", "gloom",
-  "verusHilla", "darknell", "blackMage", "seren", "kalos", "kaling"
+  "verusHilla", "darknell", "blackMage", "seren", "kalos", "kaling", "firstAdversary"
 ];
 
 export const DIFFICULTY_ORDER = ["easy", "normal", "hard", "chaos", "extreme"];
@@ -242,5 +242,8 @@ export const BOSS_REWARDS_DATA: Record<string, Record<string, { points: number; 
   },
   kaling: {
     easy: { points: 9000, coins: 3000, advancedCoins: 60 },
+  },
+  firstAdversary: {
+    easy: { points: 0, coins: 2000, advancedCoins: 30 },
   },
 };
