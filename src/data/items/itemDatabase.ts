@@ -4,11 +4,13 @@ const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 // 一般物品
 const absoLabArmorBoxIcon = `${CDN_URL}/images/items/icons/AbsoLabArmorBox_icon.png`;
 const absoLabWeaponBoxIcon = `${CDN_URL}/images/items/icons/AbsoLabWeaponBox_icon.png`;
+const ancientEternalArmorBoxIcon = `${CDN_URL}/images/items/icons/AncientEternalArmorBox_icon.png`;
 const arcaneUmbraArmorBoxIcon = `${CDN_URL}/images/items/icons/ArcaneUmbraArmorBox_icon.png`;
 const arcaneUmbraWeaponBoxIcon = `${CDN_URL}/images/items/icons/ArcaneUmbraWeaponBox_icon.png`;
 const desiredEthernalArmorBoxIcon = `${CDN_URL}/images/items/icons/DesiredEthernalArmorBox_icon.png`;
 const distortedDesiresCrystalIcon = `${CDN_URL}/images/items/icons/DistortedDesiresCrystal_icon.png`;
 const divineEternalArmorBoxIcon = `${CDN_URL}/images/items/icons/DivineEternalArmorBox_icon.png`;
+const echoOfAncientResolveIcon = `${CDN_URL}/images/items/icons/EchoOfAncientResolve_icon.png`;
 const ferociousBeastEntanglementRingIcon = `${CDN_URL}/images/items/icons/FerociousBeastEntanglementRing_icon.png`;
 const ferociousBeastEternalArmorBoxIcon = `${CDN_URL}/images/items/icons/FerociousBeastEternalArmorBox_icon.png`;
 const ferociousEntanglementRingFragmentIcon = `${CDN_URL}/images/items/icons/FerociousEntanglementRingFragment_icon.png`;
@@ -25,12 +27,14 @@ const ruinForceShieldIcon = `${CDN_URL}/images/items/icons/RuinForceShield_icon.
 const superiorEngravedGolluxBeltIcon = `${CDN_URL}/images/items/icons/SuperiorEngravedGolluxBelt_icon.png`;
 const superiorGolluxEarringsIcon = `${CDN_URL}/images/items/icons/SuperiorGolluxEarrings_icon.png`;
 const traceOfEternalLoyaltyIcon = `${CDN_URL}/images/items/icons/TraceOfEternalLoyalty_icon.png`;
+const whisperOfAncientResolveIcon = `${CDN_URL}/images/items/icons/WhisperOfAncientResolve_icon.png`;
 const MalitiaDrops2Icon = `${CDN_URL}/images/items/icons/MalitiaDrops2_icon.png`;
 const MalitiaDrops3Icon = `${CDN_URL}/images/items/icons/MalitiaDrops3_icon.png`;
 const MaliciousEternalArmorBoxIcon = `${CDN_URL}/images/items/icons/MaliciousEternalArmorBox_icon.png`;
 const MalitiaSoulIcon = `${CDN_URL}/images/items/icons/MalitiaSoul_icon.png`;
 
 // 機器人
+const adversaryroidIcon = `${CDN_URL}/images/items/icons/robot/Adversaryroid_icon.png`;
 const annihilationWeaponLotusroidIcon = `${CDN_URL}/images/items/icons/robot/AnnihilationWeaponLotusroid_icon.png`;
 const baldrixroidIcon = `${CDN_URL}/images/items/icons/robot/Baldrixroid_icon.png`;
 const damienroidIcon = `${CDN_URL}/images/items/icons/robot/Damienroid_icon.png`;
@@ -55,6 +59,7 @@ const totalControlIcon = `${CDN_URL}/images/items/icons/pitched-boss-set/TotalCo
 const willsCursedSpellbookSelectionBoxIcon = `${CDN_URL}/images/items/icons/pitched-boss-set/WillsCursedSpellbookSelectionBox_icon.png`;
 
 // 光輝BOSS套裝
+const immortalLegacyIcon = `${CDN_URL}/images/items/icons/brilliant-boss-set/ImmortalLegacy_icon.png`;
 const oathOfDeathIcon = `${CDN_URL}/images/items/icons/brilliant-boss-set/OathOfDeath_icon.png`;
 const whisperOfTheSourceIcon = `${CDN_URL}/images/items/icons/brilliant-boss-set/WhisperOfTheSource_icon.png`;
 // 黎明BOSS套裝
@@ -68,6 +73,7 @@ const exceptionalHammerBeltIcon = `${CDN_URL}/images/items/icons/exceptional-ham
 const exceptionalHammerEarringsIcon = `${CDN_URL}/images/items/icons/exceptional-hammer/ExceptionalHammerEarrings_icon.png`;
 const exceptionalHammerEyeAccIcon = `${CDN_URL}/images/items/icons/exceptional-hammer/ExceptionalHammerEyeAcc_icon.png`;
 const exceptionalHammerFaceAccIcon = `${CDN_URL}/images/items/icons/exceptional-hammer/ExceptionalHammerFaceAcc_icon.png`;
+const exceptionalHammerMedalIcon = `${CDN_URL}/images/items/icons/exceptional-hammer/ExceptionalHammerMedal_icon.png`;
 
 // BOSS戒指箱
 const blackJadeBossRingBoxIcon = `${CDN_URL}/images/items/icons/jade-boss-ring-box/BlackJadeBossRingBox_icon.png`;
@@ -202,6 +208,7 @@ export {
   willsCursedSpellbookSelectionBoxIcon,
 
   // 光輝BOSS套裝
+  immortalLegacyIcon,
   oathOfDeathIcon,
   whisperOfTheSourceIcon,
 
@@ -212,6 +219,7 @@ export {
   twilightMarkIcon,
 
   // 機器人
+  adversaryroidIcon,
   annihilationWeaponLotusroidIcon,
   baldrixroidIcon,
   damienroidIcon,
@@ -227,17 +235,20 @@ export {
   exceptionalHammerEarringsIcon,
   exceptionalHammerEyeAccIcon,
   exceptionalHammerFaceAccIcon,
+  exceptionalHammerMedalIcon,
 
   // 其他掉落物
   grindstoneOfFaithIcon,
   grindstoneOfLifeIcon,
   absoLabArmorBoxIcon,
   absoLabWeaponBoxIcon,
+  ancientEternalArmorBoxIcon,
   arcaneUmbraArmorBoxIcon,
   arcaneUmbraWeaponBoxIcon,
   desiredEthernalArmorBoxIcon,
   distortedDesiresCrystalIcon,
   divineEternalArmorBoxIcon,
+  echoOfAncientResolveIcon,
   ferociousBeastEntanglementRingIcon,
   ferociousBeastEternalArmorBoxIcon,
   ferociousEntanglementRingFragmentIcon,
@@ -252,6 +263,7 @@ export {
   superiorEngravedGolluxBeltIcon,
   superiorGolluxEarringsIcon,
   traceOfEternalLoyaltyIcon,
+  whisperOfAncientResolveIcon,
   MalitiaDrops2Icon,
   MalitiaDrops3Icon,
   MaliciousEternalArmorBoxIcon,

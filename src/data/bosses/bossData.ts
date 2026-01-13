@@ -29,6 +29,7 @@ const darknellIcon = `${CDN_URL}/images/bosses/icons/Darknell_icon.png`;
 const serenIcon = `${CDN_URL}/images/bosses/icons/Seren_icon.png`;
 const guardianAngelSlimeIcon = `${CDN_URL}/images/bosses/icons/GuardianAngelSlime_icon.png`;
 const kalosIcon = `${CDN_URL}/images/bosses/icons/Kalos_icon.png`;
+const firstAdversaryIcon = `${CDN_URL}/images/bosses/icons/FirstAdversary_icon.png`;
 const kalingIcon = `${CDN_URL}/images/bosses/icons/Kaling_icon.png`;
 const limboIcon = `${CDN_URL}/images/bosses/icons/Limbo_icon.png`;
 const baldrixIcon = `${CDN_URL}/images/bosses/icons/Baldrix_icon.png`;
@@ -38,17 +39,21 @@ const malitiaIcon = `${CDN_URL}/images/bosses/icons/Malitia_icon.png`;
 import {
   absoLabArmorBoxIcon,
   absoLabWeaponBoxIcon,
+  adversaryroidIcon,
+  ancientEternalArmorBoxIcon,
   arcaneUmbraArmorBoxIcon,
   arcaneUmbraWeaponBoxIcon,
   desiredEthernalArmorBoxIcon,
   distortedDesiresCrystalIcon,
   divineEternalArmorBoxIcon,
+  echoOfAncientResolveIcon,
   ferociousBeastEntanglementRingIcon,
   ferociousBeastEternalArmorBoxIcon,
   ferociousEntanglementRingFragmentIcon,
   golluxCoinIcon,
   grindstoneOfFaithIcon,
   grindstoneOfLifeIcon,
+  immortalLegacyIcon,
   kalossResidualDeterminationIcon,
   kalossResidualDeterminationFragmentIcon,
   mirrorWorldNodestoneIcon,
@@ -59,6 +64,7 @@ import {
   superiorEngravedGolluxBeltIcon,
   superiorGolluxEarringsIcon,
   traceOfEternalLoyaltyIcon,
+  whisperOfAncientResolveIcon,
   MalitiaDrops2Icon,
   MalitiaDrops3Icon,
   MaliciousEternalArmorBoxIcon,
@@ -92,6 +98,7 @@ import {
   exceptionalHammerEarringsIcon,
   exceptionalHammerEyeAccIcon,
   exceptionalHammerFaceAccIcon,
+  exceptionalHammerMedalIcon,
   blackJadeBossRingBoxIcon,
   greenJadeBossRingBoxIcon,
   lifeJadeBossRingBoxIcon,
@@ -981,6 +988,53 @@ export const bossData: Record<string, Boss> = {
         drops: [kalossResidualDeterminationIcon, lifeJadeBossRingBoxIcon, grindstoneOfLifeIcon, nickyroidIcon, divineEternalArmorBoxIcon, exceptionalHammerEyeAccIcon],
         solErda: 700,
         mesos: 1237100000
+      }
+    }
+  },
+  firstAdversary: {
+    name: '最初的敵對者',
+    image: firstAdversaryIcon,
+    players: 3,
+    difficulties: {
+      easy: {
+        level: 270,
+        health: [171000000000000, 171000000000000, 228000000000000],
+        defense: 380,
+        symbol: 220,
+        reset: 'weekly',
+        drops: [whiteJadeBossRingBoxIcon],
+        solErda: 200,
+        mesos: null
+      },
+      normal: {
+        level: 280,
+        health: [495000000000000, 495000000000000, 660000000000000],
+        defense: 380,
+        symbol: 320,
+        reset: 'weekly',
+        drops: [whisperOfAncientResolveIcon, whiteJadeBossRingBoxIcon, grindstoneOfLifeIcon, adversaryroidIcon],
+        solErda: 280,
+        mesos: null
+      },
+      hard: {
+        level: 285,
+        health: [3135000000000000, 3135000000000000, 4180000000000000],
+        defense: 380,
+        symbol: 340,
+        reset: 'weekly',
+        drops: [echoOfAncientResolveIcon, lifeJadeBossRingBoxIcon, grindstoneOfLifeIcon, adversaryroidIcon, ancientEternalArmorBoxIcon, immortalLegacyIcon],
+        solErda: 450,
+        mesos: null
+      },
+      extreme: {
+        level: 290,
+        health: [9655000000000000, 9655000000000000, 12870000000000000],
+        defense: 380,
+        symbol: 460,
+        reset: 'weekly',
+        drops: [echoOfAncientResolveIcon, lifeJadeBossRingBoxIcon, grindstoneOfLifeIcon, adversaryroidIcon, ancientEternalArmorBoxIcon, immortalLegacyIcon, exceptionalHammerMedalIcon],
+        solErda: 750,
+        mesos: null
       }
     }
   },
