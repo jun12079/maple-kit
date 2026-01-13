@@ -102,6 +102,7 @@ export const itemDatabase: Record<string, ItemData> = {
   [willsCursedSpellbookSelectionBoxIcon]: { name: '受詛咒的魔導書選擇箱', image: willsCursedSpellbookSelectionBoxIcon },
 
   // 光輝BOSS套裝
+  [immortalLegacyIcon]: { name: '不朽的遺產', image: immortalLegacyIcon },
   [oathOfDeathIcon]: { name: '死亡之誓', image: oathOfDeathIcon },
   [whisperOfTheSourceIcon]: { name: '根源的耳語', image: whisperOfTheSourceIcon },
 
@@ -123,6 +124,7 @@ export const itemDatabase: Record<string, ItemData> = {
   [whiteJadeBossRingBoxIcon]: { name: '白玉的BOSS戒指箱子', image: whiteJadeBossRingBoxIcon },
 
   // 機器人
+  [adversaryroidIcon]: { name: '敵對者機器人', image: adversaryroidIcon },
   [annihilationWeaponLotusroidIcon]: { name: '殲滅武器史烏機器人', image: annihilationWeaponLotusroidIcon },
   [baldrixroidIcon]: { name: '巴德利斯機器人', image: baldrixroidIcon },
   [damienroidIcon]: { name: '戴米安機器人', image: damienroidIcon },
@@ -138,15 +140,18 @@ export const itemDatabase: Record<string, ItemData> = {
   [exceptionalHammerEarringsIcon]: { name: '卓越鐵鎚(耳環)', image: exceptionalHammerEarringsIcon },
   [exceptionalHammerEyeAccIcon]: { name: '卓越鐵鎚(眼飾)', image: exceptionalHammerEyeAccIcon },
   [exceptionalHammerFaceAccIcon]: { name: '卓越鐵鎚(臉飾)', image: exceptionalHammerFaceAccIcon },
+  [exceptionalHammerMedalIcon]: { name: '卓越鐵鎚(勳章)', image: exceptionalHammerMedalIcon },
 
   // 其他掉落物
   [absoLabArmorBoxIcon]: { name: '航海師防具箱', image: absoLabArmorBoxIcon },
   [absoLabWeaponBoxIcon]: { name: '航海師武器箱', image: absoLabWeaponBoxIcon },
+  [ancientEternalArmorBoxIcon]: { name: '遠古永恆防具箱', image: ancientEternalArmorBoxIcon },
   [arcaneUmbraArmorBoxIcon]: { name: '神秘冥界幽靈防具箱', image: arcaneUmbraArmorBoxIcon },
   [arcaneUmbraWeaponBoxIcon]: { name: '神秘冥界幽靈武器箱', image: arcaneUmbraWeaponBoxIcon },
   [desiredEthernalArmorBoxIcon]: { name: '慾望的永恆防具箱', image: desiredEthernalArmorBoxIcon },
   [distortedDesiresCrystalIcon]: { name: '扭曲的慾望結晶', image: distortedDesiresCrystalIcon },
   [divineEternalArmorBoxIcon]: { name: '意志的永恆防具箱', image: divineEternalArmorBoxIcon },
+  [echoOfAncientResolveIcon]: { name: '世代傳承的遠古決心', image: echoOfAncientResolveIcon },
   [ferociousBeastEntanglementRingIcon]: { name: '交織的凶獸之環', image: ferociousBeastEntanglementRingIcon },
   [ferociousBeastEternalArmorBoxIcon]: { name: '兇獸的永恆防具箱', image: ferociousBeastEternalArmorBoxIcon },
   [ferociousEntanglementRingFragmentIcon]: { name: '交織的凶獸之環碎片', image: ferociousEntanglementRingFragmentIcon },
@@ -161,6 +166,7 @@ export const itemDatabase: Record<string, ItemData> = {
   [superiorEngravedGolluxBeltIcon]: { name: '頂級培羅德烙印腰帶', image: superiorEngravedGolluxBeltIcon },
   [superiorGolluxEarringsIcon]: { name: '頂級培羅德耳環', image: superiorGolluxEarringsIcon },
   [traceOfEternalLoyaltyIcon]: { name: '永遠忠誠的痕跡', image: traceOfEternalLoyaltyIcon },
+  [whisperOfAncientResolveIcon]: { name: '世代傳承的遠古決心碎片', image: whisperOfAncientResolveIcon },
   [MalitiaDrops2Icon]: { name: '月之淚', image: MalitiaDrops2Icon },
   [MalitiaDrops3Icon]: { name: '月亮的意志', image: MalitiaDrops3Icon },
   [MaliciousEternalArmorBoxIcon]: { name: '惡意的永恆防具箱', image: MaliciousEternalArmorBoxIcon },
