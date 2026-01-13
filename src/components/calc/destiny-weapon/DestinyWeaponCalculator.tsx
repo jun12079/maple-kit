@@ -46,6 +46,7 @@ export default function DestinyWeaponCalculator() {
     serenReset: { players: 1, difficulty: "hard", origin: "seren", enabled: true },
     kalos: { players: 1, difficulty: "normal", origin: "kalos", enabled: true },
     kalosReset: { players: 1, difficulty: "normal", origin: "kalos", enabled: true },
+    firstAdversary: { players: 1, difficulty: "normal", origin: "firstAdversary", enabled: true },
     kaling: { players: 1, difficulty: "normal", origin: "kaling", enabled: true },
     limbo: { players: 1, difficulty: "normal", origin: "limbo", enabled: true },
     baldrix: { players: 1, difficulty: "normal", origin: "baldrix", enabled: true },

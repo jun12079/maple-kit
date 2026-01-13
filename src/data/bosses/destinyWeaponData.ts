@@ -1,6 +1,7 @@
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 const serenIcon = `${CDN_URL}/images/bosses/icons/Seren_icon.png`;
 const kalosIcon = `${CDN_URL}/images/bosses/icons/Kalos_icon.png`;
+const firstAdversaryIcon = `${CDN_URL}/images/bosses/icons/FirstAdversary_icon.png`;
 const kalingIcon = `${CDN_URL}/images/bosses/icons/Kaling_icon.png`;
 const limboIcon = `${CDN_URL}/images/bosses/icons/Limbo_icon.png`;
 const baldrixIcon = `${CDN_URL}/images/bosses/icons/Baldrix_icon.png`;
@@ -41,8 +42,17 @@ export const destinyBossData: DestinyBossData = {
       extreme: { name: '極限', energy: 400 }
     }
   },
+  firstAdversary: {
+    name: '最初的敵對者',
+    players: 3,
+    difficulties: {
+      normal: { name: '普通', energy: 20 },
+      hard: { name: '困難', energy: 120 },
+      extreme: { name: '極限', energy: 500 }
+    }
+  },
   kaling: {
-    name: '卡凌',
+    name: '咖凌',
     players: 6,
     difficulties: {
       normal: { name: '普通', energy: 20 },
@@ -77,6 +87,7 @@ export const destinyBossIcon: Record<string, string> = {
   serenReset: serenIcon,
   kalos: kalosIcon,
   kalosReset: kalosIcon,
+  firstAdversary: firstAdversaryIcon,
   kaling: kalingIcon,
   limbo: limboIcon,
   baldrix: baldrixIcon
