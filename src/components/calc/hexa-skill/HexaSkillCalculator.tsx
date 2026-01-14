@@ -8,9 +8,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  CORE_TYPES, 
-  MATERIALS, 
+import {
+  CORE_TYPES,
+  MATERIALS,
   calculateUpgradeCost,
   TOTAL_UPGRADE_COSTS,
   HEXA_UPGRADE_COSTS,
@@ -31,8 +31,11 @@ interface Calculations {
 
 export default function HexaSkillCalculator() {
   // 技能核心 1 種
-  const [skillCores, setSkillCores] = useState<Core[]>([{ level: 0 }]);
-  
+  const [skillCores, setSkillCores] = useState<Core[]>([
+    { level: 0 },
+    { level: 0 }
+  ]);
+
   // 精通核心 4 種
   const [masteryCores, setMasteryCores] = useState<Core[]>([
     { level: 0 },
@@ -40,7 +43,7 @@ export default function HexaSkillCalculator() {
     { level: 0 },
     { level: 0 }
   ]);
-  
+
   // 強化核心 4 種
   const [reinforcedCores, setReinforcedCores] = useState<Core[]>([
     { level: 0 },
@@ -48,13 +51,13 @@ export default function HexaSkillCalculator() {
     { level: 0 },
     { level: 0 }
   ]);
-  
+
   // 共通核心 1 種
   const [commonCores, setCommonCores] = useState<Core[]>([{ level: 0 }]);
-  
+
   // 手機版核心類型切換
   const [selectedCoreType, setSelectedCoreType] = useState<CoreType>('skill');
-  
+
   // 是否包含共用核心
   const [includeCommonCore, setIncludeCommonCore] = useState(true);
 
@@ -62,7 +65,7 @@ export default function HexaSkillCalculator() {
   const updateCoreLevel = (type: CoreType, index: number, level: string) => {
     const parsedLevel = parseInt(level) || 0;
     const clampedLevel = Math.min(Math.max(parsedLevel, 0), 30);
-    
+
     switch (type) {
       case 'skill':
         setSkillCores(prev => {
@@ -99,7 +102,7 @@ export default function HexaSkillCalculator() {
   const calculations: Calculations = useMemo(() => {
     let totalUsedSolErda = 0;
     let totalUsedSolErdaFragment = 0;
-    
+
     // 計算已使用的材料（從等級 0 到當前等級）
     skillCores.forEach(core => {
       if (core.level > 0) {
@@ -108,7 +111,7 @@ export default function HexaSkillCalculator() {
         totalUsedSolErdaFragment += cost.solErdaFragment;
       }
     });
-    
+
     masteryCores.forEach(core => {
       if (core.level > 0) {
         const cost = calculateUpgradeCost('mastery', 0, core.level);
@@ -116,7 +119,7 @@ export default function HexaSkillCalculator() {
         totalUsedSolErdaFragment += cost.solErdaFragment;
       }
     });
-    
+
     reinforcedCores.forEach(core => {
       if (core.level > 0) {
         const cost = calculateUpgradeCost('reinforced', 0, core.level);
@@ -124,7 +127,7 @@ export default function HexaSkillCalculator() {
         totalUsedSolErdaFragment += cost.solErdaFragment;
       }
     });
-    
+
     if (includeCommonCore) {
       commonCores.forEach(core => {
         if (core.level > 0) {
@@ -134,25 +137,25 @@ export default function HexaSkillCalculator() {
         }
       });
     }
-    
+
     // 總艾爾達氣息和碎片需求
-    const totalRequiredSolErda = 
+    const totalRequiredSolErda =
       TOTAL_UPGRADE_COSTS.skill.solErda * skillCores.length +
       TOTAL_UPGRADE_COSTS.mastery.solErda * masteryCores.length +
       TOTAL_UPGRADE_COSTS.reinforced.solErda * reinforcedCores.length +
       (includeCommonCore ? TOTAL_UPGRADE_COSTS.common.solErda * commonCores.length : 0);
-      
-    const totalRequiredSolErdaFragment = 
+
+    const totalRequiredSolErdaFragment =
       TOTAL_UPGRADE_COSTS.skill.solErdaFragment * skillCores.length +
       TOTAL_UPGRADE_COSTS.mastery.solErdaFragment * masteryCores.length +
       TOTAL_UPGRADE_COSTS.reinforced.solErdaFragment * reinforcedCores.length +
       (includeCommonCore ? TOTAL_UPGRADE_COSTS.common.solErdaFragment * commonCores.length : 0);
-    
+
     // 計算進度百分比
     const solErdaProgress = totalRequiredSolErda > 0 ? (totalUsedSolErda / totalRequiredSolErda) * 100 : 0;
     const solErdaFragmentProgress = totalRequiredSolErdaFragment > 0 ? (totalUsedSolErdaFragment / totalRequiredSolErdaFragment) * 100 : 0;
     const overallProgress = ((solErdaProgress + solErdaFragmentProgress) / 2);
-    
+
     return {
       totalUsedSolErda,
       totalUsedSolErdaFragment,
@@ -359,14 +362,15 @@ export default function HexaSkillCalculator() {
                   const masteryCost = HEXA_UPGRADE_COSTS.mastery.find(c => c.level === level);
                   const reinforcedCost = HEXA_UPGRADE_COSTS.reinforced.find(c => c.level === level);
                   const commonCost = HEXA_UPGRADE_COSTS.common.find(c => c.level === level);
-                  
+
                   // 特殊背景色的等級
                   const isSpecialLevel = level === 10 || level === 20 || level === 30;
-                  
+
                   return (
-                    <tr key={level} className={`border-b hover:bg-muted/30 transition-colors ${
-                      isSpecialLevel ? 'bg-accent/50 dark:bg-accent/30' : ''
-                    }`}>
+                    <tr
+                      key={level}
+                      className={`border-b hover:bg-muted/30 transition-colors ${isSpecialLevel ? 'bg-accent/50 dark:bg-accent/30' : ''}`}
+                    >
                       <td className="text-center py-2 px-2 font-medium">
                         {level - 1}→{level}
                       </td>
@@ -440,11 +444,12 @@ export default function HexaSkillCalculator() {
                   {Array.from({ length: 30 }, (_, i) => i + 1).map((level) => {
                     const cost = HEXA_UPGRADE_COSTS[selectedCoreType]?.find(c => c.level === level);
                     const isSpecialLevel = level === 10 || level === 20 || level === 30;
-                    
+
                     return (
-                      <tr key={level} className={`border-b hover:bg-muted/30 transition-colors ${
-                        isSpecialLevel ? 'bg-accent/50 dark:bg-accent/30' : ''
-                      }`}>
+                      <tr
+                        key={level}
+                        className={`border-b hover:bg-muted/30 transition-colors ${isSpecialLevel ? 'bg-accent/50 dark:bg-accent/30' : ''}`}
+                      >
                         <td className="text-center py-2 px-3 font-medium">
                           {level - 1}→{level}
                         </td>
