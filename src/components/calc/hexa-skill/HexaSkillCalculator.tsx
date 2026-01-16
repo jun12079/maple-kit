@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RotateCcw } from "lucide-react";
 import {
   CORE_TYPES,
   MATERIALS,
@@ -16,6 +17,7 @@ import {
   HEXA_UPGRADE_COSTS,
   CoreType
 } from "@/data/hexa/hexaSkillData";
+import { useHexaSkillSave } from "@/hooks/useHexaSkillSave";
 
 interface Core {
   level: number;
@@ -30,6 +32,8 @@ interface Calculations {
 }
 
 export default function HexaSkillCalculator() {
+  const { data: savedData, isLoaded, saveData, resetData } = useHexaSkillSave();
+
   // 技能核心 1 種
   const [skillCores, setSkillCores] = useState<Core[]>([
     { level: 0 },
@@ -60,6 +64,44 @@ export default function HexaSkillCalculator() {
 
   // 是否包含共用核心
   const [includeCommonCore, setIncludeCommonCore] = useState(true);
+
+  // 載入已儲存的資料
+  useEffect(() => {
+    if (isLoaded && savedData) {
+      setSkillCores(savedData.skillCores);
+      setMasteryCores(savedData.masteryCores);
+      setReinforcedCores(savedData.reinforcedCores);
+      setCommonCores(savedData.commonCores);
+      setIncludeCommonCore(savedData.includeCommonCore);
+    }
+  }, [isLoaded]);
+
+  // 自動儲存當前設定（跳過初次載入）
+  useEffect(() => {
+    if (isLoaded) {
+      const timer = setTimeout(() => {
+        saveData({
+          skillCores,
+          masteryCores,
+          reinforcedCores,
+          commonCores,
+          includeCommonCore
+        });
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [skillCores, masteryCores, reinforcedCores, commonCores, includeCommonCore, isLoaded, saveData]);
+
+  // 重置所有資料
+  const handleReset = () => {
+    resetData();
+    // 手動重置所有狀態
+    setSkillCores([{ level: 0 }, { level: 0 }]);
+    setMasteryCores([{ level: 0 }, { level: 0 }, { level: 0 }, { level: 0 }]);
+    setReinforcedCores([{ level: 0 }, { level: 0 }, { level: 0 }, { level: 0 }]);
+    setCommonCores([{ level: 0 }]);
+    setIncludeCommonCore(true);
+  };
 
   // 更新核心等級
   const updateCoreLevel = (type: CoreType, index: number, level: string) => {
@@ -204,7 +246,7 @@ export default function HexaSkillCalculator() {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">HEXA技能</h3>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <Checkbox
                 id="includeCommonCore"
                 checked={includeCommonCore}
@@ -213,6 +255,15 @@ export default function HexaSkillCalculator() {
               <Label htmlFor="includeCommonCore" className="text-sm font-normal cursor-pointer">
                 包含共用核心
               </Label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="gap-2 ml-2"
+              >
+                <RotateCcw className="h-4 w-4" />
+                重置
+              </Button>
             </div>
           </CardTitle>
         </CardHeader>
