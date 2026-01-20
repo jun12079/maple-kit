@@ -40,7 +40,8 @@ interface BossConfig {
 export default function DestinyWeaponCalculator() {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
-  const [startEnergy, setStartEnergy] = useState<number>(0);
+  const [currentStage, setCurrentStage] = useState(1); // 目前進行的階段 (1-3)
+  const [currentStageEnergy, setCurrentStageEnergy] = useState(0); // 目前階段的決心 (0-3000)
   const [bossConfig, setBossConfig] = useState<BossConfig>({
     seren: { players: 1, difficulty: "hard", origin: "seren", enabled: true },
     serenReset: { players: 1, difficulty: "hard", origin: "seren", enabled: true },
@@ -93,6 +94,11 @@ export default function DestinyWeaponCalculator() {
     }, 0);
     return total;
   };
+
+  // 根據階段和階段決心計算總決心
+  const startEnergy = currentStage === 1 
+    ? currentStageEnergy 
+    : stageCumulative[currentStage - 2] + currentStageEnergy;
 
   function calculateStageWeeks(totalWeekEnergy: number, startEnergy: number) {
     let stageWeeks: number[] = [];
@@ -157,19 +163,63 @@ export default function DestinyWeaponCalculator() {
           </div>
 
           {/* 目前決心 */}
-          <div>
-            <Label htmlFor="startEnergy" className="block text-sm font-bold mb-2">
-              目前決心
-            </Label>
-            <Input
-              type="number"
-              id="startEnergy"
-              value={startEnergy || ''}
-              min="0"
-              max={MAX_ENERGY}
-              onChange={(e) => setStartEnergy(Number(e.target.value) || 0)}
-              placeholder={`輸入目前決心 (0-${MAX_ENERGY})`}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-[7fr_5fr] gap-4">
+            {/* 階段選擇 */}
+            <div>
+              <Label htmlFor="currentStage" className="block text-sm font-bold mb-2">
+                目前階段
+              </Label>
+              <Select
+                value={currentStage.toString()}
+                onValueChange={(value) => {
+                  setCurrentStage(Number(value));
+                  setCurrentStageEnergy(0); // 切換階段時重置階段決心
+                }}
+              >
+                <SelectTrigger id="currentStage" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">
+                    <div className="flex items-center gap-2">
+                      <img src={bossIcon.seren} alt="Seren" className="w-6 h-6" />
+                      <span>決戰，受選的賽連</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="2">
+                    <div className="flex items-center gap-2">
+                      <img src={bossIcon.kalos} alt="Kalos" className="w-6 h-6" />
+                      <span>決戰，監視者卡洛斯</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="3">
+                    <div className="flex items-center gap-2">
+                      <img src={bossIcon.kaling} alt="Kaling" className="w-6 h-6" />
+                      <span>決戰，使徒咖凌</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* 階段決心輸入 */}
+            <div>
+              <Label htmlFor="currentStageEnergy" className="block text-sm font-bold mb-2">
+                目前決心
+              </Label>
+              <Input
+                type="number"
+                id="currentStageEnergy"
+                value={currentStageEnergy || ''}
+                min="0"
+                max={3000}
+                onChange={(e) => {
+                  const value = Number(e.target.value) || 0;
+                  setCurrentStageEnergy(Math.min(Math.max(0, value), 3000));
+                }}
+                placeholder="輸入目前決心 (0-3000)"
+              />
+            </div>
           </div>
 
           {/* BOSS選單 */}
@@ -326,7 +376,7 @@ export default function DestinyWeaponCalculator() {
           </div>
 
           {/* 進度條容器 */}
-          <Card className="relative">
+          <Card className="border-0 shadow-none relative">
             <CardContent>
               {/* 進度條 */}
               <div className="relative">
@@ -365,7 +415,7 @@ export default function DestinyWeaponCalculator() {
                             <div className="text-white text-sm font-bold">✓</div>
                           ) : (
                             <img
-                              src={bossIcon[Object.keys(bossData)[i]]}
+                              src={i === 0 ? bossIcon.seren : i === 1 ? bossIcon.kalos : bossIcon.kaling}
                               alt={`Stage ${i + 1}`}
                               className="w-6 h-6 rounded-full object-contain"
                             />
@@ -390,57 +440,54 @@ export default function DestinyWeaponCalculator() {
                 </div>
               </div>
 
-              {/* 進度狀態文字 */}
-              <div className="text-center mt-16 font-medium">
-                目前進度：{
-                  startEnergy >= stageCumulative[2] ? `解放完成 ${startEnergy.toLocaleString()}/${stageCumulative[2].toLocaleString()}` :
-                    startEnergy > stageCumulative[1] ? `第三階段 ${startEnergy.toLocaleString()}/${stageCumulative[2].toLocaleString()}` :
-                      startEnergy > stageCumulative[0] ? `第二階段 ${startEnergy.toLocaleString()}/${stageCumulative[1].toLocaleString()}` :
-                        `第一階段 ${startEnergy.toLocaleString()}/${stageCumulative[0].toLocaleString()}`
-                } ({percentage}%)
-              </div>
+              {/* 進度統計區塊 */}
+              <div className="relative mt-16">
+                {/* 進度狀態文字 */}
+                <div className="text-center font-medium mb-6">
+                  目前進度：{
+                    startEnergy >= stageCumulative[2] ? `解放完成 ${startEnergy.toLocaleString()}/${stageCumulative[2].toLocaleString()}` :
+                      startEnergy > stageCumulative[1] ? `第三階段 ${startEnergy.toLocaleString()}/${stageCumulative[2].toLocaleString()}` :
+                        startEnergy > stageCumulative[0] ? `第二階段 ${startEnergy.toLocaleString()}/${stageCumulative[1].toLocaleString()}` :
+                          `第一階段 ${startEnergy.toLocaleString()}/${stageCumulative[0].toLocaleString()}`
+                  } ({percentage}%)
+                </div>
 
-              {/* 統計卡片 */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-                <Card>
-                  <CardContent className="text-center">
+                {/* 統計卡片 */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="bg-muted/50 rounded-lg p-4 text-center border border-border/50">
                     <div className="text-2xl font-bold mb-1">
                       {startEnergy.toLocaleString()}
                     </div>
-                    <div className="text-sm text-muted-foreground font-normal">目前決心</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="text-center">
+                    <div className="text-sm text-muted-foreground">目前決心</div>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-4 text-center border border-border/50">
                     <div className="text-2xl font-bold mb-1">
                       {totalWeekEnergy.toLocaleString()}
                     </div>
-                    <div className="text-sm text-muted-foreground font-normal">每週決心</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="text-center">
+                    <div className="text-sm text-muted-foreground">每週決心</div>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-4 text-center border border-border/50">
                     <div className="text-2xl font-bold mb-1">
                       {startEnergy >= MAX_ENERGY ? 0 : Math.ceil((stageCumulative[2] - startEnergy) / (totalWeekEnergy || 1))}
                     </div>
-                    <div className="text-sm text-muted-foreground font-normal">剩餘週數</div>
-                  </CardContent>
-                </Card>
+                    <div className="text-sm text-muted-foreground">剩餘週數</div>
+                  </div>
+                </div>
+
+                {/* 特殊狀態覆蓋層 */}
+                {startEnergy >= MAX_ENERGY && (
+                  <div className="absolute inset-0 bg-green-100/40 dark:bg-green-900/40 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
+                    <h3 className="text-2xl text-green-600 dark:text-green-400 font-bold">已解放！</h3>
+                  </div>
+                )}
+
+                {totalWeekEnergy === 0 && startEnergy < MAX_ENERGY && (
+                  <div className="absolute inset-0 bg-yellow-100/40 dark:bg-yellow-900/40 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
+                    <h3 className="text-2xl text-yellow-600 dark:text-yellow-400 font-bold">去課金！</h3>
+                  </div>
+                )}
               </div>
             </CardContent>
-
-            {/* 特殊狀態覆蓋層 */}
-            {startEnergy >= MAX_ENERGY && (
-              <div className="absolute inset-0 bg-green-100/30 dark:bg-green-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
-                <h3 className="text-2xl text-green-500 dark:text-green-400 font-bold">已解放！</h3>
-              </div>
-            )}
-
-            {totalWeekEnergy === 0 && startEnergy < MAX_ENERGY && (
-              <div className="absolute inset-0 bg-yellow-100/30 dark:bg-yellow-400/30 backdrop-blur-md rounded-xl flex items-center justify-center z-20">
-                <h3 className="text-2xl text-yellow-500 dark:text-yellow-400 font-bold">去課金！</h3>
-              </div>
-            )}
           </Card>
         </CardContent>
       </Card>
