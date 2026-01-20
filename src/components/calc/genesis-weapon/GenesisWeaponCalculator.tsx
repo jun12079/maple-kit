@@ -50,7 +50,8 @@ interface StageProgress {
 export default function GenesisWeaponCalculator() {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [startEnergy, setStartEnergy] = useState(0);
+  const [currentStage, setCurrentStage] = useState(1); // 目前進行的階段 (1-8)
+  const [currentStageEnergy, setCurrentStageEnergy] = useState(0); // 目前階段的痕跡 (0-3000)
   const [isBossResetDialogOpen, setIsBossResetDialogOpen] = useState(false);
   const [genesisPassEnabled, setGenesisPassEnabled] = useState(false);
   const [bossConfig, setBossConfig] = useState<BossConfigState>({
@@ -181,6 +182,12 @@ export default function GenesisWeaponCalculator() {
   }
 
   const { weeklyTotal, monthlyTotal } = calculateWeeklyAndMonthlyEnergy();
+  
+  // 根據階段和階段痕跡計算總痕跡
+  const startEnergy = currentStage === 1 
+    ? currentStageEnergy 
+    : stageCumulative[currentStage - 2] + currentStageEnergy;
+  
   const stageProgressData = calculateStageProgress(weeklyTotal, monthlyTotal, startEnergy, startDate);
   const percentage = Math.min((startEnergy / MAX_ENERGY) * 100, 100).toFixed(1);
 
@@ -259,19 +266,93 @@ export default function GenesisWeaponCalculator() {
           </div>
 
           {/* 目前痕跡 */}
-          <div>
-            <Label htmlFor="startEnergy" className="block text-sm font-bold mb-2">
-              目前痕跡
-            </Label>
-            <Input
-              type="number"
-              id="startEnergy"
-              value={startEnergy || ''}
-              min="0"
-              max={MAX_ENERGY}
-              onChange={(e) => setStartEnergy(Number(e.target.value) || 0)}
-              placeholder={`輸入目前痕跡 (0-${MAX_ENERGY})`}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-[7fr_5fr] gap-4">
+            {/* 階段選擇 */}
+            <div>
+              <Label htmlFor="currentStage" className="block text-sm font-bold mb-2">
+                目前階段
+              </Label>
+              <Select
+                value={currentStage.toString()}
+                onValueChange={(value) => {
+                  setCurrentStage(Number(value));
+                  setCurrentStageEnergy(0); // 切換階段時重置階段痕跡
+                }}
+              >
+                <SelectTrigger id="currentStage" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.vonLeon} alt="Von Leon" className="w-6 h-6" />
+                      <span>獅子王：凡雷恩的痕跡</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="2">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.arkarium} alt="Arkarium" className="w-6 h-6" />
+                      <span>時間的大神官：阿卡伊農的痕跡</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="3">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.magnus} alt="Magnus" className="w-6 h-6" />
+                      <span>暴君：梅格耐斯的痕跡</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="4">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.lotus} alt="Lotus" className="w-6 h-6" />
+                      <span>翼之主：史烏的痕跡</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="5">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.damien} alt="Damien" className="w-6 h-6" />
+                      <span>毀滅之劍：戴米安的痕跡</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="6">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.will} alt="Will" className="w-6 h-6" />
+                      <span>蜘蛛之王：威爾的痕跡</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="7">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.lucid} alt="Lucid" className="w-6 h-6" />
+                      <span>噩夢的主人：露希妲的痕跡</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="8">
+                    <div className="flex items-center gap-2">
+                      <img src={stageBossIcon.verusHilla} alt="Verus Hilla" className="w-6 h-6" />
+                      <span>赤紅魔女：真希拉的痕跡</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* 階段痕跡輸入 */}
+            <div>
+              <Label htmlFor="currentStageEnergy" className="block text-sm font-bold mb-2">
+                目前痕跡
+              </Label>
+              <Input
+                type="number"
+                id="currentStageEnergy"
+                value={currentStageEnergy || ''}
+                min="0"
+                max={3000}
+                onChange={(e) => {
+                  const value = Number(e.target.value) || 0;
+                  setCurrentStageEnergy(Math.min(Math.max(0, value), 3000));
+                }}
+                placeholder="輸入目前痕跡 (0-3000)"
+              />
+            </div>
           </div>
           <div className="flex gap-2">
             <Button
