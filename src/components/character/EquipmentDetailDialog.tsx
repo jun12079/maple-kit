@@ -494,7 +494,7 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
                   Lv.{equipment.item_base_option.base_equipment_level}
                 </Badge>
               )}
-              {equipment.special_ring_level && equipment.special_ring_level > 0 && (
+              {Number(equipment.special_ring_level) > 0 && (
                 <Badge variant="secondary" className="text-xs bg-purple-600 text-white">
                   Lv.{equipment.special_ring_level}
                 </Badge>
@@ -586,6 +586,56 @@ export function EquipmentDetailDialog({ open, onOpenChange, item }: EquipmentDet
                   </span>
                 </div>
               ))}
+          </div>
+        )}
+
+        {/* 卓越強化 */}
+        {equipment.item_exceptional_option && equipment.item_exceptional_option.exceptional_upgrade > 0 && (
+          <div className="space-y-0 pt-0.5 border-t border-gray-800">
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <span className="inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded">
+                EX
+              </span>
+              <h5 className="text-xs md:text-sm font-semibold text-red-500">卓越強化 (+{equipment.item_exceptional_option.exceptional_upgrade})</h5>
+            </div>
+            {(() => {
+              const opt = equipment.item_exceptional_option;
+              const allStat = parseInt(opt.str) || parseInt(opt.dex) || parseInt(opt.int) || parseInt(opt.luk);
+              const hp = parseInt(opt.max_hp);
+              const mp = parseInt(opt.max_mp);
+              const attackPower = parseInt(opt.attack_power);
+              const magicPower = parseInt(opt.magic_power);
+              
+              const lines: string[] = [];
+              
+              if (allStat > 0) {
+                lines.push(`全屬性 +${allStat}`);
+              }
+              if (hp > 0 || mp > 0) {
+                if (hp === mp && hp > 0) {
+                  lines.push(`最大HP/MP +${hp}`);
+                } else {
+                  if (hp > 0) lines.push(`最大HP +${hp}`);
+                  if (mp > 0) lines.push(`最大MP +${mp}`);
+                }
+              }
+              if (attackPower > 0 || magicPower > 0) {
+                if (attackPower === magicPower && attackPower > 0) {
+                  lines.push(`攻擊力/魔法攻擊力 +${attackPower}`);
+                } else {
+                  if (attackPower > 0) lines.push(`攻擊力 +${attackPower}`);
+                  if (magicPower > 0) lines.push(`魔法攻擊力 +${magicPower}`);
+                }
+              }
+              
+              return lines.map((line, idx) => (
+                <div key={idx}>
+                  <span className="text-xs md:text-sm font-medium">
+                    {line}
+                  </span>
+                </div>
+              ));
+            })()}
           </div>
         )}
 

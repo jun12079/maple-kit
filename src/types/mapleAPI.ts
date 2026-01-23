@@ -174,13 +174,7 @@ export interface ItemExceptionalOption {
   max_mp: string;
   attack_power: string;
   magic_power: string;
-  armor: string;
-  speed: string;
-  jump: string;
-  boss_damage: string;
-  damage: string;
-  all_stat: string;
-  equipment_level_decrease: number;
+  exceptional_upgrade: number;
 }
 
 export interface ItemEquipment {
