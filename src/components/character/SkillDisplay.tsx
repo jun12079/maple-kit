@@ -219,46 +219,135 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
 
     const coreNames = ['HEXA屬性 I', 'HEXA屬性 II', 'HEXA屬性 III']
 
+    // 格式化數值顯示
+    const formatStatValue = (value: number | undefined, statName: string): string => {
+      if (value === undefined) return ''
+      
+      // 主要屬性、魔力、攻擊力不顯示百分比，其他都顯示
+      const noPercentage = statName.includes('主要屬性') || 
+                          statName.includes('魔力') || 
+                          statName.includes('攻擊力')
+      
+      return `+${value}${noPercentage ? '' : '%'}`
+    }
+
+    // 計算進度百分比（最大等級10）
+    const getProgressPercentage = (level: number): number => {
+      return (level / 10) * 100
+    }
+
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {statCores.map((core, index) => {
-          if (!core) return null
-          
-          return (
-            <Card key={index} className="gap-1 border-none shadow-none">
-              <CardHeader>
-                <CardTitle className="text-sm text-primary">
-                  {coreNames[index]}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {/* 主屬性 */}
-                <div className="p-3 bg-muted dark:bg-muted border-none">
-                  <Badge variant="default">
-                    Lv. {core.main_stat_level}
+      <div className="space-y-4">
+        {/* 屬性總和 - 簡約顯示在標題下 */}
+        {hexaStatData.stat_totals && Object.keys(hexaStatData.stat_totals).length > 0 && (
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            {Object.entries(hexaStatData.stat_totals).map(([statName, statValue]) => (
+              <div key={statName} className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">{statName}</span>
+                <span className="font-semibold">
+                  {formatStatValue(statValue as number, statName)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 核心列表 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {statCores.map((core, index) => {
+            if (!core) return null
+            
+            return (
+              <div key={index} className="border rounded-lg p-4 space-y-3">
+                {/* 標題與總等級 */}
+                <div className="flex items-center justify-between pb-2">
+                  <span className="text-base font-semibold">{coreNames[index]}</span>
+                  <Badge variant="outline" className="text-xs">
+                    Lv.{core.stat_grade}
                   </Badge>
-                  <span className="text-sm text-card-foreground ms-1">{core.main_stat_name}</span>
                 </div>
 
-                {/* 副屬性 1 */}
-                <div className="p-3 bg-muted dark:bg-muted border-none">
-                  <Badge variant="default">
-                    Lv. {core.sub_stat_level_1}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground ms-1">{core.sub_stat_name_1}</span>
+                {/* MAIN STAT */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-muted-foreground font-medium">MAIN STAT</div>
+                    <div className="text-xs text-muted-foreground">
+                      Lv.{core.main_stat_level}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>{core.main_stat_name}</span>
+                      {core.main_stat_value !== undefined && (
+                        <span className="font-semibold">
+                          {formatStatValue(core.main_stat_value, core.main_stat_name)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="relative h-1 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-purple-500 transition-all"
+                        style={{ width: `${getProgressPercentage(core.main_stat_level)}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                {/* 副屬性 2 */}
-                <div className="p-3 bg-muted dark:bg-muted border-none">
-                  <Badge variant="default">
-                    Lv. {core.sub_stat_level_2}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground ms-1">{core.sub_stat_name_2}</span>
+                {/* ADDITIONAL STAT 1 */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-muted-foreground font-medium">ADDITIONAL STAT</div>
+                    <div className="text-xs text-muted-foreground">
+                      Lv.{core.sub_stat_level_1}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>{core.sub_stat_name_1}</span>
+                      {core.sub_stat_value_1 !== undefined && (
+                        <span className="font-semibold">
+                          {formatStatValue(core.sub_stat_value_1, core.sub_stat_name_1)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="relative h-1 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-blue-500 transition-all"
+                        style={{ width: `${getProgressPercentage(core.sub_stat_level_1)}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          )
-        })}
+
+                {/* ADDITIONAL STAT 2 */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-muted-foreground font-medium">ADDITIONAL STAT</div>
+                    <div className="text-xs text-muted-foreground">
+                      Lv.{core.sub_stat_level_2}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>{core.sub_stat_name_2}</span>
+                      {core.sub_stat_value_2 !== undefined && (
+                        <span className="font-semibold">
+                          {formatStatValue(core.sub_stat_value_2, core.sub_stat_name_2)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="relative h-1 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-blue-500 transition-all"
+                        style={{ width: `${getProgressPercentage(core.sub_stat_level_2)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
     )
   }
@@ -274,14 +363,14 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
         {hexaMatrix && hexaMatrix.character_skill && hexaMatrix.character_skill.length > 0 ? (
           <div className="space-y-3">
             <div>
-              <h3 className="text-sm font-semibold mb-2">HEXA矩陣</h3>
+              <h3 className="text-sm font-semibold mb-2">HEXA 矩陣</h3>
               {renderSkills(hexaMatrix.character_skill)}
             </div>
           </div>
         ) : (
           <div className="space-y-3">
             <div>
-              <h3 className="text-sm font-semibold mb-2">HEXA矩陣</h3>
+              <h3 className="text-sm font-semibold mb-2">HEXA 矩陣</h3>
               <div className="text-center py-4 text-muted-foreground text-sm">
                 沒有裝備任何 HEXA 技能
               </div>
@@ -292,7 +381,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
         {/* HEXA屬性核心 */}
         <div className="space-y-3">
           <div className="border-t pt-4">
-            <h3 className="text-sm font-semibold mb-2">HEXA屬性核心</h3>
+            <h3 className="text-sm font-semibold mb-2">HEXA 屬性</h3>
             {renderHexaStatCores(hexaStatData)}
           </div>
         </div>
@@ -300,7 +389,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
         {/* V矩陣 */}
         <div className="space-y-3">
           <div className="border-t pt-4">
-            <h3 className="text-sm font-semibold mb-2">V矩陣</h3>
+            <h3 className="text-sm font-semibold mb-2">V 矩陣</h3>
             {vMatrixData && vMatrixData.character_skill && vMatrixData.character_skill.length > 0 ? (
               renderSkills(vMatrixData.character_skill)
             ) : (

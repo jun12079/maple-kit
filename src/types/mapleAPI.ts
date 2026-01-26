@@ -536,6 +536,9 @@ export interface HexaStatCore {
   sub_stat_level_1: number;
   sub_stat_level_2: number;
   stat_grade: number;
+  main_stat_value: number;
+  sub_stat_value_1: number;
+  sub_stat_value_2: number;
 }
 
 export interface CharacterHexaMatrixStat {
@@ -545,6 +548,11 @@ export interface CharacterHexaMatrixStat {
   character_hexa_stat_core_2: HexaStatCore[];
   character_hexa_stat_core_3: HexaStatCore[];
   preset_hexa_stat_core: HexaStatCore[];
+  preset_hexa_stat_core_2: HexaStatCore[];
+  preset_hexa_stat_core_3: HexaStatCore[];
+  stat_totals: {
+    [key: string]: number;
+  };
 }
 
 export interface CharacterUnion {
