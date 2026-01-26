@@ -87,6 +87,7 @@ export class MapleAPI {
   /**
    * 檢視角色辨識器 (OCID)
    * @param characterName 角色名稱
+   * @deprecated 使用 getCharacter 代替，該方法會自動獲取 OCID 和所有角色資料
    */
   async getCharacterOCID(characterName: string): Promise<CharacterId> {
     return this.request<CharacterId>('/id', {
@@ -98,9 +99,23 @@ export class MapleAPI {
    * 一次獲取所有角色相關資料
    * @param ocid 角色辨識器
    * @param date 要搜尋的日期 (TST，YYYY-MM-DD)
+   * @deprecated 使用 getCharacter 代替，該方法會自動獲取 OCID 和所有角色資料
    */
   async getAllCharacterData(ocid: string, date: string | null = null): Promise<AllCharacterData> {
     return this.request<AllCharacterData>('/character/all', { ocid, date });
+  }
+
+  /**
+   * 取得角色所有資料（合併 OCID + 所有資料）
+   * 後端會先取得 OCID，再獲取所有角色資料
+   * @param characterName 角色名稱
+   * @param date 要搜尋的日期 (TST，YYYY-MM-DD)
+   */
+  async getCharacter(characterName: string, date: string | null = null): Promise<AllCharacterData> {
+    return this.request<AllCharacterData>('/character', { 
+      character_name: characterName,
+      date 
+    });
   }
 }
 
