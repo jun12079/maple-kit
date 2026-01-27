@@ -268,7 +268,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
                 </div>
 
                 {/* MAIN STAT */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 bg-purple-500/15 p-2 rounded">
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-muted-foreground font-medium">MAIN STAT</div>
                     <div className="text-xs text-muted-foreground">
@@ -294,7 +294,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
                 </div>
 
                 {/* ADDITIONAL STAT 1 */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 bg-blue-500/15 p-2 rounded">
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-muted-foreground font-medium">ADDITIONAL STAT</div>
                     <div className="text-xs text-muted-foreground">
@@ -320,7 +320,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
                 </div>
 
                 {/* ADDITIONAL STAT 2 */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 bg-blue-500/15 p-2 rounded">
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-muted-foreground font-medium">ADDITIONAL STAT</div>
                     <div className="text-xs text-muted-foreground">
