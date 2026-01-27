@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { CharacterUnionRaider, UnionBlock, CharacterUnionArtifact, CharacterUnion, CharacterUnionChampion } from '@/types/mapleAPI';
 import { getArtifactImage } from '@/data/union/artifactData';
-import { getUnionGradeImage } from '@/data/union/raiderData';
+import { getUnionGradeImage, getUnionGradeMaxMembers } from '@/data/union/raiderData';
 import { getJobTypeByName, getChampionImage, getChampionTypeByJobName } from '@/data/job/jobData';
 import { BADGE_ORDER, getBadgeImage } from '@/data/union/championBadgeData';
 
@@ -88,6 +88,14 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
   const blocks = currentPreset?.union_block || [];
   const raiderStats = currentPreset?.union_raider_stat || [];
   const occupiedStats = currentPreset?.union_occupied_stat || [];
+
+  // 計算 LAB / 遠征隊 (default 類型) 的方塊數量
+  const defaultBlockCount = useMemo(() => {
+    return blocks.filter(block => {
+      const type = getJobType(block.block_type, block.block_class);
+      return type === 'default';
+    }).length;
+  }, [blocks]);
 
   // 計算職業統計
   const jobStats = useMemo(() => {
@@ -295,8 +303,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
             <div>
               <CardTitle>戰地攻擊隊</CardTitle>
               {unionData && (
-                <CardDescription className="mt-1 flex items-center gap-2">
-                  <span>聯盟等級: {unionData.union_level}</span>
+                <CardDescription className="mt-1 flex items-center gap-1">
                   {getUnionGradeImage(unionData.union_grade) && (
                     <img
                       src={getUnionGradeImage(unionData.union_grade)!}
@@ -304,7 +311,15 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
                       className="w-6 h-6 object-contain"
                     />
                   )}
-                  <span>{unionData.union_grade}</span>
+                  <span>
+                    {unionData.union_grade} |
+                  </span>
+                  <span>聯盟等級: {unionData.union_level} |</span>
+                  {getUnionGradeMaxMembers(unionData.union_grade) && (
+                    <span className="text-muted-foreground">攻擊隊員: 
+                      ({blocks.length}/{getUnionGradeMaxMembers(unionData.union_grade)}{defaultBlockCount > 0 ? `+${defaultBlockCount}` : ''})
+                    </span>
+                  )}
                 </CardDescription>
               )}
             </div>
