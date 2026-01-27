@@ -162,9 +162,9 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
 
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2 font-medium">
-          <div className="w-4 h-4 rounded" style={{ background: BLOCK_COLORS[type] }}></div>
-          <span>{label}{detailString}</span>
+        <div className="flex items-start gap-2 font-medium">
+          <div className="w-4 h-4 rounded flex-shrink-0 mt-0.5" style={{ background: BLOCK_COLORS[type] }}></div>
+          <span className="break-words">{label}{detailString}</span>
         </div>
         <div className="pl-6 text-xs text-muted-foreground space-y-1">
           {typeBlocks.map((block, idx) => (
@@ -326,19 +326,20 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
         <CardContent className="flex flex-col gap-6">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* 左側：拼圖和職業圖例 */}
-            <div className="flex flex-col gap-6 flex-shrink-0">
-              <div className="overflow-auto max-w-full p-4 rounded-lg bg-white dark:bg-slate-900 mx-auto lg:mx-0">
+            <div className="flex flex-col gap-6 w-full lg:flex-1">
+              <div className="overflow-auto p-4 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 mx-auto w-full lg:w-auto">
                 <svg
                   width={GRID_WIDTH * CELL_SIZE}
                   height={GRID_HEIGHT * CELL_SIZE}
                   viewBox={`0 0 ${GRID_WIDTH * CELL_SIZE} ${GRID_HEIGHT * CELL_SIZE}`}
+                  className="block w-full h-auto lg:w-[440px] lg:h-[400px]"
                 >
                   {renderGrid()}
                   {renderBlocks()}
                 </svg>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm w-full">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
                 {renderLegendItem('warrior', '戰士')}
                 {renderLegendItem('magician', '法師')}
                 {renderLegendItem('bowman', '弓箭手')}
@@ -349,7 +350,7 @@ export const UnionRaiderDisplay: React.FC<UnionRaiderDisplayProps> = ({
             </div>
 
             {/* 右側：攻擊隊效果 */}
-            <div className="flex-grow w-full">
+            <div className="w-full lg:flex-1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* 攻擊隊員效果 */}
                 <div className="space-y-2">
