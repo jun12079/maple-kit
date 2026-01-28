@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { CharacterSkill, CharacterHexaMatrixStat, CharacterLinkSkill, Skill, LinkSkill, HexaStatCore } from '@/types/mapleAPI'
+import { HEXAStat1Icon, HEXAStat2Icon, HEXAStat3Icon } from '@/data/hexa/hexaSkillData'
 
 interface SkillWithOwned extends LinkSkill {
   isOwnedSkill?: boolean
@@ -217,7 +218,7 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
       )
     }
 
-    const coreNames = ['HEXA屬性 I', 'HEXA屬性 II', 'HEXA屬性 III']
+    const coreIcons = [HEXAStat1Icon, HEXAStat2Icon, HEXAStat3Icon]
 
     // 格式化數值顯示
     const formatStatValue = (value: number | undefined, statName: string): string => {
@@ -261,7 +262,12 @@ export function SkillDisplay({ hexaMatrix, hexaStatData, vMatrixData, linkSkillD
               <div key={index} className="border rounded-lg p-4 space-y-3">
                 {/* 標題與總等級 */}
                 <div className="flex items-center justify-between pb-2">
-                  <span className="text-base font-semibold">{coreNames[index]}</span>
+                  <img 
+                    src={coreIcons[index]} 
+                    alt={`HEXA屬性 ${index + 1}`}
+                    className="h-8 w-auto"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  />
                   <Badge variant="outline" className="text-xs">
                     Lv.{core.stat_grade}
                   </Badge>

@@ -7,6 +7,9 @@
  */
 
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
+export const HEXAStat1Icon = `${CDN_URL}/images/hexa/hexa-stat1.png`;
+export const HEXAStat2Icon = `${CDN_URL}/images/hexa/hexa-stat2.png`;
+export const HEXAStat3Icon = `${CDN_URL}/images/hexa/hexa-stat3.png`;
 const SolErdaIcon = `${CDN_URL}/images/items/icons/SolErda_icon.png`;
 const SolErdaFragmentIcon = `${CDN_URL}/images/items/icons/SolErdaFragment_icon.png`;
 
