@@ -1004,7 +1004,7 @@ export const bossData: Record<string, Boss> = {
         reset: 'weekly',
         drops: [whiteJadeBossRingBoxIcon],
         solErda: 200,
-        mesos: null
+        mesos: 252700000
       },
       normal: {
         level: 280,
@@ -1014,7 +1014,7 @@ export const bossData: Record<string, Boss> = {
         reset: 'weekly',
         drops: [whisperOfAncientResolveIcon, whiteJadeBossRingBoxIcon, grindstoneOfLifeIcon, adversaryroidIcon],
         solErda: 280,
-        mesos: null
+        mesos: 371000000
       },
       hard: {
         level: 285,
@@ -1024,7 +1024,7 @@ export const bossData: Record<string, Boss> = {
         reset: 'weekly',
         drops: [echoOfAncientResolveIcon, lifeJadeBossRingBoxIcon, grindstoneOfLifeIcon, adversaryroidIcon, ancientEternalArmorBoxIcon, immortalLegacyIcon],
         solErda: 450,
-        mesos: null
+        mesos: 682000000
       },
       extreme: {
         level: 290,
@@ -1034,7 +1034,7 @@ export const bossData: Record<string, Boss> = {
         reset: 'weekly',
         drops: [echoOfAncientResolveIcon, lifeJadeBossRingBoxIcon, grindstoneOfLifeIcon, adversaryroidIcon, ancientEternalArmorBoxIcon, immortalLegacyIcon, exceptionalHammerMedalIcon],
         solErda: 750,
-        mesos: null
+        mesos: 1344000000
       }
     }
   },
