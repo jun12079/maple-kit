@@ -77,11 +77,7 @@ export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData
                   {basicInfo.world_name}
                   {basicInfo.character_guild_name && ` | ${basicInfo.character_guild_name}`}
                 </Badge>
-                <Badge variant="outline" className="text-xs px-2 py-1">{basicInfo.character_class}</Badge>
-                <Badge variant="outline" className="flex items-center gap-1 text-xs px-2 py-1">
-                  {renderGenderIcon(basicInfo.character_gender)}
-                  {basicInfo.character_gender}
-                </Badge>
+                <Badge variant="outline" className="text-xs px-2 py-1">{basicInfo.character_class} |{renderGenderIcon(basicInfo.character_gender)}</Badge>
                 <Badge variant="outline" className="text-xs px-2 py-1">
                   創建: {new Date(basicInfo.character_date_create).toLocaleDateString('zh-TW')}
                 </Badge>
@@ -131,7 +127,7 @@ export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData
                   </h3>
                   <div className="space-y-0.5">
                     <div className="text-xs text-muted-foreground">戰地等級: {formatNumber(unionData.union_level)}</div>
-                    <div className="text-xs text-muted-foreground">戰地階級: {unionData.union_grade}</div>
+                    <div className="text-xs text-muted-foreground">戰地階級: {unionData.union_grade ?? '無'}</div>
                     <div className="text-xs text-muted-foreground">神器等級: {formatNumber(unionData.union_artifact_level)}</div>
                   </div>
                 </div>
@@ -141,7 +137,7 @@ export function CharacterCard({ basicInfo, popularityInfo, dojangData, unionData
 
           {/* 經驗圖表區域 */}
           <div className="lg:col-span-5">
-            <ExperienceChart 
+            <ExperienceChart
               experienceData={experienceData}
             />
           </div>

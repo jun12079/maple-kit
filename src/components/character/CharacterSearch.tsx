@@ -354,8 +354,17 @@ export default function CharacterSearch() {
         </div>
       )}
 
+      {/* 查詢中的 Loading 狀態 */}
+      {isLoading && !basicData && (
+        <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+          <Loader2 className="w-12 h-12 animate-spin mb-4" />
+          <p className="text-xl font-medium">正在查詢角色資料...</p>
+          <p className="text-sm mt-2">請稍候片刻</p>
+        </div>
+      )}
+
       {/* 詳細資料分頁 */}
-      {(basicData || isLoading) && (
+      {basicData && (
         <Tabs defaultValue="basic" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="basic" className="flex items-center gap-1">
@@ -371,56 +380,40 @@ export default function CharacterSearch() {
 
           {/* 基本資訊分頁 */}
           <TabsContent value="basic" className="space-y-6">
-            {basicData ? (
-              <>
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                  <div className="lg:col-span-5">
-                    <StatDisplay
-                      statData={basicData.stat}
-                      hyperStatData={basicData.hyperStat}
-                      abilityData={basicData.ability}
-                    />
-                  </div>
-                  <div className="lg:col-span-7">
-                    <EquipmentDisplay
-                      equipmentData={basicData.itemEquipment}
-                      symbolData={symbolData ?? undefined}
-                      petData={petData ?? undefined}
-                      cashItemData={basicData.cashItemEquipment}
-                    />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <Loader2 className="w-8 h-8 animate-spin mb-3" />
-                <p className="text-lg font-medium">正在載入角色資料...</p>
-                <p className="text-sm mt-1">請稍候片刻</p>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-5">
+                <StatDisplay
+                  statData={basicData.stat}
+                  hyperStatData={basicData.hyperStat}
+                  abilityData={basicData.ability}
+                />
               </div>
-            )}
+              <div className="lg:col-span-7">
+                <EquipmentDisplay
+                  equipmentData={basicData.itemEquipment}
+                  symbolData={symbolData ?? undefined}
+                  petData={petData ?? undefined}
+                  cashItemData={basicData.cashItemEquipment}
+                />
+              </div>
+            </div>
           </TabsContent>
 
           {/* 技能分頁 */}
           <TabsContent value="skill">
-            {skillData ? (
+            {skillData && (
               <SkillDisplay
                 hexaMatrix={skillData.hexaMatrix}
                 hexaStatData={skillData.hexaMatrixStat}
                 vMatrixData={skillData.vMatrix}
                 linkSkillData={skillData.linkSkill}
               />
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <Loader2 className="w-8 h-8 animate-spin mb-3" />
-                <p className="text-lg font-medium">正在載入技能資料...</p>
-                <p className="text-sm mt-1">請稍候片刻</p>
-              </div>
             )}
           </TabsContent>
 
           {/* 戰地分頁 */}
           <TabsContent value="union">
-            {unionRaiderData ? (
+            {unionRaiderData && (unionRaiderData.union_raider_stat.length > 0 || unionRaiderData.union_block.length > 0) ? (
               <UnionRaiderDisplay
                 unionRaiderData={unionRaiderData}
                 unionArtifactData={unionArtifactData}
@@ -430,15 +423,7 @@ export default function CharacterSearch() {
               />
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-8 h-8 animate-spin mb-3" />
-                    <p className="text-lg font-medium">正在載入戰地資料...</p>
-                    <p className="text-sm mt-1">請稍候片刻</p>
-                  </>
-                ) : (
-                  <p className="text-lg">無戰地資料</p>
-                )}
+                <p className="text-lg">無戰地資料</p>
               </div>
             )}
           </TabsContent>
