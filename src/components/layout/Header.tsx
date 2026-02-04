@@ -9,7 +9,7 @@ const Header = () => {
     <>
       <DomainNotice />
 
-      <nav className="h-16 border-b shadow-sm bg-muted">
+      <nav className="h-16 border-b shadow-sm bg-muted relative z-50">
         <div className="h-full flex items-center justify-between mx-auto max-w-7xl px-4">
           <div className="flex items-center gap-8">
             <Logo />

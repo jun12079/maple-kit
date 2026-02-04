@@ -85,11 +85,21 @@ export const menu: MenuGroup[] = [
     url: "/character",
   },
   {
-    title: "常見問題",
-    url: "/faq",
-  },
-  {
     title: "挑戰者世界S2",
     url: "/calc/challengers-world/season2",
+  },
+  {
+    title: "其他",
+    url: "#",
+    items: [
+      {
+        title: "常見問題",
+        url: "/faq",
+      },
+      {
+        title: "更新日誌",
+        url: "/changelog",
+      },
+    ],
   },
 ];
