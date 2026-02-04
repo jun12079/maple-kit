@@ -24,7 +24,7 @@ interface StatDisplayProps {
 export function StatDisplay({ statData, hyperStatData, abilityData }: StatDisplayProps) {
   const [activeHyperStatPreset, setActiveHyperStatPreset] = useState<string>(hyperStatData?.use_preset_no?.toString() || '1')
   const [activeAbilityPreset, setActiveAbilityPreset] = useState<string>(abilityData?.preset_no?.toString() || '1')
-  
+
   const formatNumber = (num: number | string): string => {
     if (!num) return '0'
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -39,33 +39,33 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
     { display: 'INT', apiName: 'INT' },
     { display: 'LUK', apiName: 'LUK' },
     { display: '屬性攻擊力', apiName: ['最低屬性攻擊力', '最高屬性攻擊力'] },
-    { display: '傷害', apiName: '傷害' },
     { display: '最終傷害', apiName: '最終傷害' },
+    { display: '傷害', apiName: '傷害' },
     { display: 'BOSS怪物傷害', apiName: 'BOSS怪物傷害' },
     { display: '無視防禦率', apiName: '無視防禦率' },
-    { display: '一般怪物傷害', apiName: '一般怪物傷害' },
     { display: '攻擊力', apiName: '攻擊力' },
-    { display: '爆擊機率', apiName: '爆擊機率' },
     { display: '魔法攻擊力', apiName: '魔法攻擊力' },
+    { display: '爆擊機率', apiName: '爆擊機率' },
     { display: '爆擊傷害', apiName: '爆擊傷害' },
+    { display: '星力', apiName: '星力' },
+    { display: '額外獲得經驗值', apiName: '獲得額外經驗值' },
+    { display: '楓幣獲得量', apiName: '楓幣獲得量' },
+    { display: '道具掉落率', apiName: '道具掉落率' },
+    { display: '神秘力量', apiName: '神秘力量' },
+    { display: '真實力量', apiName: '真實之力' },
     { display: '冷卻時間減少', apiName: ['冷卻時間減少(％)', '冷卻時間減少(秒)'] },
     { display: 'Buff持續時間', apiName: 'Buff持續時間' },
     { display: '無視冷卻時間', apiName: '未套用冷卻時間' },
+    { display: '一般怪物傷害', apiName: '一般怪物傷害' },
     { display: '無視屬性抗性', apiName: '無視屬性耐性' },
+    { display: '狀態異常耐性', apiName: '狀態異常耐性' },
     { display: '狀態異常追加傷害', apiName: '狀態異常追加傷害' },
     { display: '增加召喚獸持續時間', apiName: '召喚獸持續時間增加' },
-    { display: '楓幣獲得量', apiName: '楓幣獲得量' },
-    { display: '星力', apiName: '星力' },
-    { display: '道具掉落率', apiName: '道具掉落率' },
-    { display: '神秘力量', apiName: '神秘力量' },
-    { display: '額外獲得經驗值', apiName: '獲得額外經驗值' },
-    { display: '真實力量', apiName: '真實之力' },
-    { display: '防禦力', apiName: '防禦力' },
-    { display: '狀態異常耐性', apiName: '狀態異常耐性' },
-    { display: '移動速度', apiName: '移動速度' },
-    { display: '跳躍力', apiName: '跳躍力' },
+    { display: '攻擊速度', apiName: '攻擊速度' },
     { display: '格擋', apiName: '格擋' },
-    { display: '攻擊速度', apiName: '攻擊速度' }
+    { display: '防禦力', apiName: '防禦力' },
+    { display: '跳躍力', apiName: '跳躍力' },
+    { display: '移動速度', apiName: '移動速度' }
   ]
 
   // 格式化特殊數值
@@ -83,10 +83,10 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
     if (stat.display === '冷卻時間減少') {
       const percentStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(％)')
       const secondStat = statData.final_stat?.find(s => s.stat_name === '冷卻時間減少(秒)')
-      
+
       const secondValue = secondStat?.stat_value || '0'
       const percentValue = percentStat?.stat_value || '0'
-      
+
       return `${secondValue}秒 / ${percentValue}%`
     }
 
@@ -230,10 +230,13 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
         {sortedStats.map((stat, index) => (
           <div key={index} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
             <div className="flex items-center gap-2">
-              <Badge className="bg-primary text-xs h-5 px-1 w-12 justify-center">Lv. {stat.stat_level}</Badge>
+              <Badge className="bg-primary text-xs h-5 px-0 w-7 sm:w-12 justify-center shrink-0">
+                <span className="sm:hidden">{stat.stat_level}</span>
+                <span className="hidden sm:inline">Lv. {stat.stat_level}</span>
+              </Badge>
               <span className="text-xs text-muted-foreground">{stat.stat_type}</span>
             </div>
-            <div className="text-xs font-mono text-foreground">
+            <div className="text-xs font-mono text-foreground text-right">
               {stat.stat_increase}
             </div>
           </div>
@@ -272,6 +275,50 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
     </div>
   )
 
+  // 依據類別分組屬性
+  const basicStatsList = ['HP', 'MP', 'STR', 'DEX', 'INT', 'LUK']
+  const attackStatsList = ['屬性攻擊力', '傷害', '最終傷害', 'BOSS怪物傷害', '無視防禦率', '攻擊力', '魔法攻擊力', '爆擊機率', '爆擊傷害']
+  const specialStatsList = ['星力', '神秘力量', '真實力量', '道具掉落率', '楓幣獲得量', '額外獲得經驗值']
+
+  const basicStats = orderedStats.filter(s => basicStatsList.includes(s.stat_name))
+  const attackStats = orderedStats.filter(s => attackStatsList.includes(s.stat_name))
+  const specialStats = orderedStats.filter(s => specialStatsList.includes(s.stat_name))
+  const otherStats = orderedStats.filter(s =>
+    !basicStatsList.includes(s.stat_name) &&
+    !attackStatsList.includes(s.stat_name) &&
+    !specialStatsList.includes(s.stat_name)
+  )
+
+  const renderStatGrid = (stats: OrderedStat[]) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+      {stats.map((stat, index) => (
+        <div 
+          key={index} 
+          className={`flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors ${
+            stat.stat_name === '屬性攻擊力' ? 'sm:col-span-2' : ''
+          }`}
+        >
+          <div className="text-xs text-muted-foreground truncate shrink-0" title={stat.stat_name}>
+            {stat.stat_name}
+          </div>
+          <div className="font-mono text-xs font-semibold text-foreground ml-2 text-right truncate">
+            {stat.stat_value}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+
+  const StatSection = ({ stats }: { stats: OrderedStat[] }) => {
+    if (stats.length === 0) return null
+    return (
+      <div className="space-y-2">
+        <div className="h-px bg-border w-full opacity-50" />
+        {renderStatGrid(stats)}
+      </div>
+    )
+  }
+
   return (
     <Card className="gap-3">
       <CardHeader className="pb-0">
@@ -282,23 +329,17 @@ export function StatDisplay({ statData, hyperStatData, abilityData }: StatDispla
       </CardHeader>
       <CardContent className="space-y-6">
         {/* 戰鬥力獨立顯示 */}
-        <div className="text-center p-2 bg-muted/50 rounded-lg">
-          <div className="text-xs font-medium mb-1">戰鬥力</div>
-          <div className="font-mono text-lg font-bold text-muted-foreground">{combatPower}</div>
+        <div className="text-center p-3 bg-muted/40 rounded-lg border border-border/50">
+          <div className="text-xs font-medium mb-1 text-muted-foreground">戰鬥力</div>
+          <div className="font-mono text-xl font-bold text-primary dark:text-primary-foreground">{combatPower}</div>
         </div>
 
-        {/* 角色屬性 - 單排顯示，左側名稱右側數值 */}
-        <div className="space-y-1">
-          {orderedStats.map((stat, index) => (
-            <div key={index} className="flex justify-between items-center py-1 px-2 rounded hover:bg-muted/30 transition-colors">
-              <div className="text-xs text-muted-foreground truncate" title={stat.stat_name}>
-                {stat.stat_name}
-              </div>
-              <div className="font-mono text-xs font-semibold text-foreground ml-2">
-                {stat.stat_value}
-              </div>
-            </div>
-          ))}
+        {/* 分組顯示屬性 */}
+        <div className="space-y-5">
+          <StatSection stats={basicStats} />
+          <StatSection stats={attackStats} />
+          <StatSection stats={specialStats} />
+          <StatSection stats={otherStats} />
         </div>
 
         {/* 極限屬性 */}
